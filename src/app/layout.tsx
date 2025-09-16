@@ -1,20 +1,22 @@
-// src/app/layout.tsx
 import './globals.css'
+import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 
-export const metadata = {
+// Metadados para SEO e acessibilidade
+
+export const metadata: Metadata = {
   title: 'Litera',
-  description: 'Gerenciamento de biblioteca pessoal',
+  description: 'Aplicação para gerenciamento de biblioteca pessoal',
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
-      <body>
-        {/* Aqui pode adicionar Header */}
-        {children}
-        {/* Aqui pode adicionar Footer */}
+    <html lang='pt-br'>
+      <body className='min-h-screen bg-gray-50 text-gray-900 antialiased'>
+        <main className='container mx-auto px-4 py-6'>
+          {children}
+        </main>
       </body>
     </html>
   )
-}
+  }
