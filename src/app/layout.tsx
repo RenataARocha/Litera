@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { ReactNode } from 'react'
+import Header from '../components/Header'
 
 // Metadados para SEO e acessibilidade
 
@@ -14,9 +15,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang='pt-br'>
       <body className='min-h-screen bg-gray-50 text-gray-900 antialiased'>
         <main className='container mx-auto px-4 py-6'>
+          <Header />
           {children}
         </main>
       </body>
     </html>
   )
-  }
+}
