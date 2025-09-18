@@ -1,17 +1,21 @@
 import { cn } from "@/lib/utils"
 
-export default function Button({ variant = 'primary', children, ...props }) {
+export default function Button({ as, variant = 'primary', children, className, ...props }) {
+  const Component = as || 'button';
+
   return (
-    <button
+    <Component
       className={cn(
-        'px-4 py-2 rounded font-medium transition',
-        variant === 'primary' && 'bg-primary text-white hover:bg-secondary',
-        variant === 'outline' && 'border border-primary text-primary hover:bg-primary hover:text-white',
-        variant === 'ghost' && 'bg-transparent text-primary hover:bg-primary hover:text-white'
+        'px-4 py-2 rounded-xl font-medium transition-all duration-200 transform',
+        variant === 'primary' && 'bg-primary-500 text-white hover:bg-primary-600 shadow-lg hover:shadow-xl',
+        variant === 'outline' && 'border border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white',
+        variant === 'ghost' && 'bg-transparent text-gray-600 hover:bg-white/20 hover:text-gray-800',
+        variant === 'danger' && 'bg-red-500 text-white hover:bg-red-600 shadow-md',
+        className
       )}
       {...props}
     >
       {children}
-    </button>
-  )
+    </Component>
+  );
 }
