@@ -1,105 +1,153 @@
-"use client"
+'use client';
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook } from 'react-icons/fa'
+import Link from 'next/link';
+import { useState } from 'react';
+import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook } from 'react-icons/fa';
 
 export default function Header() {
-    const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-    const navLinks = [
-        { href: '/dashboard', label: 'Dashboard', icon: <FaChartLine /> },
-        { href: '/books', label: 'Biblioteca', icon: <FaBook /> },
-    ];
+  const navLinks = [
+    { href: '/', label: 'Dashboard', icon: <FaChartLine /> }, 
+    { href: '/books', label: 'Biblioteca', icon: <FaBook /> },
+  ];
 
-    return (
-        <header className="sticky top-0 z-50 glass-morphism">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                    {/* Logotipo e título */}
-                    <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-3">
-                            <div className="relative">
-                                <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
-                                    <FaBookOpen className="text-white text-lg" />
-                                </div>
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold text-gradient">BookShelf</h1>
-                                <p className="text-xs text-gray-500">Biblioteca Digital</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {/* Menu Desktop */}
-                    <nav className="desktop-only flex items-center space-x-1">
-                        {navLinks.map((link) => (
-                            <Link 
-                                key={link.href} 
-                                href={link.href} 
-                                className="flex items-center text-gray-700 hover:text-primary-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/20 group"
-                            >
-                                <span className="mr-2 group-hover:animate-bounce-subtle">
-                                    {link.icon}
-                                </span>
-                                {link.label}
-                            </Link>
-                        ))}
-                        <div className="w-px h-6 bg-white/20 mx-2"></div>
-                        <Link 
-                            href="/books/new" 
-                            className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                        >
-                            <FaPlus className="inline-block mr-2" />
-                            Novo Livro
-                        </Link>
-                    </nav>
-                    
-                    {/* Botão do Menu Mobile */}
-                    <div className="mobile-only">
-                        <button 
-                            onClick={() => setMenuOpen(!menuOpen)} 
-                            className="p-2 rounded-xl hover:bg-white/20 transition-colors"
-                            aria-expanded={menuOpen}
-                            aria-controls="mobile-menu"
-                        >
-                            {menuOpen ? 
-                                <FaTimes className="text-gray-700 text-xl" /> : 
-                                <FaBars className="text-gray-700 text-xl" />
-                            }
-                        </button>
-                    </div>
-                </div>
+  return (
+    <header className="sticky top-0 z-50 glass-morphism">
+      {/* Container com estilos forçados */}
+      <div 
+        className="max-w-7xl mx-auto"
+        style={{ 
+          paddingLeft: '2rem', 
+          paddingRight: '2rem' 
+        }}
+      >
+        <div 
+          className="flex justify-between items-center"
+          style={{ height: '4.5rem' }}
+        >
+          {/* Logotipo e título */}
+          <div className="flex items-center" style={{ gap: '1rem' }}> 
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
+                <FaBookOpen className="text-white text-lg" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
             </div>
+            <div>
+              <h1 className="text-xl font-bold text-gradient">Litera</h1>
+              <p className="text-xs text-gray-500">Biblioteca Digital</p>
+            </div>
+          </div>
+          
+          {/* Menu Desktop */}
+          <nav className="desktop-only flex items-center" style={{ gap: '0.5rem' }}>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                className="flex items-center text-gray-700 hover:text-primary-600 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/50 hover:shadow-md group"
+                style={{ 
+                  padding: '0.75rem 1.5rem',
+                  minWidth: 'fit-content'
+                }}
+              >
+                <span className="group-hover:animate-bounce-subtle" style={{ marginRight: '0.75rem' }}>
+                  {link.icon}
+                </span>
+                {link.label}
+              </Link>
+            ))}
             
-            {/* Menu Mobile */}
-            <nav 
-                id="mobile-menu" 
-                className={`${menuOpen ? 'block animate-slide-down' : 'hidden'} mobile-only glass-morphism border-t border-white/20`}
+            {/* Divisor */}
+            <div 
+              className="bg-white/30"
+              style={{ 
+                width: '1px', 
+                height: '2rem', 
+                margin: '0 1rem' 
+              }}
+            ></div>
+            
+            {/* Botão Novo Livro */}
+            <Link 
+              href="/books/new" 
+              className="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+              style={{ 
+                padding: '0.75rem 2rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}
             >
-                <div className="px-4 py-3 space-y-2">
-                    {navLinks.map((link) => (
-                        <Link 
-                            key={link.href} 
-                            href={link.href} 
-                            onClick={() => setMenuOpen(false)} 
-                            className="flex items-center w-full text-left px-4 py-3 rounded-xl hover:bg-white/20 transition-colors text-gray-700"
-                        >
-                            <span className="mr-3">{link.icon}</span>
-                            {link.label}
-                        </Link>
-                    ))}
-                    <Link 
-                        href="/books/new" 
-                        onClick={() => setMenuOpen(false)} 
-                        className="flex items-center w-full text-left px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl"
-                    >
-                        <FaPlus className="inline-block mr-3" />
-                        Novo Livro
-                    </Link>
-                </div>
-            </nav>
-        </header>
-    );
+              <FaPlus />
+              Novo Livro
+            </Link>
+          </nav>
+          
+          {/* Botão do Menu Mobile */}
+          <div className="mobile-only">
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)} 
+              className="rounded-xl hover:bg-white/50 transition-colors"
+              style={{ padding: '0.75rem' }}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+            >
+              {menuOpen ? 
+                <FaTimes className="text-gray-700 text-xl" /> : 
+                <FaBars className="text-gray-700 text-xl" />
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Menu Mobile */}
+      {menuOpen && (
+        <nav 
+          id="mobile-menu" 
+          className="mobile-only glass-morphism border-t border-white/20 animate-slide-down"
+        >
+          <div 
+            className="space-y-3"
+            style={{ 
+              padding: '1.5rem 2rem' 
+            }}
+          >
+            {navLinks.map((link) => (
+              <Link 
+                key={link.href} 
+                href={link.href} 
+                onClick={() => setMenuOpen(false)} 
+                className="flex items-center w-full text-left rounded-xl hover:bg-white/50 hover:shadow-md transition-all duration-200 text-gray-700"
+                style={{ 
+                  padding: '1rem 1.25rem',
+                  gap: '1rem'
+                }}
+              >
+                <span className="text-lg">{link.icon}</span>
+                <span className="text-base">{link.label}</span>
+              </Link>
+            ))}
+            
+            {/* Botão Novo Livro no mobile */}
+            <Link 
+              href="/books/new" 
+              onClick={() => setMenuOpen(false)} 
+              className="flex items-center w-full text-left bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              style={{ 
+                padding: '1rem 1.25rem',
+                gap: '1rem',
+                marginTop: '1rem'
+              }}
+            >
+              <FaPlus className="text-lg" />
+              <span className="text-base font-medium">Novo Livro</span>
+            </Link>
+          </div>
+        </nav>
+      )}
+    </header>
+  );
 }
