@@ -156,60 +156,80 @@ export default function Home() {
         <div className="absolute right-8 bottom-0 w-24 h-24 bg-white opacity-5 rounded-full transform translate-y-8"></div>
       </div>
 
-      {/* Cards de estatísticas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center"
-          style={{ padding: '1.5rem', gap: '1rem' }}
-        >
-          <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
-            <FaBook className="text-blue-500 text-xl" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Total de Livros</p>
-            <p className="text-2xl font-bold text-gray-800">{stats.totalBooks}</p>
-          </div>
-        </div>
-
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center"
-          style={{ padding: '1.5rem', gap: '1rem' }}
-        >
-          <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0">
-            <FaBookOpen className="text-green-500 text-xl" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Lendo Agora</p>
-            <p className="text-2xl font-bold text-gray-800">{stats.readingNow}</p>
-          </div>
-        </div>
-
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center"
-          style={{ padding: '1.5rem', gap: '1rem' }}
-        >
-          <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center flex-shrink-0">
-            <FaCheck className="text-purple-500 text-xl" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Concluídos</p>
-            <p className="text-2xl font-bold text-gray-800">{stats.finishedBooks}</p>
-          </div>
-        </div>
-
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center"
-          style={{ padding: '1.5rem', gap: '1rem' }}
-        >
-          <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center flex-shrink-0">
-            <FaFileAlt className="text-orange-500 text-xl" />
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Páginas Lidas</p>
-            <p className="text-2xl font-bold text-gray-800">{stats.totalPagesRead}</p>
-          </div>
-        </div>
+     {/* Cards de estatísticas */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <div 
+    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+    style={{ padding: '1.25rem' }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
+        <FaBook className="text-blue-500 text-lg group-hover:animate-bounce" />
       </div>
+      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+        +12% este mês
+      </span>
+    </div>
+    <div>
+      <p className="text-gray-500 text-sm mb-1">Total de Livros</p>
+      <p className="text-3xl font-bold text-gray-800">{stats.totalBooks}</p>
+    </div>
+  </div>
+
+  <div 
+    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+    style={{ padding: '1.25rem' }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors duration-200">
+        <FaBookOpen className="text-green-500 text-lg group-hover:animate-bounce" />
+      </div>
+      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+        Em progresso
+      </span>
+    </div>
+    <div>
+      <p className="text-gray-500 text-sm mb-1">Lendo Agora</p>
+      <p className="text-3xl font-bold text-gray-800">{stats.readingNow}</p>
+    </div>
+  </div>
+
+  <div 
+    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+    style={{ padding: '1.25rem' }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-200">
+        <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
+      </div>
+      <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+        Meta: 50/ano
+      </span>
+    </div>
+    <div>
+      <p className="text-gray-500 text-sm mb-1">Concluídos</p>
+      <p className="text-3xl font-bold text-gray-800">{stats.finishedBooks}</p>
+    </div>
+  </div>
+
+  <div 
+    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+    style={{ padding: '1.25rem' }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-200">
+        <FaFileAlt className="text-orange-500 text-lg group-hover:animate-bounce" />
+      </div>
+      <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+        Este ano
+      </span>
+    </div>
+    <div>
+      <p className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
+      <p className="text-3xl font-bold text-gray-800">{stats.totalPagesRead}</p>
+    </div>
+  </div>
+</div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Atividade Recente */}
