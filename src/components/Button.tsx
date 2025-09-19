@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "../_lib/utils";
 
 export default function Button({ as, variant = 'primary', children, className, ...props }) {
   const Component = as || 'button';

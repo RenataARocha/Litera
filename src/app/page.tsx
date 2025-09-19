@@ -9,7 +9,7 @@ const exampleBook = {
     year: 1954,
     genre: "Fantasia",
     rating: 5,
-    cover: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1585791242i/33.jpg",
+    cover: "",
     description: "Um hobbit chamado Frodo Baggins herda um anel e embarca em uma jornada perigosa para destruí-lo e salvar a Terra Média do Senhor das Trevas Sauron."
 };
 

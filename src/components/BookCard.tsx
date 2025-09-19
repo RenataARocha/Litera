@@ -27,7 +27,9 @@ export default function BookCard({ book }: Props) {
       <Image
         src={book.cover || "/fallback-cover.png"}
         alt={book.title}
-        className="w-32 h-48 object-cover rounded-lg self-center shadow-lg"
+        width={128}   // equivalente a w-32
+        height={192}  // equivalente a h-48
+        className="object-cover rounded-lg self-center shadow-lg"
       />
 
       {/* Informações principais */}
