@@ -48,5 +48,15 @@
     "rating": 5,
     "cover": "",
     "description": "Considerado precursor do realismo no Brasil, é narrado por um defunto-autor. Brás Cubas revisita sua vida com ironia e pessimismo, criticando instituições e costumes do século XIX. A narrativa fragmentada e inovadora rompe com convenções literárias tradicionais."
+  },
+  {
+    "id": 6,
+    "title": "Ao Farol",
+    "author": "Virginia Woolf",
+    "year": 1927,
+    "genre": "Romance",
+    "rating": 5,
+    "cover": "",
+    "description": "O romance acompanha a família Ramsay e seus convidados durante verões passados em uma casa de férias na Ilha de Skye, na Escócia. A narrativa não se centra em grandes acontecimentos externos, mas sim no fluxo de consciência dos personagens, revelando seus pensamentos mais íntimos, lembranças, expectativas e frustrações.\n\nA ida ao farol, anunciada no início como um simples passeio, torna-se um símbolo poderoso: de desejo, passagem do tempo, perdas e reconciliações. A obra explora temas como a fugacidade da vida, as relações familiares, a busca por sentido e a forma como o tempo transforma tanto as pessoas quanto suas memórias.\n\nCom sua escrita inovadora e lírica, Woolf rompe com o romance tradicional e constrói uma reflexão profunda sobre a experiência humana e a inevitabilidade do tempo."
   }
 ]
