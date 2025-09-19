@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import BookCard from "@/components/BookCard";
 import { SearchBar} from "@/components/SearchBar";
-import { GenreFilter } from "@/components/GenreFilter"; 
+import GenreFilter from "@/components/GenreFilter"; 
 
 type Book = {
     id: number;

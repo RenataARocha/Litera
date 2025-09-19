@@ -1,6 +1,13 @@
 import { cn } from "../_lib/utils";
+import { ReactNode } from "react";
 
-export default function Card({ children, className, glass = false }) {
+type CardProps = {
+  children: ReactNode;
+  className?: string;
+  glass?: boolean;
+};
+
+export default function Card({ children, className, glass = false }: CardProps) {
   return (
     <div 
       className={cn(

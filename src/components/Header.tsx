@@ -31,7 +31,7 @@ export default function Header() {
                             </div>
                         </div>
                     </div>
-
+                    
                     {/* Menu Desktop */}
                     <nav className="hidden md:flex items-center space-x-1">
                         {navLinks.map((link) => (
@@ -45,11 +45,11 @@ export default function Header() {
                             Novo Livro
                         </Link>
                     </nav>
-
+                    
                     {/* Botão do Menu Mobile */}
                     <div className="md:hidden">
-                        <button
-                            onClick={() => setMenuOpen(!menuOpen)}
+                        <button 
+                            onClick={() => setMenuOpen(!menuOpen)} 
                             className="p-2 rounded-xl hover:bg-white/20 transition-colors"
                             aria-expanded={menuOpen}
                             aria-controls="mobile-menu"
@@ -59,7 +59,7 @@ export default function Header() {
                     </div>
                 </div>
             </div>
-
+            
             {/* Menu Mobile */}
             <nav id="mobile-menu" className={`${menuOpen ? 'block animate-slide-down' : 'hidden'} md:hidden glass-morphism border-t border-white/20`}>
                 <div className="px-4 py-3 space-y-2">
