@@ -13,7 +13,7 @@ export default function Header() {
     ];
 
     return (
-        <header className="glass-morphism sticky top-0 z-50 border-b border-white/20">
+        <header className="sticky top-0 z-50 glass-morphism">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logotipo e título */}
@@ -26,49 +26,75 @@ export default function Header() {
                                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">BookShelf</h1>
+                                <h1 className="text-xl font-bold text-gradient">BookShelf</h1>
                                 <p className="text-xs text-gray-500">Biblioteca Digital</p>
                             </div>
                         </div>
                     </div>
                     
                     {/* Menu Desktop */}
-                    <nav className="hidden md:flex items-center space-x-1">
+                    <nav className="desktop-only flex items-center space-x-1">
                         {navLinks.map((link) => (
-                            <Link key={link.href} href={link.href} className="nav-btn group px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/20">
-                                <i className="mr-2 group-hover:animate-bounce-subtle">{link.icon}</i>{link.label}
+                            <Link 
+                                key={link.href} 
+                                href={link.href} 
+                                className="flex items-center text-gray-700 hover:text-primary-600 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/20 group"
+                            >
+                                <span className="mr-2 group-hover:animate-bounce-subtle">
+                                    {link.icon}
+                                </span>
+                                {link.label}
                             </Link>
                         ))}
                         <div className="w-px h-6 bg-white/20 mx-2"></div>
-                        <Link href="/books/new" className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <Link 
+                            href="/books/new" 
+                            className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2 rounded-xl text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                        >
                             <FaPlus className="inline-block mr-2" />
                             Novo Livro
                         </Link>
                     </nav>
                     
                     {/* Botão do Menu Mobile */}
-                    <div className="md:hidden">
+                    <div className="mobile-only">
                         <button 
                             onClick={() => setMenuOpen(!menuOpen)} 
                             className="p-2 rounded-xl hover:bg-white/20 transition-colors"
                             aria-expanded={menuOpen}
                             aria-controls="mobile-menu"
                         >
-                            {menuOpen ? <FaTimes className="text-gray-700" /> : <FaBars className="text-gray-700" />}
+                            {menuOpen ? 
+                                <FaTimes className="text-gray-700 text-xl" /> : 
+                                <FaBars className="text-gray-700 text-xl" />
+                            }
                         </button>
                     </div>
                 </div>
             </div>
             
             {/* Menu Mobile */}
-            <nav id="mobile-menu" className={`${menuOpen ? 'block animate-slide-down' : 'hidden'} md:hidden glass-morphism border-t border-white/20`}>
+            <nav 
+                id="mobile-menu" 
+                className={`${menuOpen ? 'block animate-slide-down' : 'hidden'} mobile-only glass-morphism border-t border-white/20`}
+            >
                 <div className="px-4 py-3 space-y-2">
                     {navLinks.map((link) => (
-                        <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)} className="block w-full text-left px-4 py-3 rounded-xl hover:bg-white/20 transition-colors">
-                            <i className="mr-3">{link.icon}</i>{link.label}
+                        <Link 
+                            key={link.href} 
+                            href={link.href} 
+                            onClick={() => setMenuOpen(false)} 
+                            className="flex items-center w-full text-left px-4 py-3 rounded-xl hover:bg-white/20 transition-colors text-gray-700"
+                        >
+                            <span className="mr-3">{link.icon}</span>
+                            {link.label}
                         </Link>
                     ))}
-                    <Link href="/books/new" onClick={() => setMenuOpen(false)} className="block w-full text-left px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl">
+                    <Link 
+                        href="/books/new" 
+                        onClick={() => setMenuOpen(false)} 
+                        className="flex items-center w-full text-left px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl"
+                    >
                         <FaPlus className="inline-block mr-3" />
                         Novo Livro
                     </Link>

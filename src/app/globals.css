@@ -1,102 +1,108 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
-/* Importação da fonte e ícones */
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
-/* Importação de fonte do Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+/* Configuração de tema personalizada */
+@theme {
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  
+  --color-dark-50: #f8fafc;
+  --color-dark-100: #f1f5f9;
+  --color-dark-200: #e2e8f0;
+  --color-dark-300: #cbd5e1;
+  --color-dark-400: #94a3b8;
+  --color-dark-500: #64748b;
+  --color-dark-600: #475569;
+  --color-dark-700: #334155;
+  --color-dark-800: #1e293b;
+  --color-dark-900: #0f172a;
 
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+  --animate-bounce-subtle: bounceSubtle 0.6s ease-out;
+  --animate-slide-down: slideDown 0.3s ease-out;
+}
 
-/* Estilos Globais e Customizados */
+/* Keyframes */
+@keyframes glow {
+  0% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); }
+  100% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6); }
+}
 
-@layer base {
-  body {
-    /* Aplica o gradiente do protótipo ao invés das cores padrão */
-    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen;
+@keyframes bounceSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+}
+
+/* Utilitários personalizados */
+@utility glass-morphism {
+  background-color: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(to right, var(--color-primary-600), var(--color-primary-800));
+  background-clip: text;
+  color: transparent;
+}
+
+@utility mobile-only {
+  display: block;
+  @media (min-width: 768px) {
+    display: none;
   }
 }
 
-@layer components {
-  .glass-morphism {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  .book-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .book-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-
-  .floating-action {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 40;
-  }
-
-  .progress-ring {
-    transform: rotate(-90deg);
-  }
-
-  .progress-ring-circle {
-    transition: stroke-dashoffset 0.35s;
-    transform-origin: 50% 50%;
-  }
-
-  .status-indicator {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .status-indicator::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
-  }
-
-  .status-indicator:hover::before {
-    left: 100%;
+@utility desktop-only {
+  display: none;
+  @media (min-width: 768px) {
+    display: block;
   }
 }
 
-/* Estilos de Utilitários e Outros */
-
-
-/* Classes para barra de rolagem customizada */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 3px;
+::-webkit-scrollbar-track {
+  background-color: #f1f5f9;
+  border-radius: 9999px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-400);
+  border-radius: 9999px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Classe de animação de foco */
-.search-glow:focus {
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1), 0 0 20px rgba(14, 165, 233, 0.2);
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary-500);
 }
