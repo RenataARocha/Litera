@@ -1,12 +1,29 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch, FaPlayCircle } from 'react-icons/fa';
+import Image from 'next/image';
+import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 
-// Dados de exemplo para a seção de Atividade Recente
-const recentActivity = [
+type Color = 'blue' | 'green' | 'purple';
+
+interface GoalCircleProps {
+  percentage: number;
+  title: string;
+  subtitle: string;
+  color?: Color;
+}
+
+interface Book {
+  title: string;
+  author: string;
+  status: 'Lido' | 'Lendo' | 'Quero Ler' | string;
+  rating: number;
+  lastRead: string;
+  cover: string;
+}
+
+const recentActivity: Book[] = [
   {
     title: "Dom Casmurro",
     author: "Machado de Assis",
@@ -49,14 +66,15 @@ const recentActivity = [
   }
 ];
 
-const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
-  const colorMap = {
+const GoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
+  const colorMap: Record<Color, string> = {
     blue: "stroke-blue-500",
     green: "stroke-green-500",
-    purple: "stroke-purple-500"
+    purple: "stroke-purple-500",
   };
 
-  const circumference = 2 * Math.PI * 36;
+  const radius = 36;
+  const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
@@ -64,19 +82,19 @@ const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
       <div className="relative w-20 h-20 mx-auto mb-4">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
           <circle
-            cx="40"
-            cy="40"
-            r="36"
+            cx={40}
+            cy={40}
+            r={radius}
             stroke="#E5E7EB"
-            strokeWidth="6"
+            strokeWidth={6}
             fill="none"
           />
           <circle
-            cx="40"
-            cy="40"
-            r="36"
+            cx={40}
+            cy={40}
+            r={radius}
             className={colorMap[color]}
-            strokeWidth="6"
+            strokeWidth={6}
             fill="none"
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -85,16 +103,16 @@ const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-lg font-bold text-gray-800">{percentage}%</span>
+          <span className="text-lg font-bold text-gray-800">{Math.round(percentage)}%</span>
         </div>
       </div>
       <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
-      <p className="text-xs text-gray-500">{subtitle}</p>
+      {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
     </div>
   );
 };
 
-export default function Home() {
+const Home: React.FC = () => {
   const [stats] = useState({
     totalBooks: 5,
     readingNow: 1,
@@ -109,7 +127,7 @@ export default function Home() {
     >
       {/* Seção principal de boas-vindas */}
       <div
-        className=" text-white flex justify-between items-center relative overflow-hiddenrelative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl "
+        className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl"
         style={{ padding: '2rem' }}
       >
         <div className="z-10">
@@ -251,10 +269,13 @@ export default function Home() {
                 className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors"
                 style={{ padding: '0.75rem 0.5rem' }}
               >
-                <img
+                <Image
                   src={book.cover}
                   alt={book.title}
-                  className="w-12 h-16 object-cover rounded-lg shadow-sm flex-shrink-0"
+                  width={48}
+                  height={64}
+                  className="object-cover rounded-lg shadow-sm flex-shrink-0"
+                  unoptimized
                 />
                 <div className="flex-1 min-w-0">
                   <h3
@@ -301,33 +322,32 @@ export default function Home() {
         </div>
 
         {/* Ações Rápidas */}
-<div
-  className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 mt-4"
-  style={{ padding: '1.5rem' }}
->
-  <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 mt-4"
+          style={{ padding: '1.5rem' }}
+        >
+          <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
 
-  {/* aqui está o truque: flex-col + gap-3 */}
-  <div className="flex flex-col gap-3">
-    <Link
-      href="/books/new"
-      className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
-    >
-      <FaPlus className="text-sm group-hover:animate-bounce" />
-      Adicionar Livro
-    </Link>
+          <div className="flex flex-col gap-3">
+            <Link
+              href="/books/new"
+              className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+            >
+              <FaPlus className="text-sm group-hover:animate-bounce" />
+              Adicionar Livro
+            </Link>
 
-    <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
-      <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
-      Explorar Biblioteca
-    </button>
+            <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+              <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
+              Explorar Biblioteca
+            </button>
 
-    <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
-      <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
-      Leituras Atuais
-    </button>
-  </div>
-</div>
+            <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+              <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
+              Leituras Atuais
+            </button>
+          </div>
+        </div>
 
       </div>
 
@@ -336,7 +356,7 @@ export default function Home() {
         className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
         style={{ padding: '1.5rem' }}
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-32">Metas de Leitura 2024</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-8">Metas de Leitura 2024</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <GoalCircle
@@ -362,3 +382,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
