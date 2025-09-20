@@ -78,8 +78,11 @@ const GoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, co
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="rounded-2xl p-6 text-center min-w-[200px] flex flex-col items-center ">
-      <div className="relative w-20 h-20 mx-auto mb-4">
+    <div className="rounded-2xl p-6 text-center min-w-[200px] flex flex-col items-center">
+      <div
+        className="relative w-20 h-20 mx-auto"
+        style={{ marginBottom: '1rem' }}
+      >
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
           <circle
             cx={40}
@@ -106,7 +109,11 @@ const GoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, co
           <span className="text-lg font-bold text-gray-800">{Math.round(percentage)}%</span>
         </div>
       </div>
-      <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
+      <h3
+        className="font-semibold text-gray-800 text-sm"
+      >
+        {title}
+      </h3>
       {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
     </div>
   );
@@ -356,9 +363,10 @@ const Home: React.FC = () => {
         className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
         style={{ padding: '1.5rem' }}
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-8">Metas de Leitura 2024</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-12"
+          style={{ marginBottom: '1.5rem' }}>Metas de Leitura 2024</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <GoalCircle
             percentage={20}
             title="Livros por Ano"
