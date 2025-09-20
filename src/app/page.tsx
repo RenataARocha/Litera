@@ -52,7 +52,7 @@ const recentActivity = [
 const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
   const colorMap = {
     blue: "stroke-blue-500",
-    green: "stroke-green-500", 
+    green: "stroke-green-500",
     purple: "stroke-purple-500"
   };
 
@@ -60,7 +60,7 @@ const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="bg-white rounded-2xl p-6 text-center min-w-[200px] shadow-sm">
+    <div className="rounded-2xl p-6 text-center min-w-[200px] flex flex-col items-center ">
       <div className="relative w-20 h-20 mx-auto mb-4">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
           <circle
@@ -88,7 +88,7 @@ const GoalCircle = ({ percentage, title, subtitle, color = "blue" }) => {
           <span className="text-lg font-bold text-gray-800">{percentage}%</span>
         </div>
       </div>
-      <h3 className="font-semibold text-gray-800 text-sm mb-1">{title}</h3>
+      <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
       <p className="text-xs text-gray-500">{subtitle}</p>
     </div>
   );
@@ -103,12 +103,12 @@ export default function Home() {
   });
 
   return (
-    <div 
+    <div
       className="flex flex-col gap-6"
       style={{ padding: '2rem' }}
     >
       {/* Seção principal de boas-vindas */}
-      <div 
+      <div
         className=" text-white flex justify-between items-center relative overflow-hiddenrelative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl "
         style={{ padding: '2rem' }}
       >
@@ -122,7 +122,7 @@ export default function Home() {
             <span>sexta-feira, 19 de setembro de 2025</span>
           </div>
         </div>
-        
+
         {/* Círculo de progresso */}
         <div className="relative w-20 h-20 z-10">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
@@ -156,84 +156,84 @@ export default function Home() {
         <div className="absolute right-8 bottom-0 w-24 h-24 bg-white opacity-5 rounded-full transform translate-y-8"></div>
       </div>
 
-     {/* Cards de estatísticas */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-  <div 
-    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
-    style={{ padding: '1.25rem' }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
-        <FaBook className="text-blue-500 text-lg group-hover:animate-bounce" />
-      </div>
-      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
-        +12% este mês
-      </span>
-    </div>
-    <div>
-      <p className="text-gray-500 text-sm mb-1">Total de Livros</p>
-      <p className="text-3xl font-bold text-gray-800">{stats.totalBooks}</p>
-    </div>
-  </div>
+      {/* Cards de estatísticas */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          style={{ padding: '1.25rem' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
+              <FaBook className="text-blue-500 text-lg group-hover:animate-bounce" />
+            </div>
+            <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+              +12% este mês
+            </span>
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm mb-1">Total de Livros</p>
+            <p className="text-3xl font-bold text-gray-800">{stats.totalBooks}</p>
+          </div>
+        </div>
 
-  <div 
-    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
-    style={{ padding: '1.25rem' }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors duration-200">
-        <FaBookOpen className="text-green-500 text-lg group-hover:animate-bounce" />
-      </div>
-      <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-        Em progresso
-      </span>
-    </div>
-    <div>
-      <p className="text-gray-500 text-sm mb-1">Lendo Agora</p>
-      <p className="text-3xl font-bold text-gray-800">{stats.readingNow}</p>
-    </div>
-  </div>
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          style={{ padding: '1.25rem' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors duration-200">
+              <FaBookOpen className="text-green-500 text-lg group-hover:animate-bounce" />
+            </div>
+            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+              Em progresso
+            </span>
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm mb-1">Lendo Agora</p>
+            <p className="text-3xl font-bold text-gray-800">{stats.readingNow}</p>
+          </div>
+        </div>
 
-  <div 
-    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
-    style={{ padding: '1.25rem' }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-200">
-        <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
-      </div>
-      <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
-        Meta: 50/ano
-      </span>
-    </div>
-    <div>
-      <p className="text-gray-500 text-sm mb-1">Concluídos</p>
-      <p className="text-3xl font-bold text-gray-800">{stats.finishedBooks}</p>
-    </div>
-  </div>
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          style={{ padding: '1.25rem' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-200">
+              <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
+            </div>
+            <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+              Meta: 50/ano
+            </span>
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm mb-1">Concluídos</p>
+            <p className="text-3xl font-bold text-gray-800">{stats.finishedBooks}</p>
+          </div>
+        </div>
 
-  <div 
-    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
-    style={{ padding: '1.25rem' }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-200">
-        <FaFileAlt className="text-orange-500 text-lg group-hover:animate-bounce" />
+        <div
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          style={{ padding: '1.25rem' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-200">
+              <FaFileAlt className="text-orange-500 text-lg group-hover:animate-bounce" />
+            </div>
+            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+              Este ano
+            </span>
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
+            <p className="text-3xl font-bold text-gray-800">{stats.totalPagesRead}</p>
+          </div>
+        </div>
       </div>
-      <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
-        Este ano
-      </span>
-    </div>
-    <div>
-      <p className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
-      <p className="text-3xl font-bold text-gray-800">{stats.totalPagesRead}</p>
-    </div>
-  </div>
-</div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Atividade Recente */}
-        <div 
+        <div
           className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100"
           style={{ padding: '1.5rem' }}
         >
@@ -243,25 +243,54 @@ export default function Home() {
               Ver tudo
             </Link>
           </div>
-          
-          <div className="space-y-4">
+
+          <div className="space-y-5">
             {recentActivity.map((book, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img 
-                  src={book.cover} 
+              <div
+                key={index}
+                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors"
+                style={{ padding: '0.75rem 0.5rem' }}
+              >
+                <img
+                  src={book.cover}
                   alt={book.title}
                   className="w-12 h-16 object-cover rounded-lg shadow-sm flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 text-sm truncate">{book.title}</h3>
-                  <p className="text-xs text-gray-500 mb-1">{book.author}</p>
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                    book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
-                    book.status === 'Lendo' ? 'bg-green-100 text-green-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
-                    {book.status}
-                  </span>
+                  <h3
+                    className="font-semibold text-gray-800 text-sm truncate"
+                    style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}
+                  >
+                    {book.title}
+                  </h3>
+                  <p
+                    className="text-xs text-gray-500"
+                    style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}
+                  >
+                    {book.author}
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
+                      book.status === 'Lendo' ? 'bg-green-100 text-green-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                      {book.status}
+                    </span>
+
+                    {/* Estrelas de rating */}
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <span
+                          key={i}
+                          className={`text-xs ${i < book.rating ? 'text-yellow-400' : 'text-gray-300'
+                            }`}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <div className="text-xs text-gray-400 whitespace-nowrap">
                   {book.lastRead}
@@ -272,47 +301,43 @@ export default function Home() {
         </div>
 
         {/* Ações Rápidas */}
-        <div 
-          className="bg-white rounded-2xl shadow-sm border border-gray-100"
-          style={{ padding: '1.5rem' }}
-        >
-          <h2 className="text-lg font-bold text-gray-800 mb-6">Ações Rápidas</h2>
-          
-          <div className="space-y-3">
-            <Link
-              href="/books/new"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-colors font-medium text-sm"
-            >
-              <FaPlus className="text-sm" />
-              Adicionar Livro
-            </Link>
-            
-            <Link
-              href="/books"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-medium text-sm"
-            >
-              <FaSearch className="text-sm" />
-              Explorar Biblioteca
-            </Link>
-            
-            <Link
-              href="#"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-orange-500 text-white hover:bg-orange-600 transition-colors font-medium text-sm"
-            >
-              <FaPlayCircle className="text-sm" />
-              Leituras Atuais
-            </Link>
-          </div>
-        </div>
+<div
+  className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 mt-4"
+  style={{ padding: '1.5rem' }}
+>
+  <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
+
+  {/* aqui está o truque: flex-col + gap-3 */}
+  <div className="flex flex-col gap-3">
+    <Link
+      href="/books/new"
+      className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+    >
+      <FaPlus className="text-sm group-hover:animate-bounce" />
+      Adicionar Livro
+    </Link>
+
+    <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+      <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
+      Explorar Biblioteca
+    </button>
+
+    <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+      <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
+      Leituras Atuais
+    </button>
+  </div>
+</div>
+
       </div>
-      
+
       {/* Metas de Leitura */}
-      <div 
-        className="bg-white rounded-2xl shadow-sm border border-gray-100"
+      <div
+        className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
         style={{ padding: '1.5rem' }}
       >
-        <h2 className="text-lg font-bold text-gray-800 mb-6">Metas de Leitura 2024</h2>
-        
+        <h2 className="text-xl font-bold text-gray-900 mb-32">Metas de Leitura 2024</h2>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <GoalCircle
             percentage={20}
