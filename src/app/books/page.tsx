@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import BookCard from "@/components/BookCard";
-import { SearchBar} from "@/components/SearchBar";
-import GenreFilter from "@/components/GenreFilter"; 
+import { SearchBar } from "@/components/SearchBar";
+import GenreFilter from "@/components/GenreFilter";
+import { Grid, List } from 'lucide-react';
 
 type Book = {
     id: number;
@@ -16,12 +17,13 @@ type Book = {
     description: string;
 };
 
-export default function BooksPage(){
+export default function BooksPage() {
     const [books, setBooks] = useState<Book[]>([]);
     const [query, setQuery] = useState("");
     const [genre, setGenre] = useState("");
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-    //consumo do JSON
+    // Consumo do JSON
     useEffect(() => {
         fetch("/books.json")
         .then((res) => res.json())
@@ -29,36 +31,97 @@ export default function BooksPage(){
         .catch((err) => console.error("Erro ao carregar livro: ", err));
     }, []);
 
-    //lista de gêneros sem repetir valores
+    // Lista de gêneros sem repetir valores
     const genres = Array.from(new Set(books.map((b) => b.genre)));
 
-    //filtrar
+    // Filtrar
     const filtered = books.filter((book) => {
         const matchesQuery =
             book.title.toLowerCase().includes(query.toLowerCase()) ||
-            book.author.toLowerCase().includes(query.toLocaleLowerCase());
-        const matchesGenre = genre ? book.genre == genre : true;
+            book.author.toLowerCase().includes(query.toLowerCase());
+        const matchesGenre = genre ? book.genre === genre : true;
         return matchesQuery && matchesGenre;
     });
 
-      return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">📚 Biblioteca</h1>
+    return (
+        <div style={{ padding: '2rem' }}>
+            {/* Header da página */}
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Sua Biblioteca</h1>
+                <p className="text-gray-600">Descubra, organize e acompanhe sua jornada literária</p>
+            </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <SearchBar value={query} onChange={setQuery} />
-        <GenreFilter genres={genres} value={genre} onChange={setGenre} />
-      </div>
+            {/* Barra de busca e filtros */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+                <div className="flex flex-col lg:flex-row gap-4 items-center">
+                    {/* Componentes de busca e filtro */}
+                    <div className="flex-1">
+                        <SearchBar value={query} onChange={setQuery} />
+                    </div>
+                    
+                    <GenreFilter genres={genres} value={genre} onChange={setGenre} />
 
-      {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtered.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
+                    {/* Seletor de status */}
+                    <select className="px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700">
+                        <option value="">Todos os Status</option>
+                        <option value="lido">Lido</option>
+                        <option value="lendo">Lendo</option>
+                        <option value="quero-ler">Quero Ler</option>
+                    </select>
+
+                    {/* Botões de visualização */}
+                    <div className="flex bg-gray-100 rounded-xl p-1">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-lg transition-colors ${
+                                viewMode === 'grid' 
+                                    ? 'bg-white text-blue-600 shadow-sm' 
+                                    : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <Grid className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-lg transition-colors ${
+                                viewMode === 'list' 
+                                    ? 'bg-white text-blue-600 shadow-sm' 
+                                    : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <List className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Informações dos resultados */}
+            <div className="mb-6">
+                <p className="text-gray-600">
+                    Mostrando {filtered.length} de {books.length} livros
+                </p>
+            </div>
+
+            {/* Grid de livros */}
+            {filtered.length > 0 ? (
+                <div className={viewMode === 'grid' 
+                    ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" 
+                    : "flex flex-col gap-4"
+                }>
+                    {filtered.map((book) => (
+                        <BookCard key={book.id} book={book} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-16">
+                    <div className="text-6xl mb-4">📚</div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum livro encontrado</h3>
+                    <p className="text-gray-600 mb-6">Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.</p>
+                    <button className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors">
+                        Adicionar Novo Livro
+                    </button>
+                </div>
+            )}
         </div>
-      ) : (
-        <p className="text-gray-500">Nenhum livro encontrado.</p>
-      )}
-    </div>
-  );
+    );
 }
