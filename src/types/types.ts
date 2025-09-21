@@ -1,0 +1,14 @@
+// types.ts
+export type BookStatus = 'read' | 'reading' | 'to-read' | 'abandoned' | 'paused';
+
+export type Book = {
+  id: number;
+  title: string;
+  author: string;
+  year: number;
+  genre: string;
+  rating: number;
+  cover?: string;
+  description: string;
+  status: BookStatus;
+};

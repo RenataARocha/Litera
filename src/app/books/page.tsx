@@ -5,22 +5,14 @@ import BookCard from "@/components/BookCard";
 import { SearchBar } from "@/components/SearchBar";
 import GenreFilter from "@/components/GenreFilter";
 import { Grid, List } from 'lucide-react';
+import { Book } from '@/types/types';
 
-type Book = {
-  id: number;
-  title: string;
-  author: string;
-  year: number;
-  genre: string;
-  rating: number;
-  cover?: string;
-  description: string;
-};
 
 export default function BooksPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Consumo do JSON
@@ -28,7 +20,7 @@ export default function BooksPage() {
     fetch("/books.json")
       .then((res) => res.json())
       .then((data: Book[]) => setBooks(data))
-      .catch((err) => console.error("Erro ao carregar livro: ", err));
+      .catch((err) => console.error("Erro ao carregar livros: ", err));
   }, []);
 
   // Lista de gêneros sem repetir valores
@@ -39,8 +31,14 @@ export default function BooksPage() {
     const matchesQuery =
       book.title.toLowerCase().includes(query.toLowerCase()) ||
       book.author.toLowerCase().includes(query.toLowerCase());
+
     const matchesGenre = genre ? book.genre === genre : true;
-    return matchesQuery && matchesGenre;
+
+    const matchesStatus = statusFilter
+      ? book.status.toLowerCase() === statusFilter.toLowerCase()
+      : true;
+
+    return matchesQuery && matchesGenre && matchesStatus;
   });
 
   return (
@@ -48,37 +46,49 @@ export default function BooksPage() {
       {/* Header da página */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Sua Biblioteca</h1>
-        <p className="text-gray-600"
-          style={{ marginBottom: '1.5rem' }}>Descubra, organize e acompanhe sua jornada literária</p>
+        <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
+          Descubra, organize e acompanhe sua jornada literária
+        </p>
       </div>
 
       {/* Barra de busca e filtros */}
-      <div className="bg-white rounded-2xl shadow-lg  p-6 mb-8" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
         <div className="flex flex-col lg:flex-row gap-4 items-center">
-          {/* Componentes de busca e filtro */}
+          {/* Busca */}
           <div className="flex-1">
-            <SearchBar value={query} onChange={setQuery} />
+            <SearchBar
+              value={query}
+              genre={genre}
+              status={statusFilter}
+              onChange={setQuery}
+            />
+
           </div>
 
+          {/* Filtro por gênero */}
           <GenreFilter genres={genres} value={genre} onChange={setGenre} />
 
-          {/* Seletor de status */}
-          <select className="w-45 h-12 text-left rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
-            style={{ padding: '0.5rem' }}>
+          {/* Filtro por status */}
+          <select
+            className="w-45 h-12 text-left rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
+            style={{ padding: '0.5rem' }}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
             <option value="">📊 Todos os Status</option>
-            <option value="QUERO_LER">🎯 Quero Ler</option>
-            <option value="LENDO">📖 Lendo</option>
-            <option value="LIDO">✅ Lido</option>
-            <option value="PAUSADO">⏸️ Pausado</option>
-            <option value="ABANDONADO">❌ Abandonado</option>
+            <option value="quero ler">🎯 Quero Ler</option>
+            <option value="lendo">📖 Lendo</option>
+            <option value="lido">✅ Lido</option>
+            <option value="pausado">⏸️ Pausado</option>
+            <option value="abandonado">❌ Abandonado</option>
           </select>
 
           {/* Botões de visualização */}
-          <div className=" w-12 h-12 gap-1 flex bg-width rounded-xl p-1">
+          <div className="w-18 h-18 gap-1 flex rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'grid'
-                  ? 'bg-white text-blue-600 '
+                  ? 'bg-white text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
@@ -87,7 +97,7 @@ export default function BooksPage() {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'list'
-                  ? 'bg-white text-blue-600 '
+                  ? 'bg-white text-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
@@ -98,7 +108,7 @@ export default function BooksPage() {
       </div>
 
       {/* Informações dos resultados */}
-      <div style={{ marginBottom: '0.7rem' }}>
+      <div style={{ marginBottom: '0.9rem', marginTop: '1rem' }}>
         <p className="text-gray-600">
           Mostrando {filtered.length} de {books.length} livros
         </p>
@@ -106,10 +116,13 @@ export default function BooksPage() {
 
       {/* Grid de livros */}
       {filtered.length > 0 ? (
-        <div className={viewMode === 'grid'
-          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-          : "flex flex-col gap-4"
-        }>
+        <div
+          className={
+            viewMode === 'grid'
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              : "flex flex-col gap-4"
+          }
+        >
           {filtered.map((book) => (
             <BookCard key={book.id} book={book} />
           ))}
@@ -117,8 +130,12 @@ export default function BooksPage() {
       ) : (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">📚</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Nenhum livro encontrado</h3>
-          <p className="text-gray-600 mb-6">Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.</p>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Nenhum livro encontrado
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
+          </p>
           <button className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors">
             Adicionar Novo Livro
           </button>

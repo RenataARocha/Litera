@@ -1,17 +1,6 @@
 'use client';
 import Image from "next/image";
-
-type Book = {
-  id: number;
-  title: string;
-  author: string;
-  year: number;
-  genre: string;
-  rating: number;
-  cover?: string;
-  description: string;
-  status: 'read' | 'reading' | 'to-read' | 'abandoned' | 'paused';
-};
+import { Book } from '@/types/types';
 
 type BookCardProps = {
   book: Book;
