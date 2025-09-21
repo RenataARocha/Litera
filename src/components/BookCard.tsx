@@ -1,6 +1,7 @@
 'use client';
 import Image from "next/image";
 import { Book } from '@/types/types';
+import Timer from './TimerBook';
 
 type BookCardProps = {
   book: Book;
@@ -103,6 +104,7 @@ export default function BookCard({ book }: BookCardProps) {
           <button className="bg-red-100 text-red-600 rounded text-xs hover:bg-red-200 transition-colors flex items-center justify-center px-3 py-2">
             🗑
           </button>
+          <Timer bookId={book.id} />
         </div>
       </div>
     </div>
