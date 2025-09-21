@@ -15,12 +15,12 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
             </div>
             <input
                 type="text"
-                placeholder="Buscar por título, autor, ISBN..."
+                placeholder="         Buscar por título, autor, ISBN..."
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 placeholder-gray-400 transition-all duration-200 hover:border-gray-300"
+                className=" w-190 h-12 pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 placeholder-gray-400 transition-all duration-200 hover:border-gray-300"
             />
-            
+
             {/* Indicador de busca ativa */}
             {value && (
                 <button
@@ -33,7 +33,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
                     </svg>
                 </button>
             )}
-            
+
             {/* Contador de resultados (opcional) */}
             {value && (
                 <div className="absolute -bottom-6 left-0 text-xs text-gray-500">
