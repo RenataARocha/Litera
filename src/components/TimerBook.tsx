@@ -22,9 +22,9 @@ export default function Timer({ bookId }: TimerProps) {
 
   // Atualização do timer
   useEffect(() => {
-    let interval: NodeJS.Timer;
+    let interval: number;
     if (isRunning) {
-      interval = setInterval(() => setSeconds(prev => prev + 1), 1000);
+      interval = window.setInterval(() => setSeconds(prev => prev + 1), 1000);
     }
     return () => clearInterval(interval);
   }, [isRunning]);
@@ -33,7 +33,7 @@ export default function Timer({ bookId }: TimerProps) {
     const h = Math.floor(secs / 3600);
     const m = Math.floor((secs % 3600) / 60);
     const s = secs % 60;
-    return `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
   return (
