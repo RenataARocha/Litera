@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { FaArrowLeft } from 'react-icons/fa';
 
 export default function NewBookPage() {
   const router = useRouter();
@@ -148,7 +147,7 @@ export default function NewBookPage() {
                     name="genre"
                     value={formData.genre}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                   >
                     <option value="">Selecione</option>
@@ -175,7 +174,7 @@ export default function NewBookPage() {
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                   >
                     <option value="quero ler">🎯 Quero Ler</option>

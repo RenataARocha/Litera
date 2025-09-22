@@ -80,7 +80,7 @@ export default function BooksPage() {
 
           {/* Filtro por status */}
           <select
-            className="w-45 h-12 text-left rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
+            className="w-45 h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
             style={{ padding: '0.5rem' }}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -97,7 +97,7 @@ export default function BooksPage() {
           <div className="w-18 h-18 gap-1 flex rounded-xl p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'grid'
+              className={`p-2 rounded-lg cursor-pointer transition-colors ${viewMode === 'grid'
                 ? 'bg-white text-blue-600'
                 : 'text-gray-500 hover:text-gray-700'
                 }`}
@@ -106,7 +106,7 @@ export default function BooksPage() {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-colors ${viewMode === 'list'
+              className={`p-2 rounded-lg cursor-pointer transition-colors ${viewMode === 'list'
                 ? 'bg-white text-blue-600'
                 : 'text-gray-500 hover:text-gray-700'
                 }`}

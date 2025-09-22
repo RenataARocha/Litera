@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
+import { useRouter } from "next/navigation";
+
 
 type Color = 'blue' | 'green' | 'purple';
 
@@ -126,6 +128,9 @@ const Home: React.FC = () => {
     finishedBooks: 2,
     totalPagesRead: 688,
   });
+
+  const router = useRouter();
+
 
   return (
     <div
@@ -344,7 +349,7 @@ const Home: React.FC = () => {
               Adicionar Livro
             </Link>
 
-            <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+            <button onClick={() => router.push('/books')} className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
               <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
               Explorar Biblioteca
             </button>

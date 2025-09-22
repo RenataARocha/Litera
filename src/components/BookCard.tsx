@@ -106,7 +106,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200">
+      <div className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl/20 transition-all duration-200 hover:-translate-y-3">
         {/* Área da capa do livro */}
         <div className="relative h-48 bg-gray-100 flex items-center justify-center">
           {book.cover ? (
@@ -187,7 +187,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           <div className="flex gap-2 pt-3">
             <button
               onClick={() => setShowDetailsModal(true)}
-              className="flex-1 bg-blue-50 text-blue-600 rounded-md h-8 text-sm font-medium hover:bg-blue-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
+              className="flex-1 bg-blue-50 text-blue-600 rounded-md h-8 text-sm cursor-pointer font-medium hover:bg-blue-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -197,7 +197,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             </button>
             <button
               onClick={handleEdit}
-              className="flex-1 bg-gray-50 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
+              className="flex-1 bg-gray-50 text-gray-600 rounded-lg cursor-pointer text-sm font-medium hover:bg-gray-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 8.207l-3-3L12.146.146zM11.207 9l-3-3-6.5 6.5-.5 3 3-.5 6.5-6.5z" />
@@ -206,7 +206,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             </button>
             <button
               onClick={handleDelete}
-              className="bg-red-100 text-red-600 w-8 rounded-lg text-sm hover:bg-red-50 transition-colors flex items-center justify-center px-3 py-2.5"
+              className="bg-red-100 text-red-600 w-8 cursor-pointer rounded-lg text-sm hover:bg-red-50 transition-colors flex items-center justify-center px-3 py-2.5"
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
@@ -226,7 +226,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
 
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -298,7 +298,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                             setShowDetailsModal(false);
                             setShowEditModal(true);
                           }}
-                          className="flex-1 bg-blue-600 text-white py-2 px-4 h-8 rounded-md hover:bg-gradient-to-r from-blue-500 to-blue-900 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 cursor-pointer bg-blue-600 text-white py-2 px-4 h-8 rounded-md hover:bg-gradient-to-r from-blue-500 to-blue-900 transition-colors flex items-center justify-center gap-2"
                           style={{ marginTop: '1rem' }}
                         >
                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -311,7 +311,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                             setShowDetailsModal(false);
                             setShowDeleteModal(true);
                           }}
-                          className="flex-1 bg-red-600 text-white py-2 px-4 h-8 rounded-lg hover:bg-gradient-to-r from-red-500 to-red-700 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 cursor-pointer bg-red-600 text-white py-2 px-4 h-8 rounded-lg hover:bg-gradient-to-r from-red-500 to-red-700 transition-colors flex items-center justify-center gap-2"
                           style={{ marginTop: '1rem' }}
                         >
                           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -372,7 +372,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               <div className="flex justify-center" style={{ marginBottom: '1rem' }}>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="bg-white text-gray-700 font-bold py-2 px-6 rounded-lg w-18 hover:bg-gray-200 transition-colors"
+                  className="bg-white cursor-pointer text-gray-700 font-bold py-2 px-6 rounded-lg w-18 hover:bg-gray-200 transition-colors"
                 >
                   Fechar
                 </button>
@@ -395,7 +395,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             <div style={{ padding: "1.5rem" }}>
               {/* Header */}
               <div
-                className="flex justify-between items-center "
+                className="flex justify-between items-center"
                 style={{ marginBottom: "1.5rem" }}
               >
                 <div className="flex flex-col">
@@ -404,7 +404,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                 </div>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
                 >
                   <svg
                     className="w-6 h-6"
@@ -505,7 +505,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                       </label>
                       <select
                         defaultValue={book.genre}
-                        className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                       >
                         <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
@@ -532,7 +532,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                       </label>
                       <select
                         defaultValue={book.status}
-                        className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                       >
                         <option value="quero ler">🎯 Quero Ler</option>
@@ -672,7 +672,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
-                    className="flex-1 h-9 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                    className="flex-1 cursor-pointer h-9 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
                   >
                     Cancelar
                   </button>
@@ -729,13 +729,13 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex-1 cursor-pointer bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={confirmDelete}
-                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex-1 cursor-pointer bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Excluir
                 </button>

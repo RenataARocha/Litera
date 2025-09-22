@@ -15,7 +15,7 @@ export default function GenreFilter({ value, onChange }: GenreFilterProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-50 h-12 text-left rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 min-w-[180px] appearance-none cursor-pointer transition-all duration-200 hover:border-gray-300"
-        style={{ padding: '0.5rem' }}>
+        style={{ padding: '0.5rem', marginLeft: '1rem' }}>
         <option value=""> 🏷️ Todos os Gêneros</option>
         <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
         <option value="Ficção Científica">🚀 Ficção Científica</option>
