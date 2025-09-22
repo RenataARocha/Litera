@@ -1,4 +1,3 @@
-// types.ts
 export type BookStatus = 'read' | 'reading' | 'to-read' | 'abandoned' | 'paused';
 
 export type Book = {
@@ -10,5 +9,6 @@ export type Book = {
   rating: number;
   cover?: string;
   description: string;
+  notes?: string; 
   status: BookStatus;
 };
