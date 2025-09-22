@@ -17,7 +17,7 @@ export default function Timer({ bookId }: TimerProps) {
 
   // Salvar no localStorage
   useEffect(() => {
-    localStorage.setItem(`book-timer-${bookId}`, String(seconds));
+    localStorage.setItem(`book-timer-${bookId}`, Number(seconds));
   }, [seconds, bookId]);
 
   // Atualização do timer
@@ -42,21 +42,21 @@ export default function Timer({ bookId }: TimerProps) {
       <div className="flex gap-1">
         <button
           onClick={() => setIsRunning(true)}
-          className="px-2 py-1 bg-green-500 text-white rounded text-xs"
+          className="p-4 bg-green-500 text-white rounded text-xs"
         >
           ▶
         </button>
         <button
           onClick={() => setIsRunning(false)}
-          className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+          className="px-4 py-1 bg-red-500 text-white rounded text-xs"
         >
           ⏸
         </button>
         <button
           onClick={() => setSeconds(0)}
-          className="px-2 py-1 bg-gray-400 text-white rounded text-xs"
+          className="px-16 bg-gray-400 text-white rounded text-xs"
         >
-          ⏹
+          🔁
         </button>
       </div>
     </div>
