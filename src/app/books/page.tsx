@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import BookCard from "@/components/BookCard";
 import { SearchBar } from "@/components/SearchBar";
 import GenreFilter from "@/components/GenreFilter";
 import { Grid, List } from 'lucide-react';
 import { Book } from '@/types/types';
 
-
 export default function BooksPage() {
+  const router = useRouter(); // <- importante
   const [books, setBooks] = useState<Book[]>([]);
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
@@ -43,6 +44,16 @@ export default function BooksPage() {
 
   return (
     <div style={{ padding: '2rem' }}>
+      {/* Botão Voltar para Home */}
+      <div style={{ marginBottom: '2rem' }}>
+        <button
+          onClick={() => router.push('/')}
+          className="px-4 py-2 text-blue-600 cursor-pointer rounded-lg hover:underline transition-colors"
+        >
+          ← Voltar para Home
+        </button>
+      </div>
+
       {/* Header da página */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Sua Biblioteca</h1>
@@ -62,7 +73,6 @@ export default function BooksPage() {
               status={statusFilter}
               onChange={setQuery}
             />
-
           </div>
 
           {/* Filtro por gênero */}
@@ -88,8 +98,8 @@ export default function BooksPage() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'grid'
-                  ? 'bg-white text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
               <Grid className="w-6 h-6" />
@@ -97,8 +107,8 @@ export default function BooksPage() {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-colors ${viewMode === 'list'
-                  ? 'bg-white text-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                ? 'bg-white text-blue-600'
+                : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
               <List className="w-6 h-6" />
@@ -136,7 +146,10 @@ export default function BooksPage() {
           <p className="text-gray-600 mb-6">
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
-          <button className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors">
+          <button
+            onClick={() => router.push('/new-book')}
+            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors"
+          >
             Adicionar Novo Livro
           </button>
         </div>

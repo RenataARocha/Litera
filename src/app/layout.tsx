@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
 import Header from "@/components/Header";
+import ScrollToTopButton from "@/components/ScrollToTopButton"; 
 
 export const metadata: Metadata = {
     title: 'Litera - Gerenciamento de Livros',
@@ -18,6 +19,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <main className='flex-1 py-8 mt-4'>
                         {children}
                     </main>
+
+                    <ScrollToTopButton /> {/* botão aparece em todas as páginas */}
                 </div>
             </body>
         </html>
