@@ -8,7 +8,8 @@
     "rating": 5,
     "cover": "/images/dom-casmurro.jpg",
     "description": "Um dos maiores clássicos da literatura brasileira, narrado por Bentinho, que rememora sua juventude e seu relacionamento com Capitu. A dúvida sobre a fidelidade dela se torna o eixo central da narrativa, marcada por ciúmes, introspecção e ironia característica de Machado de Assis.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   },
   {
     "id": 2,
@@ -19,7 +20,8 @@
     "rating": 4,
     "cover": "/images/o-cortico.jpg",
     "description": "Romance naturalista que retrata a vida num cortiço do Rio de Janeiro do século XIX. A obra expõe as tensões sociais, os contrastes entre classes, e as forças do meio que moldam o comportamento humano. Aluísio Azevedo denuncia desigualdades e vícios da sociedade brasileira.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   },
   {
     "id": 3,
@@ -30,7 +32,8 @@
     "rating": 5,
     "cover": "/images/grande-sertao.jpg",
     "description": "Narrado por Riobaldo, o livro percorre o sertão mineiro em um fluxo de memória e reflexão. A prosa inovadora de Rosa mistura oralidade, neologismos e filosofia. A amizade com Diadorim, as batalhas jagunças e o dilema entre bem e mal compõem esta obra monumental.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   },
   {
     "id": 4,
@@ -41,7 +44,8 @@
     "rating": 4,
     "cover": "/images/hora-da-estrela.jpg",
     "description": "A história de Macabéa, jovem nordestina pobre que migra para o Rio de Janeiro. Narrada pelo escritor fictício Rodrigo S.M., a obra reflete sobre a condição humana, invisibilidade social e a fragilidade da existência. Clarice constrói uma narrativa lírica, intensa e comovente.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   },
   {
     "id": 5,
@@ -52,7 +56,8 @@
     "rating": 5,
     "cover": "/images/memorias-postumas.jpg",
     "description": "Considerado precursor do realismo no Brasil, é narrado por um defunto-autor. Brás Cubas revisita sua vida com ironia e pessimismo, criticando instituições e costumes do século XIX. A narrativa fragmentada e inovadora rompe com convenções literárias tradicionais.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   },
   {
     "id": 6,
@@ -63,6 +68,7 @@
     "rating": 5,
     "cover": "/images/ao-farol.jpg",
     "description": "O romance acompanha a família Ramsay e seus convidados durante verões passados em uma casa de férias na Ilha de Skye, na Escócia. A narrativa não se centra em grandes acontecimentos externos, mas sim no fluxo de consciência dos personagens, revelando seus pensamentos mais íntimos, lembranças, expectativas e frustrações.\n\nA ida ao farol, anunciada no início como um simples passeio, torna-se um símbolo poderoso: de desejo, passagem do tempo, perdas e reconciliações. A obra explora temas como a fugacidade da vida, as relações familiares, a busca por sentido e a forma como o tempo transforma tanto as pessoas quanto suas memórias.\n\nCom sua escrita inovadora e lírica, Woolf rompe com o romance tradicional e constrói uma reflexão profunda sobre a experiência humana e a inevitabilidade do tempo.",
-    "status": "Não lido"
+    "status": "Não lido",
+    "notes": ""
   }
 ]

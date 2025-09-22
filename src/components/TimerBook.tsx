@@ -17,7 +17,7 @@ export default function Timer({ bookId }: TimerProps) {
 
   // Salvar no localStorage
   useEffect(() => {
-    localStorage.setItem(`book-timer-${bookId}`, Number(seconds));
+    localStorage.setItem(`book-timer-${bookId}`, String(seconds));
   }, [seconds, bookId]);
 
   // Atualização do timer

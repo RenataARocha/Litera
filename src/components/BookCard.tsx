@@ -1,8 +1,7 @@
 'use client';
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Book } from '@/types/types';
-import Timer from './TimerBook';
 
 type BookCardProps = {
   book: Book;
@@ -10,7 +9,7 @@ type BookCardProps = {
   onDelete?: (bookId: number) => void;
 };
 
-export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
+export default function BookCard({ book, onDelete }: BookCardProps) {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -79,7 +78,31 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
     setShowDeleteModal(false);
   };
 
-  const [coverUrl, setCoverUrl] = useState(book.cover || "");
+  const [coverUrl] = useState(book.cover || "");
+  function PersonalNotes() {
+    const [notes, setNotes] = useState("");
+
+    useEffect(() => {
+      const savedNotes = localStorage.getItem("personalNotes");
+      if (savedNotes) setNotes(savedNotes);
+    }, []);
+
+    useEffect(() => {
+      localStorage.setItem("personalNotes", notes);
+    }, [notes]);
+
+    return (
+      <textarea
+        rows={4}
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+        style={{ padding: '0.7rem' }}
+        placeholder="Escreva suas notas pessoais..."
+      />
+    );
+  }
+
 
   return (
     <>
@@ -595,10 +618,12 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
                     {/* Preview da capa */}
                     {coverUrl && (
                       <div className="flex justify-center mt-8">
-                        <img
+                        <Image
                           src={coverUrl}
                           alt="Capa do livro"
-                          className="w-32 h-48 object-cover rounded-lg border"
+                          width={128}
+                          height={192}
+                          className="object-cover rounded-lg border"
                           style={{ margin: '1.5rem 0' }}
                         />
                       </div>
@@ -615,17 +640,27 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
                   >
                     Conteúdo e Notas
                   </h3>
-                  <div>
+
+                  {/* Campo Sinopse */}
+                  <div style={{ marginBottom: "1rem" }}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Sinopse
                     </label>
                     <textarea
                       rows={4}
-                      defaultValue={book.description}
+                      defaultValue={book.description} // já vem preenchido
                       className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       style={{ padding: '0.7rem' }}
                       placeholder="Descreva brevemente o enredo do livro..."
                     />
+                  </div>
+
+                  {/* Campo Notas Pessoais */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Notas Pessoais
+                    </label>
+                    <PersonalNotes />
                   </div>
                 </div>
 
@@ -662,32 +697,53 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
 
 
 
-     {/* Modal de Confirmação de Exclusão */}
-{showDeleteModal && (
-  <div className="flex items-center justify-center z-50" style={{ position: 'fixed', inset: 0 }}>
-    <div
-      className="bg-white rounded-xl shadow-lg"
-      style={{ padding: '1.5rem', maxWidth: '24rem', width: '100%' }}
-    >
-      <div className="text-center">
-        <div
-          className="mx-auto flex items-center justify-center rounded-full mb-4"
-          style={{ height: '3rem', width: '3rem', backgroundColor: '#fee2e2' }}
-        >
-          <svg
-            className="h-6 w-6 text-red-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      {/* Modal de Confirmação de Exclusão */}
+      {showDeleteModal && (
+        <div className="flex items-center justify-center z-50" style={{ position: 'fixed', inset: 0 }}>
+          <div
+            className="bg-white rounded-xl shadow-lg"
+            style={{ padding: '1.5rem', maxWidth: '24rem', width: '100%' }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
+            <div className="text-center">
+              <div
+                className="mx-auto flex items-center justify-center rounded-full mb-4"
+                style={{ height: '3rem', width: '3rem', backgroundColor: '#fee2e2' }}
+              >
+                <svg
+                  className="h-6 w-6 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Excluir Livro</h3>
+              <p className="text-sm text-gray-600 mb-6">
+                Tem certeza que deseja excluir &quot;{book.title}&quot;? Esta ação não pode ser desfeita.        </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Excluir
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+<<<<<<< HEAD
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Excluir Livro</h3>
         <p className="text-sm text-gray-600 mb-6">
           Tem certeza que deseja excluir "{book.title}"? Esta ação não pode ser desfeita.
@@ -711,6 +767,9 @@ export default function BookCard({ book, onEdit, onDelete }: BookCardProps) {
     </div>
   </div>
 )}
+=======
+      )}
+>>>>>>> d74af488f7174c30315cf01a06a021b8ebbd8cf8
 
     </>
   );
