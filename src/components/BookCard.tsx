@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Book } from '@/types/types';
+import Timer from "./TimerBook";
 
 type BookCardProps = {
   book: Book;
@@ -211,8 +212,8 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
               </svg>
-            </button> 
-          </div> <Timer bookId="book.id"/>
+            </button>
+          </div> 
         </div>
       </div>
 
@@ -318,8 +319,8 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                           </svg>
                           Excluir
-                        </button>
-                      </div>
+                        </button> 
+                      </div> <Timer bookId={book.id} />
                     </div>
                   </div>
                 </div>
@@ -695,8 +696,6 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
       )}
 
 
-
-
       {/* Modal de Confirmação de Exclusão */}
       {showDeleteModal && (
         <div className="flex items-center justify-center z-50" style={{ position: 'fixed', inset: 0 }}>
@@ -725,7 +724,8 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Excluir Livro</h3>
               <p className="text-sm text-gray-600 mb-6">
-                Tem certeza que deseja excluir &quot;{book.title}&quot;? Esta ação não pode ser desfeita.        </p>
+                Tem certeza que deseja excluir &quot;{book.title}&quot;? Esta ação não pode ser desfeita.
+              </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteModal(false)}
@@ -743,34 +743,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Excluir Livro</h3>
-        <p className="text-sm text-gray-600 mb-6">
-          Tem certeza que deseja excluir "{book.title}"? Esta ação não pode ser desfeita.
-        </p>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setShowDeleteModal(false)}
-            className="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={confirmDelete}
-            className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Excluir
-          </button>
-        
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-=======
       )}
->>>>>>> d74af488f7174c30315cf01a06a021b8ebbd8cf8
-
     </>
   );
 }
