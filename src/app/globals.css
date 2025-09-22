@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 /* Configuração de tema personalizada */
 @theme {
   --color-primary-50: #f0f9ff;
