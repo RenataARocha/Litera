@@ -354,10 +354,13 @@ const Home: React.FC = () => {
               Explorar Biblioteca
             </button>
 
-            <button className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
+            <Link
+              href="/leituras-atuais"
+              className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group"
+            >
               <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
               Leituras Atuais
-            </button>
+            </Link>
           </div>
         </div>
 

@@ -9,7 +9,7 @@ import { Grid, List } from 'lucide-react';
 import { Book } from '@/types/types';
 
 export default function BooksPage() {
-  const router = useRouter(); // <- importante
+  const router = useRouter();
   const [books, setBooks] = useState<Book[]>([]);
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
@@ -138,21 +138,27 @@ export default function BooksPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">📚</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <div
+          className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl shadow-md"
+          style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
+        >
+          <div className="text-6xl mb-4 animate-bounce">📚</div>
+          <h3 className="text-2xl font-semibold text-gray-900 mb-2">
             Nenhum livro encontrado
           </h3>
           <p className="text-gray-600 mb-6">
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
           <button
-            onClick={() => router.push('/new-book')}
-            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition-colors"
+            onClick={() => router.push('books/new')}
+            className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md"
+            style={{ marginTop: "1rem", padding: "0.75rem 1.5rem" }}
           >
             Adicionar Novo Livro
           </button>
+
         </div>
+
       )}
     </div>
   );
