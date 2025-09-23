@@ -86,6 +86,7 @@ export default function BooksPage() {
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="">📊 Todos os Status</option>
+            <option value="não lido">📚 Não Lido</option>
             <option value="quero ler">🎯 Quero Ler</option>
             <option value="lendo">📖 Lendo</option>
             <option value="lido">✅ Lido</option>

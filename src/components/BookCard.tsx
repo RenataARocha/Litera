@@ -18,34 +18,38 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
   // Função para obter as cores e texto de cada status
   const getStatusConfig = (status: string) => {
     const configs = {
-      read: {
+
+      'lido': {
         text: "Lido",
         bgColor: "bg-green-100",
         textColor: "text-green-700",
       },
-      reading: {
+      'lendo': {
         text: "Lendo",
         bgColor: "bg-blue-100",
         textColor: "text-blue-700",
       },
-      paused: {
+      'pausado': {
         text: "Pausado",
         bgColor: "bg-yellow-100",
         textColor: "text-yellow-700",
       },
-      "to-read": {
+      'quero ler': {
         text: "Quero Ler",
         bgColor: "bg-purple-100",
         textColor: "text-purple-700",
       },
-      abandoned: {
+      'abandonado': {
         text: "Abandonado",
         bgColor: "bg-red-100",
         textColor: "text-red-700",
       }
     };
 
-    return configs[status as keyof typeof configs] || configs.abandoned;
+    const normalizedStatus = status.toLowerCase();
+
+    // Agora, a função vai procurar por "lido", "lendo", etc.
+    return configs[normalizedStatus as keyof typeof configs] || configs['abandonado'];
   };
 
   const statusConfig = getStatusConfig(book.status);
@@ -136,12 +140,12 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           )}
 
           {/* Status no canto superior esquerdo sem borda */}
-          <span className={`absolute top-2 left-2 ${statusConfig.bgColor} ${statusConfig.textColor} text-[10px] px-6 py-1 rounded-full shadow-sm font-medium`}>
+          <span className={`absolute top-2 left-2 ${statusConfig.bgColor} ${statusConfig.textColor} text-[10px] rounded-full shadow-sm font-medium`} style={{ padding: '0.3rem' }}>
             {statusConfig.text}
           </span>
 
           {/* Rating com estrela no canto superior direito */}
-          <div className="absolute w-8 top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 shadow">
+          <div className="absolute w-8 top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full shadow" style={{ padding: '0.3rem' }}>
             <svg
               width="16"
               height="14"
@@ -213,7 +217,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
               </svg>
             </button>
-          </div> 
+          </div>
         </div>
       </div>
 
@@ -319,7 +323,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                             <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
                           </svg>
                           Excluir
-                        </button> 
+                        </button>
                       </div> <Timer bookId={book.id} />
                     </div>
                   </div>
@@ -536,6 +540,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                         className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                       >
+                        <option value="não lido">📚 Não Lido</option>
                         <option value="quero ler">🎯 Quero Ler</option>
                         <option value="lendo">📖 Lendo</option>
                         <option value="lido">✅ Lido</option>
