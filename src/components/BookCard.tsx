@@ -8,6 +8,7 @@ type BookCardProps = {
   book: Book;
   onEdit?: (book: Book) => void;
   onDelete?: (bookId: number) => void;
+  onDetails: (book: Book) => void;
 };
 
 export default function BookCard({ book, onDelete }: BookCardProps) {
@@ -193,6 +194,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             <button
               onClick={() => setShowDetailsModal(true)}
               className="flex-1 bg-blue-50 text-blue-600 rounded-md h-8 text-sm cursor-pointer font-medium hover:bg-blue-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
+              style={{ padding: '1rem 0.6rem' }}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -203,6 +205,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             <button
               onClick={handleEdit}
               className="flex-1 bg-gray-50 text-gray-600 rounded-lg cursor-pointer text-sm font-medium hover:bg-gray-100 transition-colors px-3 py-2.5 flex items-center justify-center gap-2"
+              style={{ padding: '0.4rem 0.6rem' }}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 8.207l-3-3L12.146.146zM11.207 9l-3-3-6.5 6.5-.5 3 3-.5 6.5-6.5z" />
@@ -211,7 +214,8 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             </button>
             <button
               onClick={handleDelete}
-              className="bg-red-100 text-red-600 w-8 cursor-pointer rounded-lg text-sm hover:bg-red-50 transition-colors flex items-center justify-center px-3 py-2.5"
+              className="bg-red-100 text-red-600 w-8 cursor-pointer rounded-lg text-sm hover:bg-red-50 transition-colors flex items-center justify-center"
+
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />

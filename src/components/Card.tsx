@@ -9,7 +9,7 @@ type CardProps = {
 
 export default function Card({ children, className, glass = false }: CardProps) {
   return (
-    <div 
+    <div
       className={cn(
         'bg-surface p-6 rounded-2xl shadow-xl border border-gray-100',
         glass && 'glass-morphism',

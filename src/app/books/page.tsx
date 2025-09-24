@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import BookCard from "@/components/BookCard";
-import { SearchBar } from "@/components/SearchBar";
-import GenreFilter from "@/components/GenreFilter";
-import { Grid, List } from 'lucide-react';
+import FilterBar from "@/components/FilterBar";
 import { Book } from '@/types/types';
 
 export default function BooksPage() {
@@ -14,7 +12,6 @@ export default function BooksPage() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Consumo do JSON
   useEffect(() => {
@@ -42,124 +39,116 @@ export default function BooksPage() {
     return matchesQuery && matchesGenre && matchesStatus;
   });
 
+  // Função para limpar todos os filtros
+  const clearAllFilters = () => {
+    setQuery("");
+    setGenre("");
+    setStatusFilter("");
+  };
+
+  // Handlers
+  const handleEdit = (book: Book) => {
+    router.push(`/books/edit/${book.id}`);
+  };
+
+  const handleDelete = (bookId: number) => {
+    console.log("Excluindo livro:", bookId);
+    setBooks(books.filter(book => book.id !== bookId));
+  };
+
+  const handleDetails = (book: Book) => {
+    router.push(`/books/${book.id}`);
+  };
+
+  const hasActiveFilters = query || genre || statusFilter;
+
   return (
     <div style={{ padding: '2rem' }}>
       {/* Botão Voltar para Home */}
       <div style={{ marginBottom: '2rem' }}>
         <button
           onClick={() => router.push('/')}
-          className="px-4 py-2 text-blue-600 cursor-pointer rounded-lg hover:underline transition-colors"
+          className="text-blue-600 cursor-pointer rounded-lg hover:underline transition-colors"
+          style={{ padding: '1rem 1rem' }}
         >
           ← Voltar para Home
         </button>
       </div>
 
       {/* Header da página */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sua Biblioteca</h1>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1 className="text-3xl font-bold text-gray-900" style={{ marginBottom: '0.5rem' }}>
+          Sua Biblioteca
+        </h1>
         <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
           Descubra, organize e acompanhe sua jornada literária
         </p>
       </div>
 
-      {/* Barra de busca e filtros */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 items-center">
-          {/* Busca */}
-          <div className="flex-1">
-            <SearchBar
-              value={query}
-              genre={genre}
-              status={statusFilter}
-              onChange={setQuery}
-            />
-          </div>
-
-          {/* Filtro por gênero */}
-          <GenreFilter genres={genres} value={genre} onChange={setGenre} />
-
-          {/* Filtro por status */}
-          <select
-            className="w-45 h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
-            style={{ padding: '0.5rem' }}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">📊 Todos os Status</option>
-            <option value="não lido">📚 Não Lido</option>
-            <option value="quero ler">🎯 Quero Ler</option>
-            <option value="lendo">📖 Lendo</option>
-            <option value="lido">✅ Lido</option>
-            <option value="pausado">⏸️ Pausado</option>
-            <option value="abandonado">❌ Abandonado</option>
-          </select>
-
-          {/* Botões de visualização */}
-          <div className="w-18 h-18 gap-1 flex rounded-xl p-1">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg cursor-pointer transition-colors ${viewMode === 'grid'
-                ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              <Grid className="w-6 h-6" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg cursor-pointer transition-colors ${viewMode === 'list'
-                ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
-                }`}
-            >
-              <List className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Componente de filtros unificado */}
+      <FilterBar
+        query={query}
+        genre={genre}
+        status={statusFilter}
+        genres={genres}
+        onQueryChange={setQuery}
+        onGenreChange={setGenre}
+        onStatusChange={setStatusFilter}
+        onClearFilters={clearAllFilters}
+      />
 
       {/* Informações dos resultados */}
       <div style={{ marginBottom: '0.9rem', marginTop: '1rem' }}>
         <p className="text-gray-600">
           Mostrando {filtered.length} de {books.length} livros
+          {hasActiveFilters && (
+            <span className="text-sm text-blue-600" style={{ marginLeft: '0.5rem' }}>
+              (filtros ativos)
+            </span>
+          )}
         </p>
       </div>
 
-      {/* Grid de livros */}
+      {/* Exibição dos livros centralizados */}
       {filtered.length > 0 ? (
-        <div
-          className={
-            viewMode === 'grid'
-              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-              : "flex flex-col gap-4"
-          }
-        >
-          {filtered.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
+        <div className="flex justify-center">
+          <div className="max-w-6xl w-full">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center"
+              style={{ gap: '1.5rem' }}
+            >
+              {filtered.map((book) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onDetails={handleDetails}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       ) : (
         <div
           className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl shadow-md"
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
-          <div className="text-6xl mb-4 animate-bounce">📚</div>
-          <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+          <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
+          <h3 className="text-2xl font-semibold text-gray-900" style={{ marginBottom: '0.5rem' }}>
             Nenhum livro encontrado
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
           <button
-            onClick={() => router.push('books/new')}
-            className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md"
+            onClick={() => router.push('/books/new')}
+            className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md cursor-pointer"
             style={{ marginTop: "1rem", padding: "0.75rem 1.5rem" }}
           >
             Adicionar Novo Livro
           </button>
-
         </div>
-
       )}
     </div>
   );
