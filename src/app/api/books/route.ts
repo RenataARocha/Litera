@@ -1,46 +1,26 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { prisma } from "../../../../src/_lib/db";
 
-// Caminho para o JSON
-const filePath = path.join(process.cwd(), 'public', 'books.json');
-
-function readBooks() {
-  if (!fs.existsSync(filePath)) return [];
-  const data = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(data || '[]');
-}
-
-function saveBooks(books: any[]) {
-  fs.writeFileSync(filePath, JSON.stringify(books, null, 2));
-}
-
-// GET → lista todos os livros
+//GET /api/books - listar todos
 export async function GET() {
-  const books = readBooks();
+  const books = await prisma.books.findMany();
   return NextResponse.json(books);
 }
 
-// POST → adiciona novo livro
-export async function POST(req: Request) {
+//POST /api/books - adcionar
+export async function POST(req: Request){
   const body = await req.json();
-  const books = readBooks();
+  const newBook = await prisma.book.create({
+    data: {
+      title: body.title,
+      author: body.author,
+      year: body.year,
+      genre: body.genre,
+      rating: body.rating,
+      cover: body.cover || "",
+      description: body.description,
+    },
+  });
 
-  const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1;
-
-  const newBook = {
-    id: newId,
-    title: body.title,
-    author: body.author,
-    year: body.year,
-    genre: body.genre,
-    rating: body.rating,
-    cover: body.cover || "",
-    description: body.description,
-  };
-
-  books.push(newBook);
-  saveBooks(books);
-
-  return NextResponse.json(newBook, { status: 201 });
+  return NextResponse.json(newBook, {status: 201});
 }

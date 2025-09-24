@@ -1,4 +1,4 @@
-// src/_lib/db.ts
+import { NextRes}
 import { PrismaClient } from "@prisma/client"
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient }

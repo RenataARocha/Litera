@@ -1,4 +1,4 @@
-export type BookStatus = 'read' | 'reading' | 'to-read' | 'abandoned' | 'paused';
+export type BookStatus = 'read' | 'reading' | 'to_read' | 'abandoned' | 'paused';
 
 export type Book = {
   id: number;
