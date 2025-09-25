@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook } from 'react-icons/fa';
+import { useTheme } from 'next-themes';
+import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun } from 'react-icons/fa';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const navLinks = [
     { href: '/', label: 'Dashboard', icon: <FaChartLine /> }, 
@@ -83,6 +85,16 @@ export default function Header() {
               <FaPlus />
               Novo Livro
             </Link>
+
+            {/* Botão Alterar Tema */}
+            <button
+              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              className="rounded-xl transition-colors duration-200"
+              style={{ padding: '0.75rem' }}
+              aria-label="Alterar tema"
+            >
+              {theme === 'light' ? <FaMoon className="text-gray-700" /> : <FaSun className="text-yellow-400" />}
+            </button>
           </nav>
           
           {/* Botão do Menu Mobile */}
