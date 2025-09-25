@@ -1,13 +1,19 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun } from 'react-icons/fa';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Evita mismatch: só mostramos o ícone dependente do tema depois que o componente monta no client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { href: '/', label: 'Dashboard', icon: <FaChartLine /> }, 
@@ -15,7 +21,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 glass-morphism">
+    <header className="sticky top-0 z-50 glass-morphism dark:bg-gray-900/70 dark:backdrop-blur-md">
       {/* Container com estilos forçados */}
       <div 
         className="max-w-7xl mx-auto"
@@ -38,7 +44,7 @@ export default function Header() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gradient">Litera</h1>
-              <p className="text-xs text-gray-500">Biblioteca Digital</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Biblioteca Digital</p>
             </div>
           </div>
           
@@ -48,7 +54,7 @@ export default function Header() {
               <Link 
                 key={link.href} 
                 href={link.href} 
-                className="flex items-center text-gray-700 hover:text-primary-600 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/50 hover:shadow-md group"
+                className="flex items-center text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group"
                 style={{ 
                   padding: '0.75rem 1.5rem',
                   minWidth: 'fit-content'
@@ -63,7 +69,7 @@ export default function Header() {
             
             {/* Divisor */}
             <div 
-              className="bg-white/30"
+              className="bg-white/30 dark:bg-gray-700"
               style={{ 
                 width: '1px', 
                 height: '2rem', 
@@ -88,12 +94,15 @@ export default function Header() {
 
             {/* Botão Alterar Tema */}
             <button
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="rounded-xl transition-colors duration-200"
+              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+              className="rounded-xl transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
               style={{ padding: '0.75rem' }}
               aria-label="Alterar tema"
             >
-              {theme === 'light' ? <FaMoon className="text-gray-700" /> : <FaSun className="text-yellow-400" />}
+              {/* só renderiza o ícone depois do mount para evitar hydration mismatch */}
+              {mounted ? (
+                resolvedTheme === 'light' ? <FaMoon className="text-gray-700" /> : <FaSun className="text-yellow-400" />
+              ) : null}
             </button>
           </nav>
           
@@ -119,7 +128,7 @@ export default function Header() {
       {menuOpen && (
         <nav 
           id="mobile-menu" 
-          className="mobile-only glass-morphism border-t border-white/20 animate-slide-down"
+          className="mobile-only glass-morphism border-t border-white/20 dark:border-gray-700 animate-slide-down"
         >
           <div 
             className="space-y-3"
@@ -132,7 +141,7 @@ export default function Header() {
                 key={link.href} 
                 href={link.href} 
                 onClick={() => setMenuOpen(false)} 
-                className="flex items-center w-full text-left rounded-xl hover:bg-white/50 hover:shadow-md transition-all duration-200 text-gray-700"
+                className="flex items-center w-full text-left rounded-xl hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md transition-all duration-200 text-gray-700 dark:text-gray-200"
                 style={{ 
                   padding: '1rem 1.25rem',
                   gap: '1rem'
