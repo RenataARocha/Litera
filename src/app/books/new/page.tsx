@@ -19,6 +19,7 @@ export default function NewBookPage() {
     isbn: '',
     description: '',
     notes: '',
+    techInfo: '',
   });
 
   const handleChange = (
@@ -43,6 +44,35 @@ export default function NewBookPage() {
     router.push('/books');
   };
 
+  // Calcula progresso do formulário
+  const progress = () => {
+    let filled = 0;
+    if (formData.title) filled += 1;
+    if (formData.author) filled += 1;
+    if (formData.year) filled += 1;
+    if (formData.pages) filled += 1;
+    if (formData.genre) filled += 1;
+    if (formData.cover) filled += 1;
+    return Math.floor((filled / 6) * 100);
+  };
+
+  // Mensagem motivadora
+  const progressMessage = () => {
+    const p = progress();
+    if (p === 0) return 'Comece preenchendo o formulário!';
+    if (p <= 40) return 'Você está indo bem!';
+    if (p <= 80) return 'Quase lá!';
+    return 'Uau! Formulário quase completo!';
+  };
+
+  // Cor da barra de progresso
+  const progressColor = () => {
+    const p = progress();
+    if (p <= 40) return 'bg-red-500';
+    if (p <= 80) return 'bg-yellow-400';
+    return 'bg-blue-600';
+  };
+
   return (
     <div>
       {/* Botão Voltar para Home */}
@@ -54,6 +84,7 @@ export default function NewBookPage() {
           ← Voltar para Home
         </button>
       </div>
+
       <div className="flex items-center justify-center min-h-screen" style={{ margin: '2rem' }}>
         <div className="max-w-3xl w-full p-4 bg-white rounded-xl shadow" style={{ margin: 'auto', padding: '1rem', boxSizing: 'border-box' }}>
           {/* Header */}
@@ -62,6 +93,14 @@ export default function NewBookPage() {
               Adicionar Novo Livro
             </h1>
             <p className="text-sm text-gray-900">Preencha as informações para catalogar seu livro</p>
+          </div>
+
+          {/* Barra de progresso */}
+          <div className="mb-4">
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-1" role="progressbar" aria-valuenow={progress()} aria-valuemin={0} aria-valuemax={100}>
+              <div className={`${progressColor()} h-2 rounded-full transition-all duration-500`} style={{ width: `${progress()}%` }} />
+            </div>
+            <p className="text-sm text-gray-700" style={{ marginBottom: '1rem' }}>{progress()}% preenchido - {progressMessage()}</p>
           </div>
 
           <form
@@ -217,7 +256,7 @@ export default function NewBookPage() {
                 </div>
               </div>
 
-              {/* ISBN */}
+              {/* ISBN e Informações Técnicas */}
               <div style={{ marginTop: '1rem' }}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
                 <input
@@ -230,6 +269,20 @@ export default function NewBookPage() {
                   placeholder="Ex: 978-85-359-0277-5"
                 />
               </div>
+
+              <div style={{ marginTop: '0.5rem' }}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Informações Técnicas</label>
+                <textarea
+                  name="techInfo"
+                  value={formData.techInfo}
+                  onChange={handleChange}
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  style={{ padding: '0.7rem' }}
+                  placeholder="Preenchimento automático via ISBN no futuro..."
+                  readOnly
+                />
+              </div>
             </div>
 
             {/* Capa */}
@@ -237,31 +290,63 @@ export default function NewBookPage() {
               <h3 className="text-lg font-semibold text-purple-800" style={{ marginBottom: '1rem' }}>
                 Capa do Livro
               </h3>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">URL da Capa</label>
+
+              {/* Input de URL */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label htmlFor="cover-url" className="block text-sm font-medium text-gray-700 mb-1">
+                  URL da Capa
+                </label>
                 <input
+                  id="cover-url"
                   name="cover"
                   type="url"
                   value={formData.cover}
                   onChange={handleChange}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                   placeholder="https://exemplo.com/capa-do-livro.jpg"
+                  aria-describedby="cover-help"
+                  style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                 />
-
-                {formData.cover && (
-                  <div className="flex justify-center mt-4">
-                    <Image
-                      src={formData.cover}
-                      alt="Capa do livro"
-                      width={128}
-                      height={192}
-                      className="object-cover rounded-lg border"
-                      style={{ margin: '1rem 0' }}
-                    />
-                  </div>
-                )}
+                <p id="cover-help" className="text-xs text-gray-500 mt-1">
+                  Você pode colar a URL da imagem ou fazer upload abaixo.
+                </p>
               </div>
+
+              {/* Upload com botão estilizado */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label htmlFor="cover-upload" className="cursor-pointer inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors" style={{ padding: '0.3rem' }}>
+                  Escolher Arquivo
+                </label>
+                <input
+                  id="cover-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormData({ ...formData, cover: reader.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Preview */}
+              {formData.cover && (
+                <div className="flex justify-center mt-4" aria-live="polite">
+                  <Image
+                    src={formData.cover}
+                    alt={`Capa do livro: ${formData.title || "Pré-visualização"}`}
+                    width={128}
+                    height={192}
+                    className="object-cover rounded-lg border"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Sinopse e Notas */}
@@ -281,7 +366,6 @@ export default function NewBookPage() {
                   placeholder="Descreva brevemente o enredo do livro..."
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notas Pessoais</label>
                 <textarea
@@ -302,7 +386,6 @@ export default function NewBookPage() {
                 type="button"
                 onClick={() => router.back()}
                 className="border border-gray-300 rounded-lg w-25 h-10 hover:bg-gray-100 font-medium cursor-pointer transition-colors"
-
               >
                 Cancelar
               </button>
