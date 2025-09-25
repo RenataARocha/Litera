@@ -9,9 +9,10 @@ type BookEditModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onSave?: (book: Book) => void;
+    onBack?: () => void;
 };
 
-export default function BookEditModal({ book, isOpen, onClose, onSave }: BookEditModalProps) {
+export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }: BookEditModalProps) {
     const [rating, setRating] = useState(book.rating);
     const [coverUrl, setCoverUrl] = useState(book.cover || "");
 
@@ -29,10 +30,18 @@ export default function BookEditModal({ book, isOpen, onClose, onSave }: BookEdi
             className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50"
             style={{ padding: "1rem" }}
         >
+
             <div
                 className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-                style={{ margin: "2rem" }}
+                style={{ margin: "1rem" }}
             >
+                {/* Botão Voltar para Detalhes */}
+                <div>
+                    <button type="button" onClick={onBack} className="text-blue-600 hover:underline cursor-pointer" style={{ padding: '1rem' }}>
+                        ← Voltar para detalhes
+                    </button>
+
+                </div>
                 <div style={{ padding: "1.5rem" }}>
                     {/* Header */}
                     <div
@@ -274,7 +283,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave }: BookEdi
                                     URL da Capa
                                 </label>
                                 <input
-                                    type="url"
+                                    type="text"
                                     value={coverUrl}
                                     onChange={(e) => setCoverUrl(e.target.value)}
                                     className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -340,7 +349,12 @@ export default function BookEditModal({ book, isOpen, onClose, onSave }: BookEdi
                                 >
                                     Notas Pessoais
                                 </label>
-                                <PersonalNotes bookId={book.id} />
+                                <PersonalNotes
+                                    bookId={book.id}
+                                    initialNotes={book.notes}
+                                    placeholder="Escreva suas notas pessoais..."
+                                />
+
                             </div>
                         </div>
 

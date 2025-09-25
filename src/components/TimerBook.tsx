@@ -52,7 +52,7 @@ export default function Timer({ bookId }: TimerProps) {
 
         {/* Timer à esquerda */}
         <div className="flex flex-col items-center justify-center">
-          <div className="text-2xl font-mono font-bold text-orange-800" style={{ marginBottom: '0.25rem' }}>
+          <div className="text-lg font-mono font-bold text-orange-800" style={{ marginBottom: '0.25rem' }}>
             {formatTime(seconds)}
           </div>
           <p className="text-xs text-orange-600 font-medium">

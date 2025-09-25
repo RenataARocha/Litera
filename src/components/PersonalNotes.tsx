@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 
 type PersonalNotesProps = {
     bookId?: number;
+    initialNotes?: string; // <-- nova prop
     placeholder?: string;
 };
 
 export default function PersonalNotes({
     bookId,
+    initialNotes = "",
     placeholder = "Escreva suas notas pessoais..."
 }: PersonalNotesProps) {
     const [notes, setNotes] = useState("");
@@ -15,11 +17,17 @@ export default function PersonalNotes({
 
     useEffect(() => {
         const savedNotes = localStorage.getItem(storageKey);
-        if (savedNotes) setNotes(savedNotes);
-    }, [storageKey]);
+        if (savedNotes) {
+            setNotes(savedNotes);
+        } else if (initialNotes) {
+            setNotes(initialNotes);
+        }
+    }, [storageKey, initialNotes]);
 
     useEffect(() => {
-        localStorage.setItem(storageKey, notes);
+        if (notes) {
+            localStorage.setItem(storageKey, notes);
+        }
     }, [notes, storageKey]);
 
     return (
