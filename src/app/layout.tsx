@@ -2,8 +2,9 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
 import Header from "@/components/Header";
-import ScrollToTopButton from "@/components/ScrollToTopButton"; 
+import ScrollToTopButton from "@/components/ScrollToTopButton";
 import { ThemeProvider } from 'next-themes';
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: 'Litera - Gerenciamento de Livros',
@@ -17,11 +18,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true}>
           <div className="flex flex-col min-h-screen">
             <Header />
-            
+
             <main className="flex-1 py-8 mt-4">
               {children}
-            </main>
 
+            </main>
+            <Toaster richColors position="top-right" />
             <ScrollToTopButton />
           </div>
         </ThemeProvider>
