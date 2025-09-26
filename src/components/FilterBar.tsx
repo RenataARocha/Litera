@@ -1,6 +1,7 @@
 'use client';
 
 import { Search } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 type FilterBarProps = {
     query: string;
@@ -25,23 +26,42 @@ export default function FilterBar({
 
     const hasActiveFilters = query || genre || status;
 
+    // Variantes de animação
+    const containerVariants = {
+        hidden: { opacity: 0, y: -10 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: -5 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+    };
+
     return (
-        <div className="bg-white rounded-2xl shadow-lg" style={{
-            paddingLeft: '0.9rem',
-            paddingRight: '2.5rem',
-            paddingTop: '0.5rem',
-            paddingBottom: '1rem',
-            marginBottom: '2rem'
-        }}>
+        <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="bg-white rounded-2xl shadow-lg"
+            style={{
+                paddingLeft: '0.9rem',
+                paddingRight: '2.5rem',
+                paddingTop: '0.5rem',
+                paddingBottom: '1rem',
+                marginBottom: '2rem'
+            }}
+        >
             {/* Barra de busca */}
-            <div className="relative w-full" style={{ margin: '1rem' }}>
+            <motion.div
+                variants={itemVariants}
+                className="relative w-full"
+                style={{ margin: '1rem' }}
+            >
                 <div className="relative">
-                    {/* Ícone de busca */}
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10">
                         <Search className="w-5 h-5 text-gray-400" />
                     </div>
 
-                    {/* Input de busca */}
                     <input
                         type="text"
                         placeholder="Buscar por título, autor, ISBN..."
@@ -56,7 +76,6 @@ export default function FilterBar({
                         }}
                     />
 
-                    {/* Botão limpar busca */}
                     {query && (
                         <button
                             onClick={() => onQueryChange('')}
@@ -71,7 +90,6 @@ export default function FilterBar({
                     )}
                 </div>
 
-                {/* Indicador de busca ativa */}
                 {(query || genre || status) && (
                     <div className="text-xs text-gray-500" style={{ marginTop: '0.5rem' }}>
                         Buscando por:{" "}
@@ -80,14 +98,18 @@ export default function FilterBar({
                         {status && ` / "${status}"`}
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Filtros */}
-            <div className="flex flex-wrap items-center" style={{ gap: '1rem', paddingLeft: '1rem' }}>
+            <motion.div
+                variants={itemVariants}
+                className="flex flex-wrap items-center"
+                style={{ gap: '1rem', paddingLeft: '1rem' }}
+            >
                 {/* Filtro por gênero */}
                 <div className="relative">
                     <select
-                        className="w-full h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300 "
+                        className="w-full h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300"
                         value={genre}
                         onChange={(e) => onGenreChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}
@@ -109,15 +131,11 @@ export default function FilterBar({
                         <option value="Filosofia">🤔 Filosofia</option>
                         <option value="Poesia">🎭 Poesia</option>
                     </select>
-
-                    {/* Seta customizada */}
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
-
-                    {/* Indicador de filtro ativo */}
                     {genre && (
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white"></div>
                     )}
@@ -139,21 +157,17 @@ export default function FilterBar({
                         <option value="pausado">⏸️ Pausado</option>
                         <option value="abandonado">❌ Abandonado</option>
                     </select>
-
-                    {/* Seta customizada */}
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                     </div>
-
-                    {/* Indicador de filtro ativo */}
                     {status && (
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white"></div>
                     )}
                 </div>
 
-                {/* Botão para limpar filtros */}
+                {/* Botão limpar filtros */}
                 {hasActiveFilters && (
                     <button
                         onClick={onClearFilters}
@@ -163,7 +177,7 @@ export default function FilterBar({
                         Limpar filtros
                     </button>
                 )}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }

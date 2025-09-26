@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function NewBookPage() {
   const router = useRouter();
@@ -56,7 +57,6 @@ export default function NewBookPage() {
     return Math.floor((filled / 6) * 100);
   };
 
-  // Mensagem motivadora
   const progressMessage = () => {
     const p = progress();
     if (p === 0) return 'Comece preenchendo o formulário! 📖';
@@ -65,12 +65,22 @@ export default function NewBookPage() {
     return 'Uau! Formulário quase completo! 🎉';
   };
 
-  // Cor da barra de progresso
   const progressColor = () => {
     const p = progress();
     if (p <= 40) return 'bg-red-500';
     if (p <= 80) return 'bg-yellow-400';
     return 'bg-blue-600';
+  };
+
+  // Variantes de animação
+  const containerVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   return (
@@ -86,29 +96,37 @@ export default function NewBookPage() {
       </div>
 
       <div className="flex items-center justify-center min-h-screen" style={{ margin: '2rem' }}>
-        <div className="max-w-3xl w-full p-4 bg-white rounded-xl shadow" style={{ margin: 'auto', padding: '1rem', boxSizing: 'border-box' }}>
+        <motion.div
+          className="max-w-3xl w-full p-4 bg-white rounded-xl shadow"
+          style={{ margin: 'auto', padding: '1rem', boxSizing: 'border-box' }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {/* Header */}
-          <div style={{ marginBottom: '1rem' }}>
+          <motion.div variants={itemVariants} style={{ marginBottom: '1rem' }}>
             <h1 className="text-2xl font-bold text-gray-900" style={{ marginBottom: '0.25rem' }}>
               Adicionar Novo Livro
             </h1>
             <p className="text-sm text-gray-900">Preencha as informações para catalogar seu livro</p>
-          </div>
+          </motion.div>
 
           {/* Barra de progresso */}
-          <div className="mb-4">
+          <motion.div variants={itemVariants} className="mb-4">
             <div className="w-full bg-gray-200 rounded-full h-4 mb-1" role="progressbar" aria-valuenow={progress()} aria-valuemin={0} aria-valuemax={100}>
               <div className={`${progressColor()} h-4 rounded-full transition-all duration-500`} style={{ width: `${progress()}%` }} />
             </div>
-            <p className="text-sm text-gray-700" style={{ marginBottom: '1rem', padding: '0.5rem' }}>{progress()}% preenchido - {progressMessage()}</p>
-          </div>
+            <p className="text-sm text-gray-700" style={{ marginBottom: '1rem', padding: '0.5rem' }}>
+              {progress()}% preenchido - {progressMessage()}
+            </p>
+          </motion.div>
 
           <form
             onSubmit={handleSubmit}
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
           >
             {/* Informações Obrigatórias */}
-            <div className="bg-red-50 rounded-lg" style={{ padding: '1rem' }}>
+            <motion.div variants={itemVariants} className="bg-red-50 rounded-lg" style={{ padding: '1rem' }}>
               <h3 className="text-lg font-semibold text-red-800" style={{ marginBottom: '1rem' }}>
                 <span className="text-red-500">*</span> Informações Obrigatórias
               </h3>
@@ -144,10 +162,10 @@ export default function NewBookPage() {
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Informações Adicionais */}
-            <div className="bg-blue-50 rounded-lg" style={{ padding: '1rem' }}>
+            <motion.div variants={itemVariants} className="bg-blue-50 rounded-lg" style={{ padding: '1rem' }}>
               <h3 className="text-lg font-semibold text-blue-800" style={{ marginBottom: '1rem' }}>
                 Informações Adicionais
               </h3>
@@ -283,10 +301,10 @@ export default function NewBookPage() {
                   readOnly
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Capa */}
-            <div className="bg-purple-50 rounded-lg" style={{ padding: '1rem' }}>
+            <motion.div variants={itemVariants} className="bg-purple-50 rounded-lg" style={{ padding: '1rem' }}>
               <h3 className="text-lg font-semibold text-purple-800" style={{ marginBottom: '1rem' }}>
                 Capa do Livro
               </h3>
@@ -347,10 +365,10 @@ export default function NewBookPage() {
                   />
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Sinopse e Notas */}
-            <div className="bg-green-50 rounded-lg" style={{ padding: '1rem' }}>
+            <motion.div variants={itemVariants} className="bg-green-50 rounded-lg" style={{ padding: '1rem' }}>
               <h3 className="text-lg font-semibold text-green-800" style={{ marginBottom: '1rem' }}>
                 Conteúdo e Notas
               </h3>
@@ -378,10 +396,10 @@ export default function NewBookPage() {
                   placeholder="Suas observações sobre o livro..."
                 />
               </div>
-            </div>
+            </motion.div>
 
             {/* Botões */}
-            <div className="flex justify-end gap-4 mt-4">
+            <motion.div variants={itemVariants} className="flex justify-end gap-4 mt-4">
               <button
                 type="button"
                 onClick={() => router.back()}
@@ -395,9 +413,9 @@ export default function NewBookPage() {
               >
                 Adicionar Livro
               </button>
-            </div>
+            </motion.div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
