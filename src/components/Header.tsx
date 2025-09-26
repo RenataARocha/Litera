@@ -18,6 +18,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Dashboard', icon: <FaChartLine /> },
     { href: '/books', label: 'Biblioteca', icon: <FaBook /> },
+    { href: '/leituras-atuais', label: 'Leituras Atuais', icon: <FaBookOpen /> }
   ];
 
   return (

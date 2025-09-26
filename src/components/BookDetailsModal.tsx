@@ -4,6 +4,7 @@ import { Book } from '@/types/types';
 import StarRating from './StarRating';
 import Timer from "./TimerBook";
 
+
 type BookDetailsModalProps = {
     book: Book;
     isOpen: boolean;
@@ -38,6 +39,7 @@ export default function BookDetailsModal({
     return (
         <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
             <div className="bg-blue-50 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+
                 <div>
                     {/* Header com botão fechar */}
                     <div style={{ margin: '1rem' }}>

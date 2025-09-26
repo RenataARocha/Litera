@@ -87,7 +87,7 @@ export default function FilterBar({
                 {/* Filtro por gênero */}
                 <div className="relative">
                     <select
-                        className="w-full h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300"
+                        className="w-full h-12 text-left cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300 "
                         value={genre}
                         onChange={(e) => onGenreChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}

@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
 
 // --- Interfaces e Tipos ---
 
@@ -100,6 +102,8 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
   const dashOffset = circumference * (1 - percentage / 100);
 
   return (
+
+
     <div className="flex flex-col items-center">
       <div className="relative w-24 h-24 mb-3">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
@@ -144,20 +148,36 @@ const Home: React.FC = () => {
   // e o GoalCircle de props foi renomeado para DisplayGoalCircle para evitar conflito/recursão.
 
   return (
-    <div
+    <motion.div
       className="flex flex-col gap-6"
-      style={{ padding: '2rem' }}
+      style={{ padding: "2rem" }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Seção principal de boas-vindas */}
       <div
         className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl"
-        style={{ padding: '2rem', marginBottom: '2rem' }}
+        style={{ padding: "2rem", marginBottom: "2rem" }}
       >
         <div className="z-10">
-          <h1 className="text-5xl font-bold ">Bem-vindo de volta!</h1>
-          <p className="text-xl mb-3 text-blue-100 mt-6" style={{ lineHeight: '1', marginTop: '0.5rem', marginBottom: '0.9rem' }}>Gerencie sua biblioteca pessoal com estilo</p>
-          <div className="flex items-center gap-2 text-base text-blue-100 " style={{ marginTop: '2rem' }}>
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse " ></div>
+          <h1 className="text-5xl font-bold">Bem-vindo de volta!</h1>
+          <p
+            className="text-xl mb-3 text-blue-100 mt-6"
+            style={{
+              lineHeight: "1",
+              marginTop: "0.5rem",
+              marginBottom: "0.9rem",
+            }}
+          >
+            Gerencie sua biblioteca pessoal com estilo
+          </p>
+          <div
+            className="flex items-center gap-2 text-base text-blue-100"
+            style={{ marginTop: "2rem" }}
+          >
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span>Sistema Online</span>
             <span>•</span>
             <span>sexta-feira, 19 de setembro de 2025</span>
@@ -166,7 +186,10 @@ const Home: React.FC = () => {
 
         {/* Círculo de progresso */}
         <div className="relative w-20 h-20 z-10">
-          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
+          <svg
+            className="w-full h-full transform -rotate-90"
+            viewBox="0 0 80 80"
+          >
             <circle
               cx="40"
               cy="40"
@@ -184,12 +207,9 @@ const Home: React.FC = () => {
               fill="none"
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 36}
-              strokeDashoffset={2 * Math.PI * 36 * (1 - 70 / 100)} // 
+              strokeDashoffset={2 * Math.PI * 36 * (1 - 70 / 100)}
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-            </div>
           </svg>
-          {/* O texto 70% foi movido para um div APÓS o SVG e com posicionamento absoluto para sobrepor */}
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="text-xl font-bold">70%</span>
           </div>
@@ -383,25 +403,29 @@ const Home: React.FC = () => {
       {/* Metas de Leitura */}
       <div
         className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg"
-        style={{ padding: '1.5rem' }}
+        style={{ padding: "1.5rem" }}
       >
-        <h2 className="text-xl font-bold text-gray-900"
-          style={{ marginBottom: '1.5rem' }}>Metas de Leitura 2024</h2>
+        <h2
+          className="text-xl font-bold text-gray-900"
+          style={{ marginBottom: "1.5rem" }}
+        >
+          Metas de Leitura 2024
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
+          <DisplayGoalCircle
             percentage={20}
             title="Livros por Ano"
             subtitle="10 de 50 livros"
             color="blue"
           />
-          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
+          <DisplayGoalCircle
             percentage={40}
             title="Páginas por Mês"
             subtitle="800 de 2000 páginas"
             color="green"
           />
-          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
+          <DisplayGoalCircle
             percentage={50}
             title="Gêneros Diversos"
             subtitle="5 de 10 gêneros"
@@ -409,8 +433,8 @@ const Home: React.FC = () => {
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
-}
+};
 
 export default Home;
