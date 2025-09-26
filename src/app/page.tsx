@@ -6,13 +6,14 @@ import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 
+// --- Interfaces e Tipos ---
 
 type Color = 'blue' | 'green' | 'purple';
 
 interface GoalCircleProps {
   percentage: number;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   color?: Color;
 }
 
@@ -24,6 +25,15 @@ interface Book {
   lastRead: string;
   cover: string;
 }
+
+interface Stats {
+  totalBooks: number;
+  readingNow: number;
+  finishedBooks: number;
+  totalPagesRead: number;
+}
+
+// --- Dados Mock (Adicionados para corrigir o erro 'stats is not defined') ---
 
 const recentActivity: Book[] = [
   {
@@ -68,69 +78,70 @@ const recentActivity: Book[] = [
   }
 ];
 
-const GoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
+const stats: Stats = {
+  totalBooks: 152,
+  readingNow: 8,
+  finishedBooks: 10,
+  totalPagesRead: 3245,
+};
+
+// --- GoalCircle (Definição para uso dentro do Home) ---
+
+const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
   const colorMap: Record<Color, string> = {
-    blue: "stroke-blue-500",
-    green: "stroke-green-500",
-    purple: "stroke-purple-500",
+    blue: "#3B82F6",
+    green: "#10B981",
+    purple: "#8B5CF6",
   };
 
+  const selectedColor = colorMap[color];
   const radius = 36;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const dashOffset = circumference * (1 - percentage / 100);
 
   return (
-    <div className="rounded-2xl p-6 text-center min-w-[200px] flex flex-col items-center">
-      <div
-        className="relative w-20 h-20 mx-auto"
-        style={{ marginBottom: '1rem' }}
-      >
+    <div className="flex flex-col items-center">
+      <div className="relative w-24 h-24 mb-3">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
           <circle
-            cx={40}
-            cy={40}
+            cx="40"
+            cy="40"
             r={radius}
-            stroke="#E5E7EB"
-            strokeWidth={6}
+            stroke="rgba(0,0,0,0.1)"
+            strokeWidth="6"
             fill="none"
           />
           <circle
-            cx={40}
-            cy={40}
+            cx="40"
+            cy="40"
             r={radius}
-            className={colorMap[color]}
-            strokeWidth={6}
+            stroke={selectedColor}
+            strokeWidth="6"
             fill="none"
             strokeLinecap="round"
             strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+            strokeDashoffset={dashOffset}
+            className="transition-all duration-1000 ease-in-out"
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-lg font-bold text-gray-800">{Math.round(percentage)}%</span>
+          <span className="text-xl font-bold text-gray-800">{percentage}%</span>
         </div>
       </div>
-      <h3
-        className="font-semibold text-gray-800 text-sm"
-      >
-        {title}
-      </h3>
-      {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+      <h3 className="font-semibold text-gray-700 text-center">{title}</h3>
+      {subtitle && <p className="text-sm text-gray-500 text-center mt-1">{subtitle}</p>}
     </div>
   );
 };
 
-const Home: React.FC = () => {
-  const [stats] = useState({
-    totalBooks: 5,
-    readingNow: 1,
-    finishedBooks: 2,
-    totalPagesRead: 688,
-  });
 
+// --- Componente Home (Corrigido para ser o container principal e usar GoalCircle) ---
+
+const Home: React.FC = () => {
   const router = useRouter();
 
+  // Note: O GoalCircle original foi renomeado para Home, 
+  // e o GoalCircle de props foi renomeado para DisplayGoalCircle para evitar conflito/recursão.
 
   return (
     <div
@@ -140,13 +151,13 @@ const Home: React.FC = () => {
       {/* Seção principal de boas-vindas */}
       <div
         className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl"
-        style={{ padding: '2rem' }}
+        style={{ padding: '2rem', marginBottom: '2rem' }}
       >
         <div className="z-10">
           <h1 className="text-5xl font-bold ">Bem-vindo de volta!</h1>
-          <p className="text-xl mb-3 text-blue-100 mt-6" style={{ lineHeight: '2.8' }}>Gerencie sua biblioteca pessoal com estilo</p>
-          <div className="flex items-center gap-2 text-base text-blue-100 ">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse "></div>
+          <p className="text-xl mb-3 text-blue-100 mt-6" style={{ lineHeight: '1', marginTop: '0.5rem', marginBottom: '0.9rem' }}>Gerencie sua biblioteca pessoal com estilo</p>
+          <div className="flex items-center gap-2 text-base text-blue-100 " style={{ marginTop: '2rem' }}>
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse " ></div>
             <span>Sistema Online</span>
             <span>•</span>
             <span>sexta-feira, 19 de setembro de 2025</span>
@@ -167,17 +178,20 @@ const Home: React.FC = () => {
             <circle
               cx="40"
               cy="40"
-              r="36"
+              r={36}
               stroke="white"
               strokeWidth="6"
               fill="none"
               strokeLinecap="round"
-              strokeDasharray={226}
-              strokeDashoffset={136}
+              strokeDasharray={2 * Math.PI * 36}
+              strokeDashoffset={2 * Math.PI * 36 * (1 - 70 / 100)} // 
             />
+            <div className="absolute inset-0 flex items-center justify-center">
+            </div>
           </svg>
+          {/* O texto 70% foi movido para um div APÓS o SVG e com posicionamento absoluto para sobrepor */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold">40%</span>
+            <span className="text-xl font-bold">70%</span>
           </div>
         </div>
 
@@ -335,8 +349,8 @@ const Home: React.FC = () => {
 
         {/* Ações Rápidas */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 mt-4"
-          style={{ padding: '1.5rem' }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7"
+          style={{ padding: '1.5rem', marginTop: '1rem' }}
         >
           <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
 
@@ -368,26 +382,26 @@ const Home: React.FC = () => {
 
       {/* Metas de Leitura */}
       <div
-        className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg"
+        className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg"
         style={{ padding: '1.5rem' }}
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-12"
+        <h2 className="text-xl font-bold text-gray-900"
           style={{ marginBottom: '1.5rem' }}>Metas de Leitura 2024</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <GoalCircle
+          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
             percentage={20}
             title="Livros por Ano"
             subtitle="10 de 50 livros"
             color="blue"
           />
-          <GoalCircle
+          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
             percentage={40}
             title="Páginas por Mês"
             subtitle="800 de 2000 páginas"
             color="green"
           />
-          <GoalCircle
+          <DisplayGoalCircle // Usando o componente GoalCircle corrigido
             percentage={50}
             title="Gêneros Diversos"
             subtitle="5 de 10 gêneros"

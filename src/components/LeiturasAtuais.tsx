@@ -43,10 +43,6 @@ const LeiturasAtuais = () => {
         setReadingTime('');
     };
 
-    const openNoteModal = () => {
-        setIsNoteModalOpen(true);
-    };
-
     const closeNoteModal = () => {
         setIsNoteModalOpen(false);
         setNoteText('');

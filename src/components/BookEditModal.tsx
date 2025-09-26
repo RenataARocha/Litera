@@ -66,7 +66,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
         const percent = Math.min(Math.round((filled / total) * 100), 100); // nunca passa de 100
         setProgress(percent);
 
-        if (percent === 0) setMessage("Comece a preencher suas informações 📖");
+        if (percent === 0) setMessage("Comece preenchendo o formulário! 📖");
         else if (percent < 50) setMessage("Ótimo começo! Continue ✨");
         else if (percent < 100) setMessage("Quase lá, não desista 💪");
         else setMessage("Parabéns, tudo pronto! 🎉");

@@ -59,10 +59,10 @@ export default function NewBookPage() {
   // Mensagem motivadora
   const progressMessage = () => {
     const p = progress();
-    if (p === 0) return 'Comece preenchendo o formulário!';
-    if (p <= 40) return 'Você está indo bem!';
-    if (p <= 80) return 'Quase lá!';
-    return 'Uau! Formulário quase completo!';
+    if (p === 0) return 'Comece preenchendo o formulário! 📖';
+    if (p <= 40) return 'Você está indo bem! ✨';
+    if (p <= 80) return 'Quase lá! 💪';
+    return 'Uau! Formulário quase completo! 🎉';
   };
 
   // Cor da barra de progresso
@@ -97,10 +97,10 @@ export default function NewBookPage() {
 
           {/* Barra de progresso */}
           <div className="mb-4">
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-1" role="progressbar" aria-valuenow={progress()} aria-valuemin={0} aria-valuemax={100}>
-              <div className={`${progressColor()} h-2 rounded-full transition-all duration-500`} style={{ width: `${progress()}%` }} />
+            <div className="w-full bg-gray-200 rounded-full h-4 mb-1" role="progressbar" aria-valuenow={progress()} aria-valuemin={0} aria-valuemax={100}>
+              <div className={`${progressColor()} h-4 rounded-full transition-all duration-500`} style={{ width: `${progress()}%` }} />
             </div>
-            <p className="text-sm text-gray-700" style={{ marginBottom: '1rem' }}>{progress()}% preenchido - {progressMessage()}</p>
+            <p className="text-sm text-gray-700" style={{ marginBottom: '1rem', padding: '0.5rem' }}>{progress()}% preenchido - {progressMessage()}</p>
           </div>
 
           <form
