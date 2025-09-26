@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 
 type PersonalNotesProps = {
     bookId?: number;
-    initialNotes?: string; // <-- nova prop
+    initialNotes?: string;
     placeholder?: string;
+    onChange: (value: string) => void;
 };
 
 export default function PersonalNotes({

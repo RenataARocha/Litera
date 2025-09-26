@@ -7,7 +7,7 @@ import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // Evita mismatch: só mostramos o ícone dependente do tema depois que o componente monta no client
@@ -16,26 +16,26 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Dashboard', icon: <FaChartLine /> }, 
+    { href: '/', label: 'Dashboard', icon: <FaChartLine /> },
     { href: '/books', label: 'Biblioteca', icon: <FaBook /> },
   ];
 
   return (
     <header className="sticky top-0 z-50 glass-morphism dark:bg-gray-900/70 dark:backdrop-blur-md">
       {/* Container com estilos forçados */}
-      <div 
+      <div
         className="max-w-7xl mx-auto"
-        style={{ 
-          paddingLeft: '2rem', 
-          paddingRight: '2rem' 
+        style={{
+          paddingLeft: '2rem',
+          paddingRight: '2rem'
         }}
       >
-        <div 
+        <div
           className="flex justify-between items-center"
           style={{ height: '4.5rem' }}
         >
           {/* Logotipo e título */}
-          <div className="flex items-center" style={{ gap: '1rem' }}> 
+          <div className="flex items-center" style={{ gap: '1rem' }}>
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
                 <FaBookOpen className="text-white text-lg" />
@@ -47,15 +47,15 @@ export default function Header() {
               <p className="text-xs text-gray-500 dark:text-gray-400">Biblioteca Digital</p>
             </div>
           </div>
-          
+
           {/* Menu Desktop */}
           <nav className="desktop-only flex items-center" style={{ gap: '0.5rem' }}>
             {navLinks.map((link) => (
-              <Link 
-                key={link.href} 
-                href={link.href} 
+              <Link
+                key={link.href}
+                href={link.href}
                 className="flex items-center text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 rounded-xl text-sm font-medium transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group"
-                style={{ 
+                style={{
                   padding: '0.75rem 1.5rem',
                   minWidth: 'fit-content'
                 }}
@@ -66,22 +66,22 @@ export default function Header() {
                 {link.label}
               </Link>
             ))}
-            
+
             {/* Divisor */}
-            <div 
+            <div
               className="bg-white/30 dark:bg-gray-700"
-              style={{ 
-                width: '1px', 
-                height: '2rem', 
-                margin: '0 1rem' 
+              style={{
+                width: '1px',
+                height: '2rem',
+                margin: '0 1rem'
               }}
             ></div>
-            
+
             {/* Botão Novo Livro */}
-            <Link 
-              href="/books/new" 
+            <Link
+              href="/books/new"
               className="bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
-              style={{ 
+              style={{
                 padding: '0.75rem 2rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -105,44 +105,44 @@ export default function Header() {
               ) : null}
             </button>
           </nav>
-          
+
           {/* Botão do Menu Mobile */}
           <div className="mobile-only">
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)} 
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
               className="rounded-xl hover:bg-white/50 transition-colors"
               style={{ padding: '0.75rem' }}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
             >
-              {menuOpen ? 
-                <FaTimes className="text-gray-700 text-xl" /> : 
+              {menuOpen ?
+                <FaTimes className="text-gray-700 text-xl" /> :
                 <FaBars className="text-gray-700 text-xl" />
               }
             </button>
           </div>
         </div>
       </div>
-      
+
       {/* Menu Mobile */}
       {menuOpen && (
-        <nav 
-          id="mobile-menu" 
+        <nav
+          id="mobile-menu"
           className="mobile-only glass-morphism border-t border-white/20 dark:border-gray-700 animate-slide-down"
         >
-          <div 
+          <div
             className="space-y-3"
-            style={{ 
-              padding: '1.5rem 2rem' 
+            style={{
+              padding: '1.5rem 2rem'
             }}
           >
             {navLinks.map((link) => (
-              <Link 
-                key={link.href} 
-                href={link.href} 
-                onClick={() => setMenuOpen(false)} 
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
                 className="flex items-center w-full text-left rounded-xl hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md transition-all duration-200 text-gray-700 dark:text-gray-200"
-                style={{ 
+                style={{
                   padding: '1rem 1.25rem',
                   gap: '1rem'
                 }}
@@ -151,13 +151,13 @@ export default function Header() {
                 <span className="text-base">{link.label}</span>
               </Link>
             ))}
-            
+
             {/* Botão Novo Livro no mobile */}
-            <Link 
-              href="/books/new" 
-              onClick={() => setMenuOpen(false)} 
+            <Link
+              href="/books/new"
+              onClick={() => setMenuOpen(false)}
               className="flex items-center w-full text-left bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-              style={{ 
+              style={{
                 padding: '1rem 1.25rem',
                 gap: '1rem',
                 marginTop: '1rem'
