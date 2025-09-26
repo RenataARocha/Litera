@@ -26,6 +26,7 @@ const LeiturasAtuais = () => {
     });
     const [feedback, setFeedback] = useState('');
     const [isPaused, setIsPaused] = useState(false);
+    const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
 
     useEffect(() => {
     }, []);
@@ -241,20 +242,31 @@ const LeiturasAtuais = () => {
                                     <button
                                         onClick={() => openUpdateModal('Dom Casmurro')}
                                         className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                        style={{ padding: '12px 20px' }}
+                                        style={{ padding: '0.3rem 0.9rem' }}
                                         disabled={isPaused}
                                     >
                                         <Edit className="w-4 h-4" />
                                         Atualizar Progresso
                                     </button>
 
+                                    {/*Botão para fazer anotação */}
                                     <button
-                                        onClick={openNoteModal}
+                                        onClick={() => { setNoteMode('write'); setIsNoteModalOpen(true); }}
                                         className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 font-medium cursor-pointer"
-                                        style={{ padding: '12px 20px' }}
+                                        style={{ padding: '0.3rem 0.9rem' }}
                                     >
                                         <StickyNote className="w-4 h-4" />
                                         Fazer Anotação
+                                    </button>
+
+                                    {/* Botão para ver minhas anotações */}
+                                    <button
+                                        onClick={() => { setNoteMode('view'); setIsNoteModalOpen(true); }}
+                                        className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 font-medium cursor-pointer"
+                                        style={{ padding: '0.3rem 0.9rem' }}
+                                    >
+                                        <StickyNote className="w-4 h-4" />
+                                        Minhas Anotações
                                     </button>
 
                                     <button
@@ -341,47 +353,80 @@ const LeiturasAtuais = () => {
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" style={{ padding: '20px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl" style={{ padding: '32px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '24px' }}>
-                                <h3 className="text-xl font-semibold text-gray-800">Fazer Anotação</h3>
+                                <h3 className="text-xl font-semibold text-gray-800">
+                                    {noteMode === 'write' ? 'Fazer Anotação' : 'Minhas Anotações'}
+                                </h3>
                                 <button onClick={closeNoteModal} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-colors">
                                     <X className="w-5 h-5 text-gray-500" />
                                 </button>
                             </div>
 
                             <div className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '8px' }}>
-                                        Suas reflexões sobre &quot;Dom Casmurro&quot;:
-                                    </label>
-                                    <textarea
-                                        value={noteText}
-                                        onChange={(e) => setNoteText(e.target.value)}
-                                        className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none"
-                                        style={{ padding: '16px', minHeight: '120px' }}
-                                        placeholder="Escreva suas impressões, citações favoritas, análises do capítulo..."
-                                        rows={6}
-                                    />
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={closeNoteModal}
-                                        className="flex-1 border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium cursor-pointer"
-                                        style={{ padding: '12px 16px' }}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        onClick={saveNote}
-                                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg hover:shadow-lg transition-all font-medium cursor-pointer"
-                                        style={{ padding: '12px 16px' }}
-                                    >
-                                        Salvar Anotação
-                                    </button>
-                                </div>
+                                {noteMode === 'write' ? (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '8px' }}>
+                                            Suas reflexões sobre &quot;Dom Casmurro&quot;:
+                                        </label>
+                                        <textarea
+                                            value={noteText}
+                                            onChange={(e) => setNoteText(e.target.value)}
+                                            className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none"
+                                            style={{ padding: '16px', minHeight: '120px' }}
+                                            placeholder="Escreva suas impressões, citações favoritas, análises do capítulo..."
+                                            rows={6}
+                                        />
+                                        <div className="flex gap-3 mt-3">
+                                            <button
+                                                onClick={closeNoteModal}
+                                                className="flex-1 border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-medium cursor-pointer"
+                                                style={{ padding: '12px 16px' }}
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button
+                                                onClick={saveNote}
+                                                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg hover:shadow-lg transition-all font-medium cursor-pointer"
+                                                style={{ padding: '12px 16px' }}
+                                            >
+                                                Salvar Anotação
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="relative border-2 border-dashed border-gray-300 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 text-gray-800 min-h-[120px] transition-all duration-300 hover:border-gray-400" style={{ padding: '20px' }}>
+                                        {noteText ? (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                    <span>Suas anotações salvas</span>
+                                                </div>
+                                                <div className="text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">
+                                                    {noteText}
+                                                </div>
+                                                <div className="absolute top-3 right-3">
+                                                    <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center">
+                                                        <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center h-full text-center">
+                                                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </div>
+                                                <p className="text-gray-500 font-medium mb-1">Nenhuma anotação ainda</p>
+                                                <p className="text-gray-400 text-sm">Suas anotações aparecerão aqui quando salvas</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
                 )}
+
 
                 {/* Feedback */}
                 {feedback && (

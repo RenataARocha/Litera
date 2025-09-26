@@ -11,4 +11,5 @@ export type Book = {
   description: string;
   notes?: string;
   status: BookStatus;
+  isbn: string;
 };
