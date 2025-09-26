@@ -1,26 +1,89 @@
 import { NextResponse } from 'next/server';
-import { prisma } from "../../../../src/_lib/db";
+import { prisma } from '@/_lib/db';
+import { BookStatus, BookRating } from '@prisma/client';
 
-//GET /api/books - listar todos
-export async function GET() {
-  const books = await prisma.books.findMany();
-  return NextResponse.json(books);
-}
 
-//POST /api/books - adcionar
-export async function POST(req: Request){
-  const body = await req.json();
-  const newBook = await prisma.book.create({
-    data: {
-      title: body.title,
-      author: body.author,
-      year: body.year,
-      genre: body.genre,
-      rating: body.rating,
-      cover: body.cover || "",
-      description: body.description,
-    },
-  });
+const mapStatusToDB = (status: string): string => {
+  switch (status.toLowerCase()) {
+    case 'lido':
+      return BookStatus.READ;
+    case 'lendo':
+      return BookStatus.READING;
+    case 'quero ler':
+      return BookStatus.TO_READ; 
+    case 'pausado':
+    case 'não lido': 
+    default:
+      return BookStatus.TO_READ; 
+  }
+};
 
-  return NextResponse.json(newBook, {status: 201});
+const mapRatingToDB = (rating: number): string => {
+  switch (rating) {
+    case 5:
+      return 'FIVE_STARS';
+    case 4:
+      return 'FOUR_STARS';
+    case 3:
+      return 'THREE_STARS';
+    case 2:
+      return 'TWO_STARS';
+    case 1:
+      return 'ONE_STAR';
+    case 0:
+    default:
+      return 'ZERO_STARS'; 
+  }
+};
+
+export async function POST(request: Request) {
+  try {
+    const bookData = await request.json();
+
+    if (!bookData.title || !bookData.author) {
+      return NextResponse.json(
+        { message: 'Título e Autor são obrigatórios.' },
+        { status: 400 }
+      );
+    }
+    
+    const dbStatus = mapStatusToDB(bookData.status);
+    const dbRating = mapRatingToDB(bookData.rating);
+
+    const newBook = await prisma.book.create({
+      data: {
+        title: bookData.title,
+        year: bookData.year,
+        pages: bookData.pages,
+        genre: bookData.genre,
+        cover: bookData.cover,
+        isbn: bookData.isbn,
+        description: bookData.description,
+        notes: bookData.notes,
+        
+        author: {
+          connectOrCreate: {
+            where: { name: bookData.author }, 
+            create: { name: bookData.author }, 
+          },
+        },
+
+        status: dbStatus as any, 
+        rating: dbRating as any,
+      },
+    });
+
+    return NextResponse.json(
+      { message: 'Livro adicionado com sucesso!', book: newBook },
+      { status: 201 } 
+    );
+
+  } catch (error) {
+    console.error('Erro ao salvar livro:', error);
+    
+    return NextResponse.json(
+      { message: 'Erro interno do servidor ao adicionar o livro. Verifique a conexão com o banco de dados.' },
+      { status: 500 }
+    );
+  }
 }

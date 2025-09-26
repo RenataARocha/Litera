@@ -1,36 +1,41 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../src/_lib/db"
+import { prisma } from '@/_lib/db';
 
-//GET
-export async function GET(req: Request, { params }: { params: {id: string} }){
-    const book = await prisma.book.findUnique({ where: { id: parseInt(params.id) }}    
-    );
-    
-    if (!book)
-        return NextResponse.json({ error: "Livro não encontrado"}, { status: 404});
+// GET
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
+  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
-    return NextResponse.json(book);
+  const book = await prisma.book.findUnique({ where: { id } });
+  if (!book) return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+
+  return NextResponse.json(book);
 }
 
-//PUT
-export async function PUT( req: Request, { params }: { params: { id: string} }){
-    const body = await req.json();
+// PUT
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
+  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
-    const updateBook = await prisma.book.update({
-        where: { id: parseInt(params.id) },
-        data: body,
-    });
+  const body = await req.json();
 
+  try {
+    const updateBook = await prisma.book.update({ where: { id }, data: body });
     return NextResponse.json(updateBook);
+  } catch {
+    return NextResponse.json({ error: "Livro não encontrado ou dados inválidos" }, { status: 404 });
+  }
 }
 
-//DELETE
-export async function  DELETE( req: Request, { params }: { params: { id: string} }
-){
-    await prisma.book.delete({
-        where: { id: parseInt(params.id) },
-    });
+// DELETE
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const id = parseInt(params.id);
+  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
-    return NextResponse.json({ message: "Livro removido com sucesso"};)
+  try {
+    await prisma.book.delete({ where: { id } });
+    return NextResponse.json({ message: "Livro removido com sucesso" });
+  } catch {
+    return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+  }
 }
-

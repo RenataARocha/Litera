@@ -6,10 +6,49 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum BookStatus{
+  READ
+  READING
+  TO_READ
+}
+
+enum BookRating {
+  ONE_STAR
+  TWO_STARS
+  THREE_STARS
+  FOUR_STARS
+  FIVE_STARS
+}
+
+model Author {
+  id        Int      @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime         @default(now())
+  books     Book[]
+}
+
+model Book {
+  id            Int         @id @default(autoincrement())
+  title         String
+  year          Int?
+  pages         Int
+  genre         String?
+  status        BookStatus  @default(TO_READ)
+  rating        BookRating?
+  cover         String
+  isbn          String      @unique
+  description   String      @db.Text
+  notes         String?     @db.Text
+  author        Author      @relation(fields: [authorId], references: [id])
+  authorId      Int
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt @default(now())
 }

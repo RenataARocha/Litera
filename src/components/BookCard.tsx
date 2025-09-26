@@ -486,7 +486,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                       </label>
                       <input
                         type="number"
-                        defaultValue={book.year}
+                        defaultValue={book.year ?? undefined }
                         className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                         placeholder="Ex: 2023"
@@ -509,7 +509,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
                         Gênero
                       </label>
                       <select
-                        defaultValue={book.genre}
+                        defaultValue={book.genre ?? undefined}
                         className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                       >

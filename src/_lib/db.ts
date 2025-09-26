@@ -1,12 +1,17 @@
-import { NextRes}
-import { PrismaClient } from "@prisma/client"
+// db.ts
+import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
+export let prisma: PrismaClient;
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ["query"],
-  })
+if (process.env.NODE_ENV === "production") {
+  prisma = new PrismaClient();
+} else {
+  if (!(global as any).prisma) {
+    (global as any).prisma = new PrismaClient();
+  }
+  prisma = (global as any).prisma;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+export async function getBooks() {
+  return await prisma.book.findMany({ include: { author: true } });
+}
