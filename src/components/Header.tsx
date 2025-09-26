@@ -21,6 +21,12 @@ export default function Header() {
     { href: '/leituras-atuais', label: 'Leituras Atuais', icon: <FaBookOpen /> }
   ];
 
+  const toggleTheme = () => {
+    if (!mounted) return; // só muda se montado
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
+
+
   return (
     <header className="sticky top-0 z-50 glass-morphism dark:bg-gray-900/70 dark:backdrop-blur-md">
       {/* Container com estilos forçados */}
@@ -95,23 +101,22 @@ export default function Header() {
 
             {/* Botão Alterar Tema */}
             <button
-              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+              onClick={toggleTheme}
               className="rounded-xl transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
               style={{ padding: '0.75rem' }}
               aria-label="Alterar tema"
             >
-              {/* só renderiza o ícone depois do mount para evitar hydration mismatch */}
               {mounted ? (
                 resolvedTheme === 'light' ? <FaMoon className="text-gray-700" /> : <FaSun className="text-yellow-400" />
               ) : null}
             </button>
+
           </nav>
 
           {/* Botão do Menu Mobile */}
           <div className="mobile-only">
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="rounded-xl hover:bg-white/50 transition-colors"
+              onClick={toggleTheme} className="rounded-xl hover:bg-white/50 transition-colors"
               style={{ padding: '0.75rem' }}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
