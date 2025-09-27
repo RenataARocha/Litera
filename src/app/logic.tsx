@@ -1,10 +1,10 @@
 import Home from '../components/Home';
-import type { Book, Stats} from '@/types/types';
+import type { Book, Stats } from '@/types/types';
 import { prisma } from '@/_lib/db';
 
 function formatTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  
+
   let interval = seconds / 31536000;
   if (interval > 1) {
     const years = Math.floor(interval);
@@ -43,61 +43,61 @@ export async function getDashboardData(): Promise<{ recentActivity: Book[], stat
   const totalBooks = dbBooks.length;
   const readingNow = dbBooks.filter(b => b.status == "READING").length;
   const finishedBooks = dbBooks.filter(b => b.status == "READ").length;
-  
+
   const totalPagesRead = dbBooks
-    .filter (b => b.status === "READ")
+    .filter(b => b.status === "READ")
     .reduce((sum, b) => {
       return sum + b.pages;
-    }, 0 );
+    }, 0);
 
-    const stats = {
-        totalBooks: totalBooks,
-        readingNow: readingNow,
-        finishedBooks: finishedBooks,
-        totalPagesRead: totalPagesRead,
-    };
+  const stats = {
+    totalBooks: totalBooks,
+    readingNow: readingNow,
+    finishedBooks: finishedBooks,
+    totalPagesRead: totalPagesRead,
+  };
 
   const recentActivity: Book[] = dbBooks
-    .slice(0,5)
+    .slice(0, 5)
     .map((b) => {
-    let statusPt: Book['status'];
+      let statusPt: Book['status'];
 
-    switch(b.status){
-      case "READ":
-      statusPt = "Lido";
-      break;
-    case "READING":
-      statusPt = "Lendo";
-      break;
-    case "TO_READ":
-      statusPt = "Quero ler";
-      break;
-    default:
-      statusPt = "Desconhecido";
-    }
+      switch (b.status) {
+        case "READ":
+          statusPt = "Lido";
+          break;
+        case "READING":
+          statusPt = "Lendo";
+          break;
+        case "TO_READ":
+          statusPt = "Quero ler";
+          break;
+        default:
+          statusPt = "Desconhecido";
+      }
 
-    const ratingMap: Record<string, number> ={
-      "FIVE_STARS": 5, "FOUR_STARS": 4, "THREE_STARS": 3, 
-          "TWO_STARS": 2, "ONE_STAR": 1
-    }
+      const ratingMap: Record<string, number> = {
+        "FIVE_STARS": 5, "FOUR_STARS": 4, "THREE_STARS": 3,
+        "TWO_STARS": 2, "ONE_STAR": 1
+      }
 
-    const lastReadDate = new Date(b.updatedAt);
-    const timeAgo = formatTimeAgo(lastReadDate);
+      const lastReadDate = new Date(b.updatedAt);
+      const timeAgo = formatTimeAgo(lastReadDate);
 
-    return {
-    title: b.title,
-    author: b.author.name,
-    status: statusPt,
-    genre: b.genre,
-    description: b.description,
-  
-    rating: b.rating ? ratingMap[b.rating] : 0,
-    lastRead: timeAgo,
-    cover: b.cover,
-    } as Book;
+      return {
+        title: b.title,
+        author: b.author.name,
+        status: statusPt,
+        genre: b.genre,
+        description: b.description,
 
-    
-});
+        rating: b.rating ? ratingMap[b.rating] : 0,
+        lastRead: timeAgo,
+        cover: b.cover,
+      } as Book;
+
+
+    });
 
   return { recentActivity, stats }
 }
