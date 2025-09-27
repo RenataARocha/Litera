@@ -436,5 +436,9 @@ const Home: React.FC = () => {
     </motion.div>
   );
 };
+import React from 'react';
+import Logic from './logic';
 
-export default Home;
+export default async function Page() {
+  return <Logic />;
+}

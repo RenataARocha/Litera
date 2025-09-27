@@ -4,12 +4,12 @@ export type Book = {
   id: number;
   title: string;
   author: string;
-  year?: number | null;
-  genre: string;
+  year: number | null;
+  genre: string | null;
+  description: string;
   rating: number;
   cover?: string;
-  description: string;
   notes?: string;
-  status: BookStatus;
-  isbn: string;
+  status: string;
+  lastRead?: string
 };
