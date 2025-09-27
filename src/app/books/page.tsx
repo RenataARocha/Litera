@@ -21,8 +21,14 @@ export default function BooksPage() {
       .catch((err) => console.error("Erro ao carregar livros: ", err));
   }, []);
 
-  // Lista de gêneros sem repetir valores
-  const genres = Array.from(new Set(books.map((b) => b.genre)));
+  //Mapeia todos os gêneros
+    const allGenresWithNull = books.map((b) => b.genre);
+
+  //Removendo todos os valores null
+    const validGenres = allGenresWithNull.filter((g): g is string => g !== null);
+
+  //Cria o Set para ter apenas valores únicos
+    const genres = Array.from(new Set(validGenres));
 
   // Filtrar
   const filtered = books.filter((book) => {

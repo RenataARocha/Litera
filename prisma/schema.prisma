@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,42 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum BookStatus{
+model author {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique(map: "Author_name_key")
+  createdAt DateTime @default(now())
+  book      book[]
+}
+
+model book {
+  id          Int          @id @default(autoincrement())
+  title       String
+  year        Int?
+  pages       Int
+  genre       String?
+  status      book_status  @default(TO_READ)
+  rating      book_rating?
+  cover       String
+  isbn        String       @unique(map: "Book_isbn_key")
+  description String       @db.Text
+  notes       String?      @db.Text
+  authorId    Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+  author      author       @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+
+  @@index([authorId], map: "Book_authorId_fkey")
+}
+
+enum book_status {
   READ
   READING
   TO_READ
 }
 
-enum BookRating {
+enum book_rating {
   ONE_STAR
   TWO_STARS
   THREE_STARS
   FOUR_STARS
   FIVE_STARS
-}
-
-model Author {
-  id        Int      @id @default(autoincrement())
-  name      String    @unique
-  createdAt DateTime         @default(now())
-  books     Book[]
-}
-
-model Book {
-  id            Int         @id @default(autoincrement())
-  title         String
-  year          Int?
-  pages         Int
-  genre         String?
-  status        BookStatus  @default(TO_READ)
-  rating        BookRating?
-  cover         String
-  isbn          String      @unique
-  description   String      @db.Text
-  notes         String?     @db.Text
-  author        Author      @relation(fields: [authorId], references: [id])
-  authorId      Int
-
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt @default(now())
 }

@@ -1,5 +1,5 @@
-import Home from './page';
-import type { Book } from '@/types/types';
+import Home from '../components/Home';
+import type { Book, Stats} from '@/types/types';
 import { prisma } from '@/_lib/db';
 
 function formatTimeAgo(date: Date): string {
@@ -33,22 +33,29 @@ function formatTimeAgo(date: Date): string {
   return "agora";
 }
 
-export default async function DashboardPage() {
+export async function getDashboardData(): Promise<{ recentActivity: Book[], stats: Stats }> {
   const dbBooks = await prisma.book.findMany({
     include: { author: true },
-    orderBy: {
-      updatedAt: 'desc',
-    }
+    orderBy: { updatedAt: 'desc' }
   });
 
+
   const totalBooks = dbBooks.length;
-  const reaadingNow = dbBooks.filter(b => b.status == "READING").length;
+  const readingNow = dbBooks.filter(b => b.status == "READING").length;
   const finishedBooks = dbBooks.filter(b => b.status == "READ").length;
+  
   const totalPagesRead = dbBooks
     .filter (b => b.status === "READ")
     .reduce((sum, b) => {
       return sum + b.pages;
     }, 0 );
+
+    const stats = {
+        totalBooks: totalBooks,
+        readingNow: readingNow,
+        finishedBooks: finishedBooks,
+        totalPagesRead: totalPagesRead,
+    };
 
   const recentActivity: Book[] = dbBooks
     .slice(0,5)
@@ -88,7 +95,9 @@ export default async function DashboardPage() {
     lastRead: timeAgo,
     cover: b.cover,
     } as Book;
+
+    
 });
 
-  return <Home recentActivity={recentActivity} />;
+  return { recentActivity, stats }
 }

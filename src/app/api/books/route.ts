@@ -18,7 +18,7 @@ const mapStatusToDB = (status: string): string => {
   }
 };
 
-const mapRatingToDB = (rating: number): string => {
+const mapRatingToDB = (rating: number): BookRating| null => {
   switch (rating) {
     case 5:
       return 'FIVE_STARS';
@@ -31,8 +31,7 @@ const mapRatingToDB = (rating: number): string => {
     case 1:
       return 'ONE_STAR';
     case 0:
-    default:
-      return 'ZERO_STARS'; 
+    default: return null; 
   }
 };
 
@@ -53,23 +52,21 @@ export async function POST(request: Request) {
     const newBook = await prisma.book.create({
       data: {
         title: bookData.title,
-        year: bookData.year,
+        year: bookData.year ?? null,
         pages: bookData.pages,
-        genre: bookData.genre,
+        genre: bookData.genre ?? null,
         cover: bookData.cover,
         isbn: bookData.isbn,
-        description: bookData.description,
-        notes: bookData.notes,
-        
+        description: bookData.description ?? '',
+        notes: bookData.notes ?? null,
+        status: dbStatus as any, 
+        rating: dbRating as any,
         author: {
           connectOrCreate: {
             where: { name: bookData.author }, 
             create: { name: bookData.author }, 
           },
         },
-
-        status: dbStatus as any, 
-        rating: dbRating as any,
       },
     });
 
