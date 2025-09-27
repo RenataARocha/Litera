@@ -4,7 +4,7 @@ export type Book = {
   id: number;
   title: string;
   author: string;
-  year: number | null;
+  year?: number | null;
   genre: string | null;
   description: string;
   rating: number;
@@ -12,6 +12,7 @@ export type Book = {
   notes?: string;
   status: string;
   lastRead: string
+  isbn?: string
 };
 
 export type Color = 'blue' | 'green' | 'purple' | 'orange';
