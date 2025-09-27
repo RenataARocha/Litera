@@ -6,94 +6,16 @@ import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-
-
-// --- Interfaces e Tipos ---
-
-type Color = 'blue' | 'green' | 'purple';
-
-interface GoalCircleProps {
-  percentage: number;
-  title: string;
-  subtitle?: string;
-  color?: Color;
-}
-
-interface Book {
-  title: string;
-  author: string;
-  status: 'Lido' | 'Lendo' | 'Quero Ler' | string;
-  rating: number;
-  lastRead: string;
-  cover: string;
-}
-
-interface Stats {
-  totalBooks: number;
-  readingNow: number;
-  finishedBooks: number;
-  totalPagesRead: number;
-}
-
-// --- Dados Mock (Adicionados para corrigir o erro 'stats is not defined') ---
-
-const recentActivity: Book[] = [
-  {
-    title: "Dom Casmurro",
-    author: "Machado de Assis",
-    status: "Lido",
-    rating: 5,
-    lastRead: "3 dias atrás",
-    cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=60&h=80&fit=crop"
-  },
-  {
-    title: "O Senhor dos Anéis: A Sociedade do Anel",
-    author: "J.R.R. Tolkien",
-    status: "Lendo",
-    rating: 5,
-    lastRead: "4 dias atrás",
-    cover: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=60&h=80&fit=crop"
-  },
-  {
-    title: "Sapiens: Uma Breve História da Humanidade",
-    author: "Yuval Noah Harari",
-    status: "Lendo",
-    rating: 4,
-    lastRead: "5 dias atrás",
-    cover: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=60&h=80&fit=crop"
-  },
-  {
-    title: "Cem Anos de Solidão",
-    author: "Gabriel García Márquez",
-    status: "Quero Ler",
-    rating: 0,
-    lastRead: "6 dias atrás",
-    cover: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=60&h=80&fit=crop"
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    status: "Lendo",
-    rating: 4,
-    lastRead: "1 semana atrás",
-    cover: "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=60&h=80&fit=crop"
-  }
-];
-
-const stats: Stats = {
-  totalBooks: 152,
-  readingNow: 8,
-  finishedBooks: 10,
-  totalPagesRead: 3245,
-};
+import {DashboardProps, GoalCircleProps, Color } from '@/types/types';
 
 // --- GoalCircle (Definição para uso dentro do Home) ---
 
-const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
-  const colorMap: Record<Color, string> = {
-    blue: "#3B82F6",
-    green: "#10B981",
-    purple: "#8B5CF6",
+  const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
+    const colorMap: Record<Color, string> = {
+      blue: "#3B82F6",
+      green: "#10B981",
+      purple: "#8B5CF6",
+      orange: "#F97316",
   };
 
   const selectedColor = colorMap[color];
@@ -102,8 +24,6 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
   const dashOffset = circumference * (1 - percentage / 100);
 
   return (
-
-
     <div className="flex flex-col items-center">
       <div className="relative w-24 h-24 mb-3">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
@@ -138,10 +58,7 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
   );
 };
 
-
-// --- Componente Home (Corrigido para ser o container principal e usar GoalCircle) ---
-
-const Home: React.FC = () => {
+const Home: React.FC<DashboardProps> = ({ recentActivity, stats}) => {
   const router = useRouter();
 
   // Note: O GoalCircle original foi renomeado para Home, 
@@ -180,7 +97,7 @@ const Home: React.FC = () => {
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span>Sistema Online</span>
             <span>•</span>
-            <span>sexta-feira, 19 de setembro de 2025</span>
+            <span>{new Date().toLocaleDateString('pt-BR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</span>
           </div>
         </div>
 
@@ -207,11 +124,11 @@ const Home: React.FC = () => {
               fill="none"
               strokeLinecap="round"
               strokeDasharray={2 * Math.PI * 36}
-              strokeDashoffset={2 * Math.PI * 36 * (1 - 70 / 100)}
+              strokeDashoffset={2 * Math.PI * 36 * (1 - (stats.finishedBooks / (stats.totalBooks || 1)) * 100 / 100)}
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold">70%</span>
+            <span className="text-xl font-bold">{Math.round((stats.finishedBooks / (stats.totalBooks || 1)) * 100)}</span>
           </div>
         </div>
 
@@ -258,6 +175,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
+        {/* Páginas Lidas */}
         <div
           className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
           style={{ padding: '1.25rem' }}
@@ -267,7 +185,7 @@ const Home: React.FC = () => {
               <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
             </div>
             <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
-              Meta: 50/ano
+              Este ano
             </span>
           </div>
           <div>
@@ -316,7 +234,7 @@ const Home: React.FC = () => {
                 style={{ padding: '0.75rem 0.5rem' }}
               >
                 <Image
-                  src={book.cover}
+                  src={book.cover || '/path/to/placeholder-cover.jpg'}
                   alt={book.title}
                   width={48}
                   height={64}

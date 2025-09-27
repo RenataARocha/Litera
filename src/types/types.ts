@@ -11,5 +11,26 @@ export type Book = {
   cover?: string;
   notes?: string;
   status: string;
-  lastRead?: string
+  lastRead: string
 };
+
+export type Color = 'blue' | 'green' | 'purple' | 'orange';
+
+export interface GoalCircleProps {
+  percentage: number;
+  title: string;
+  subtitle?: string;
+  color?: Color;
+}
+
+export interface Stats {
+  totalBooks: number;
+  readingNow: number;
+  finishedBooks: number;
+  totalPagesRead: number;
+}
+
+export interface DashboardProps{
+  recentActivity: Book[];
+  stats: Stats;
+}
