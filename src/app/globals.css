@@ -107,3 +107,5 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-primary-500);
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
