@@ -118,67 +118,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        {/* Schema.org JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "Litera",
-              "description": "Plataforma completa para gestão editorial e literária",
-              "url": "https://litera.com.br",
-              "applicationCategory": "ProductivityApplication",
-              "operatingSystem": "Web Browser",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "BRL"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "Litera",
-                "url": "https://litera.com.br",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://litera.com.br/assets/logo.png",
-                  "caption": "Logo oficial do Litera"
-                }
-              },
-              "audience": {
-                "@type": "Audience",
-                "audienceType": "Escritores, Editores, Profissionais do mercado editorial"
-              },
-              "featureList": [
-                "Gestão de manuscritos",
-                "Organização de projetos literários",
-                "Colaboração em tempo real",
-                "Controle de versões",
-                "Biblioteca digital pessoal"
-              ]
-            })
-          }}
-        />
 
-        {/* Preconnect para performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* DNS prefetch */}
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
-      </head>
-      <body className="min-h-screen transition-colors duration-300">
+    <html lang="pt-br" suppressHydrationWarning>
+      <body className="min-h-screen transition-colors duration-300 dark:bg-[#1e2939]">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen ">
             <Header />
-            <main className="flex-1 py-8 mt-4">{children}</main>
-            <ToasterClient />
+            <main className="flex-1 py-8 mt-4 ">{children}</main>
+            <Toaster richColors position="top-right" />
             <ScrollToTopButton />
           </div>
         </ThemeProvider>
       </body>
     </html>
+          </ThemeProvider >
+        </body >
+      </html >
   );
 }
