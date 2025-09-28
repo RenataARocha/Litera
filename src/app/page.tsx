@@ -7,9 +7,7 @@ import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-
 // --- Interfaces e Tipos ---
-
 type Color = 'blue' | 'green' | 'purple';
 
 interface GoalCircleProps {
@@ -35,8 +33,7 @@ interface Stats {
   totalPagesRead: number;
 }
 
-// --- Dados Mock (Adicionados para corrigir o erro 'stats is not defined') ---
-
+// --- Dados Mock ---
 const recentActivity: Book[] = [
   {
     title: "Dom Casmurro",
@@ -87,8 +84,7 @@ const stats: Stats = {
   totalPagesRead: 3245,
 };
 
-// --- GoalCircle (Definição para uso dentro do Home) ---
-
+// --- GoalCircle ---
 const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
   const colorMap: Record<Color, string> = {
     blue: "#3B82F6",
@@ -102,8 +98,6 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
   const dashOffset = circumference * (1 - percentage / 100);
 
   return (
-
-
     <div className="flex flex-col items-center">
       <div className="relative w-24 h-24 mb-3">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
@@ -112,6 +106,7 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
             cy="40"
             r={radius}
             stroke="rgba(0,0,0,0.1)"
+            className="dark:stroke-gray-700"
             strokeWidth="6"
             fill="none"
           />
@@ -129,23 +124,18 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xl font-bold text-gray-800">{percentage}%</span>
+          <span className="text-xl font-bold text-gray-800 dark:text-gray-100">{percentage}%</span>
         </div>
       </div>
-      <h3 className="font-semibold text-gray-700 text-center">{title}</h3>
-      {subtitle && <p className="text-sm text-gray-500 text-center mt-1">{subtitle}</p>}
+      <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-center">{title}</h3>
+      {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-1">{subtitle}</p>}
     </div>
   );
 };
 
-
-// --- Componente Home (Corrigido para ser o container principal e usar GoalCircle) ---
-
+// --- Componente Home ---
 const Home: React.FC = () => {
   const router = useRouter();
-
-  // Note: O GoalCircle original foi renomeado para Home, 
-  // e o GoalCircle de props foi renomeado para DisplayGoalCircle para evitar conflito/recursão.
 
   return (
     <motion.div
@@ -156,40 +146,30 @@ const Home: React.FC = () => {
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Seção principal de boas-vindas */}
+      {/* Hero */}
       <div
-        className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl"
+        className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl 
+                   bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 
+                   dark:from-slate-800 dark:via-slate-900 dark:to-slate-900 dark:shadow-[#60a5fa] dark:shadow-sm
+                   p-8 mb-8 shadow-2xl"
         style={{ padding: "2rem", marginBottom: "2rem" }}
       >
         <div className="z-10">
-          <h1 className="text-5xl font-bold">Bem-vindo de volta!</h1>
-          <p
-            className="text-xl mb-3 text-blue-100 mt-6"
-            style={{
-              lineHeight: "1",
-              marginTop: "0.5rem",
-              marginBottom: "0.9rem",
-            }}
-          >
+          <h1 className="text-5xl font-bold dark:text-blue-400">Bem-vindo de volta!</h1>
+          <p className="text-xl mb-3 text-blue-100 dark:text-blue-200 mt-6">
             Gerencie sua biblioteca pessoal com estilo
           </p>
-          <div
-            className="flex items-center gap-2 text-base text-blue-100"
-            style={{ marginTop: "2rem" }}
-          >
+          <div className="flex items-center gap-2 text-base text-blue-100 dark:text-blue-400" style={{ marginTop: "2rem" }}>
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Sistema Online</span>
-            <span>•</span>
-            <span>sexta-feira, 19 de setembro de 2025</span>
+            <span className="dark:text-blue-200">Sistema Online</span>
+            <span className="dark:text-blue-200">•</span>
+            <span className="dark:text-blue-200">sexta-feira, 19 de setembro de 2025</span>
           </div>
         </div>
 
-        {/* Círculo de progresso */}
+        {/* Progresso */}
         <div className="relative w-20 h-20 z-10">
-          <svg
-            className="w-full h-full transform -rotate-90"
-            viewBox="0 0 80 80"
-          >
+          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80 ">
             <circle
               cx="40"
               cy="40"
@@ -202,7 +182,7 @@ const Home: React.FC = () => {
               cx="40"
               cy="40"
               r={36}
-              stroke="white"
+              stroke="#BFDBFE"
               strokeWidth="6"
               fill="none"
               strokeLinecap="round"
@@ -211,86 +191,102 @@ const Home: React.FC = () => {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold">70%</span>
+            <span className="text-xl font-bold dark:text-blue-200">70%</span>
           </div>
         </div>
 
-        {/* Padrão de fundo sutil */}
-        <div className="absolute right-0 top-0 w-32 h-32 bg-white opacity-5 rounded-full transform translate-x-16 -translate-y-16"></div>
-        <div className="absolute right-8 bottom-0 w-24 h-24 bg-white opacity-5 rounded-full transform translate-y-8"></div>
+        {/* Background decorativo */}
+        <div className="absolute right-0 top-0 w-32 h-32 bg-white opacity-5 dark:bg-slate-200 rounded-full transform translate-x-16 -translate-y-16"></div>
+        <div className="absolute right-8 bottom-0 w-24 h-24 bg-white opacity-5 dark:bg-slate-200 rounded-full transform translate-y-8"></div>
       </div>
 
-      {/* Cards de estatísticas */}
+      {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Livros */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm 
+                     border border-gray-100 dark:border-slate-700 
+                     hover:shadow-lg hover:border-gray-200 dark:hover:border-slate-600 dark:shadow-[#60a5fa]
+                     hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
           style={{ padding: '1.25rem' }}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/40 rounded-xl flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-800/60 transition-colors duration-200">
               <FaBook className="text-blue-500 text-lg group-hover:animate-bounce" />
             </div>
-            <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+            <span className="text-xs font-medium text-green-600 dark:text-green-300 bg-green-50 dark:bg-green-900/40 px-4 py-2 dark:p-4 rounded-full">
               +12% este mês
             </span>
           </div>
           <div>
-            <p className="text-gray-500 text-sm mb-1">Total de Livros</p>
-            <p className="text-3xl font-bold text-gray-800">{stats.totalBooks}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Total de Livros</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.totalBooks}</p>
           </div>
         </div>
 
+        {/* Lendo Agora */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm 
+                     border border-gray-100 dark:border-slate-700 
+                     hover:shadow-lg hover:border-gray-200 dark:hover:border-slate-600 dark:shadow-[#60a5fa]
+                     hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
           style={{ padding: '1.25rem' }}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors duration-200">
+            <div className="w-10 h-10 bg-green-50 dark:bg-green-900/40 rounded-xl flex items-center justify-center group-hover:bg-green-100 dark:group-hover:bg-green-800/60 transition-colors duration-200">
               <FaBookOpen className="text-green-500 text-lg group-hover:animate-bounce" />
             </div>
-            <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+            <span className="text-xs font-medium text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/40 px-2 py-1 rounded-full">
               Em progresso
             </span>
           </div>
           <div>
-            <p className="text-gray-500 text-sm mb-1">Lendo Agora</p>
-            <p className="text-3xl font-bold text-gray-800">{stats.readingNow}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Lendo Agora</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.readingNow}</p>
           </div>
         </div>
 
+        {/* Concluídos */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm 
+                     border border-gray-100 dark:border-slate-700 
+                     hover:shadow-lg hover:border-gray-200 dark:hover:border-slate-600 dark:shadow-[#60a5fa]
+                     hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
           style={{ padding: '1.25rem' }}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-200">
+            <div className="w-10 h-10 bg-purple-50 dark:bg-purple-900/40 rounded-xl flex items-center justify-center group-hover:bg-purple-100 dark:group-hover:bg-purple-800/60 transition-colors duration-200">
               <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
             </div>
-            <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+            <span className="text-xs font-medium text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/40 px-2 py-1 rounded-full">
               Meta: 50/ano
             </span>
           </div>
           <div>
-            <p className="text-gray-500 text-sm mb-1">Concluídos</p>
-            <p className="text-3xl font-bold text-gray-800">{stats.finishedBooks}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Concluídos</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.finishedBooks}</p>
           </div>
         </div>
 
+        {/* Páginas Lidas */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+          className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm 
+                     border border-gray-100 dark:border-slate-700 
+                     hover:shadow-lg hover:border-gray-200 dark:hover:border-slate-600 dark:shadow-[#60a5fa]
+                     hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
           style={{ padding: '1.25rem' }}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-200">
+            <div className="w-10 h-10 bg-orange-50 dark:bg-orange-900/40 rounded-xl flex items-center justify-center group-hover:bg-orange-100 dark:group-hover:bg-orange-800/60 transition-colors duration-200">
               <FaFileAlt className="text-orange-500 text-lg group-hover:animate-bounce" />
             </div>
-            <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
+            <span className="text-xs font-medium text-orange-600 dark:text-orange-300 bg-orange-50 dark:bg-orange-900/40 px-2 py-1 rounded-full">
               Este ano
             </span>
           </div>
           <div>
-            <p className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
-            <p className="text-3xl font-bold text-gray-800">{stats.totalPagesRead}</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Páginas Lidas</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.totalPagesRead}</p>
           </div>
         </div>
       </div>
@@ -298,12 +294,12 @@ const Home: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Atividade Recente */}
         <div
-          className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100"
+          className="lg:col-span-2 bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700"
           style={{ padding: '1.5rem' }}
         >
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-bold text-gray-800">Atividade Recente</h2>
-            <Link href="/books" className="text-sm text-blue-500 hover:text-blue-600 transition-colors">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Atividade Recente</h2>
+            <Link href="/books" className="text-sm text-blue-500 dark:text-blue-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               Ver tudo
             </Link>
           </div>
@@ -312,7 +308,7 @@ const Home: React.FC = () => {
             {recentActivity.map((book, index) => (
               <div
                 key={index}
-                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/60 transition-colors"
                 style={{ padding: '0.75rem 0.5rem' }}
               >
                 <Image
@@ -324,34 +320,32 @@ const Home: React.FC = () => {
                   unoptimized
                 />
                 <div className="flex-1 min-w-0">
-                  <h3
-                    className="font-semibold text-gray-800 text-sm truncate"
-                    style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}
-                  >
+                  <h3 className="font-semibold text-gray-800 dark:text-gray-100 text-sm truncate" style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}>
                     {book.title}
                   </h3>
-                  <p
-                    className="text-xs text-gray-500"
-                    style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}
-                  >
+                  <p className="text-xs text-gray-500 dark:text-gray-400" style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}>
                     {book.author}
                   </p>
 
                   <div className="flex items-center gap-2">
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
-                      book.status === 'Lendo' ? 'bg-green-100 text-green-700' :
-                        'bg-gray-100 text-gray-700'
-                      }`}>
+                    <span
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium 
+                        ${book.status === 'Lido'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200'
+                          : book.status === 'Lendo'
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200'
+                            : 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300'
+                        }`}
+                    >
                       {book.status}
                     </span>
 
-                    {/* Estrelas de rating */}
+                    {/* Estrelas */}
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <span
                           key={i}
-                          className={`text-xs ${i < book.rating ? 'text-yellow-400' : 'text-gray-300'
-                            }`}
+                          className={`text-xs ${i < book.rating ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`}
                         >
                           ★
                         </span>
@@ -359,7 +353,7 @@ const Home: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-400 whitespace-nowrap">
+                <div className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
                   {book.lastRead}
                 </div>
               </div>
@@ -369,10 +363,10 @@ const Home: React.FC = () => {
 
         {/* Ações Rápidas */}
         <div
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7"
+          className="bg-white dark:bg-slate-800/90 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col gap-7"
           style={{ padding: '1.5rem', marginTop: '1rem' }}
         >
-          <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Ações Rápidas</h2>
 
           <div className="flex flex-col gap-3">
             <Link
@@ -383,55 +377,30 @@ const Home: React.FC = () => {
               Adicionar Livro
             </Link>
 
-            <button onClick={() => router.push('/books')} className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
-              <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
-              Explorar Biblioteca
-            </button>
-
-            <Link
-              href="/leituras-atuais"
-              className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group"
+            <button
+              onClick={() => router.push('/books')}
+              className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl 
+                         bg-white dark:bg-slate-700 text-gray-600 dark:text-gray-200 
+                         hover:bg-teal-50 dark:hover:bg-slate-600 hover:shadow-md 
+                         font-medium text-sm border border-gray-200 dark:border-slate-600 
+                         hover:border-teal-200 dark:hover:border-teal-500 
+                         hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
             >
-              <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
-              Leituras Atuais
-            </Link>
+              <FaSearch className="text-sm group-hover:animate-bounce" />
+              Procurar Livros
+            </button>
           </div>
-        </div>
+</div>
 
-      </div>
-
-      {/* Metas de Leitura */}
-      <div
-        className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg"
-        style={{ padding: "1.5rem" }}
-      >
-        <h2
-          className="text-xl font-bold text-gray-900"
-          style={{ marginBottom: "1.5rem" }}
-        >
-          Metas de Leitura 2024
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <DisplayGoalCircle
-            percentage={20}
-            title="Livros por Ano"
-            subtitle="10 de 50 livros"
-            color="blue"
-          />
-          <DisplayGoalCircle
-            percentage={40}
-            title="Páginas por Mês"
-            subtitle="800 de 2000 páginas"
-            color="green"
-          />
-          <DisplayGoalCircle
-            percentage={50}
-            title="Gêneros Diversos"
-            subtitle="5 de 10 gêneros"
-            color="purple"
-          />
-        </div>
+          <div className=" backdrop-blur-sm rounded-2xl col-span-3 shadow-lg border-t border-gray-100 dark:border-slate-700 pt-6">
+            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-4">Metas de Leitura 2024</h3>
+            <div className="grid grid-cols-3 gap-3">
+              <DisplayGoalCircle percentage={70} title="Meta Anual" subtitle="35/50" color="blue" />
+              <DisplayGoalCircle percentage={50} title="Este Mês" subtitle="2/4" color="green" />
+              <DisplayGoalCircle percentage={80} title="Coleção" subtitle="120/150" color="purple" />
+            </div>
+          </div>
+        
       </div>
     </motion.div>
   );
