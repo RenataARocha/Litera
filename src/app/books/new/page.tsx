@@ -174,37 +174,38 @@ export default function NewBookPage() {
     >
       {/* Botão Voltar para Home */}
       <motion.div
-        style={{ margin: '1rem' }}
+        style={{ margin: "1rem" }}
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
       >
         <motion.button
-          onClick={() => router.push('/')}
+          onClick={() => router.push("/")}
           className="px-4 py-2 text-blue-600 rounded-lg hover:underline transition-colors cursor-pointer"
           whileHover={{ scale: 1.05, x: 5 }}
           whileTap={{ scale: 0.95 }}
+          aria-label="Voltar para página inicial"
         >
           ← Voltar para Home
         </motion.button>
       </motion.div>
 
-      <div className="flex items-center justify-center min-h-screen" style={{ margin: '2rem' }}>
+      <div
+        className="flex items-center justify-center min-h-screen"
+        style={{ margin: "2rem" }}
+      >
         <motion.div
           className="max-w-3xl w-full p-4 bg-white rounded-xl shadow-lg"
-          style={{ margin: 'auto', padding: '1rem', boxSizing: 'border-box' }}
+          style={{ margin: "auto", padding: "1rem", boxSizing: "border-box" }}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           {/* Header */}
-          <motion.div
-            variants={headerVariants}
-            style={{ marginBottom: '1rem' }}
-          >
+          <motion.div variants={headerVariants} style={{ marginBottom: "1rem" }}>
             <motion.h1
               className="text-2xl font-bold text-gray-900"
-              style={{ marginBottom: '0.25rem' }}
+              style={{ marginBottom: "0.25rem" }}
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: 0.5 }}
@@ -229,6 +230,7 @@ export default function NewBookPage() {
               aria-valuenow={progress()}
               aria-valuemin={0}
               aria-valuemax={100}
+              aria-label="Progresso do preenchimento do formulário"
               variants={progressBarVariants}
             >
               <motion.div
@@ -241,61 +243,77 @@ export default function NewBookPage() {
             </motion.div>
             <motion.p
               className="text-sm text-gray-700"
-              style={{ marginBottom: '1rem', padding: '0.5rem' }}
+              style={{ marginBottom: "1rem", padding: "0.5rem" }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
+              aria-live="polite"
             >
               {progress()}% preenchido - {progressMessage()}
             </motion.p>
           </motion.div>
 
+          {/* Formulário */}
           <form
             onSubmit={handleSubmit}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+            aria-label="Formulário para adicionar novo livro"
           >
             {/* Informações Obrigatórias */}
             <motion.div
               variants={itemVariants}
               className="bg-red-50 rounded-lg"
-              style={{ padding: '1rem' }}
+              style={{ padding: "1rem" }}
               whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="text-lg font-semibold text-red-800" style={{ marginBottom: '1rem' }}>
+              <h3
+                className="text-lg font-semibold text-red-800"
+                style={{ marginBottom: "1rem" }}
+              >
                 <span className="text-red-500">*</span> Informações Obrigatórias
               </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="title"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Título <span className="text-red-500">*</span>
                   </label>
                   <motion.input
+                    id="title"
                     name="title"
                     type="text"
                     value={formData.title}
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
+                    style={{ padding: "0.3rem", paddingLeft: "0.7rem" }}
                     placeholder="Digite o título do livro"
                     required
+                    aria-required="true"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="author"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Autor <span className="text-red-500">*</span>
                   </label>
                   <motion.input
+                    id="author"
                     name="author"
                     type="text"
                     value={formData.author}
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
+                    style={{ padding: "0.3rem", paddingLeft: "0.7rem" }}
                     placeholder="Digite o autor"
                     required
+                    aria-required="true"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   />
@@ -327,6 +345,7 @@ export default function NewBookPage() {
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     placeholder="Ex: 2023"
+                    aria-label="Ano de Publicação"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   />
@@ -343,6 +362,7 @@ export default function NewBookPage() {
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     placeholder="Ex: 250"
+                    aria-label="Total de Páginas"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   />
@@ -355,6 +375,7 @@ export default function NewBookPage() {
                     onChange={handleChange}
                     className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
+                    aria-label="Selecione o gênero do livro"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -376,14 +397,19 @@ export default function NewBookPage() {
                     <option value="Poesia">🎭 Poesia</option>
                   </motion.select>
                 </div>
+
+                {/* Status de Leitura */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status de Leitura</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status de Leitura
+                  </label>
                   <motion.select
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
                     className="w-full px-3 py-2 cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
+                    aria-label="Selecione o status de leitura do livro"
                     whileFocus={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >

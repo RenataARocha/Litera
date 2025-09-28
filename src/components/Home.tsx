@@ -59,7 +59,7 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
 };
 
 // --- Home (Componente Principal) ---
-const Home: React.FC<DashboardProps> = ({ recentActivity, stats}) => {
+const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
     const router = useRouter();
 
     return (
@@ -95,7 +95,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats}) => {
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                         <span>Sistema Online</span>
                         <span>•</span>
-                        <span>{new Date().toLocaleDateString('pt-BR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'})}</span>
+                        <span>{new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
                     </div>
                 </div>
 
@@ -137,79 +137,103 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats}) => {
 
             {/* Cards de estatísticas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Total de Livros */}
                 <div
+                    role="region"
+                    aria-labelledby="stat-total-books"
+                    tabIndex={0}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-200">
-                            <FaBook className="text-blue-500 text-lg group-hover:animate-bounce" />
+                            <FaBook aria-hidden="true" className="text-blue-500 text-lg group-hover:animate-bounce" />
                         </div>
                         <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
                             +12% este mês
                         </span>
                     </div>
                     <div>
-                        <p className="text-gray-500 text-sm mb-1">Total de Livros</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats?.totalBooks ?? 0}</p>
+                        <p id="stat-total-books" className="text-gray-500 text-sm mb-1">Total de Livros</p>
+                        <p className="text-3xl font-bold text-gray-800" aria-label={`Total de livros: ${stats?.totalBooks ?? 0}`}>
+                            {stats?.totalBooks ?? 0}
+                        </p>
                     </div>
                 </div>
 
+                {/* Lendo Agora */}
                 <div
+                    role="region"
+                    aria-labelledby="stat-reading-now"
+                    tabIndex={0}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors duration-200">
-                            <FaBookOpen className="text-green-500 text-lg group-hover:animate-bounce" />
+                            <FaBookOpen aria-hidden="true" className="text-green-500 text-lg group-hover:animate-bounce" />
                         </div>
                         <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
                             Em progresso
                         </span>
                     </div>
                     <div>
-                        <p className="text-gray-500 text-sm mb-1">Lendo Agora</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats?.readingNow ?? 0}</p>
+                        <p id="stat-reading-now" className="text-gray-500 text-sm mb-1">Lendo Agora</p>
+                        <p className="text-3xl font-bold text-gray-800" aria-label={`Livros em leitura: ${stats?.readingNow ?? 0}`}>
+                            {stats?.readingNow ?? 0}
+                        </p>
                     </div>
                 </div>
 
-                {/* Páginas Lidas */}
+                {/* Concluídos */}
                 <div
+                    role="region"
+                    aria-labelledby="stat-finished-books"
+                    tabIndex={0}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors duration-200">
-                            <FaCheck className="text-purple-500 text-lg group-hover:animate-bounce" />
+                            <FaCheck aria-hidden="true" className="text-purple-500 text-lg group-hover:animate-bounce" />
                         </div>
                         <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
                             Este ano
                         </span>
                     </div>
                     <div>
-                        <p className="text-gray-500 text-sm mb-1">Concluídos</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats?.finishedBooks ?? 0 }</p>
+                        <p id="stat-finished-books" className="text-gray-500 text-sm mb-1">Concluídos</p>
+                        <p className="text-3xl font-bold text-gray-800" aria-label={`Livros concluídos: ${stats?.finishedBooks ?? 0}`}>
+                            {stats?.finishedBooks ?? 0}
+                        </p>
                     </div>
                 </div>
 
+                {/* Páginas Lidas */}
                 <div
+                    role="region"
+                    aria-labelledby="stat-pages-read"
+                    tabIndex={0}
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
                         <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-100 transition-colors duration-200">
-                            <FaFileAlt className="text-orange-500 text-lg group-hover:animate-bounce" />
+                            <FaFileAlt aria-hidden="true" className="text-orange-500 text-lg group-hover:animate-bounce" />
                         </div>
                         <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded-full">
                             Este ano
                         </span>
                     </div>
                     <div>
-                        <p className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats?.totalPagesRead ?? 0 }</p>
+                        <p id="stat-pages-read" className="text-gray-500 text-sm mb-1">Páginas Lidas</p>
+                        <p className="text-3xl font-bold text-gray-800" aria-label={`Total de páginas lidas: ${stats?.totalPagesRead ?? 0}`}>
+                            {stats?.totalPagesRead ?? 0}
+                        </p>
                     </div>
                 </div>
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Atividade Recente */}
