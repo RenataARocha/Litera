@@ -38,10 +38,11 @@ export default function BooksGrid({ books, onDelete }: BooksGridProps) {
       <AnimatePresence>
         {visibleBooks.map((book) => (
           <motion.div
-            key={book.id} // cada card precisa ter key única
+            key={book.id}
             initial={{ opacity: 0, y: 30, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, type: 'spring', stiffness: 100, damping: 15 } }}
             exit={{ opacity: 0, y: -20, scale: 0.9, transition: { duration: 0.2 } }}
+            className="w-full" // 💡 SOLUÇÃO: Garante que o item ocupe 100% da coluna.
           >
             <BookCard
               book={book}

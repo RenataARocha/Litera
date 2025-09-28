@@ -77,30 +77,44 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                 style={{ padding: "2rem", marginBottom: "2rem" }}
             >
                 <div className="z-10">
-                    <h1 className="text-5xl font-bold">Bem-vindo de volta!</h1>
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+                        Bem-vindo de volta!
+                    </h1>
                     <p
-                        className="text-xl mb-3 text-blue-100 mt-6"
+                        className="text-base sm:text-lg md:text-xl text-blue-100"
                         style={{
-                            lineHeight: "1",
+                            lineHeight: "1.2",
                             marginTop: "0.5rem",
-                            marginBottom: "0.9rem",
+                            marginBottom: "0.75rem",
                         }}
                     >
                         Gerencie sua biblioteca pessoal com estilo
                     </p>
                     <div
-                        className="flex items-center gap-2 text-base text-blue-100"
-                        style={{ marginTop: "2rem" }}
+                        className="flex flex-col sm:flex-row sm:items-center text-sm sm:text-base text-blue-100"
+                        style={{
+                            marginTop: "1rem",
+                            gap: "0.5rem"
+                        }}
                     >
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                        <span>Sistema Online</span>
-                        <span>•</span>
-                        <span>{new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                        <div className="flex items-center" style={{ gap: "0.5rem" }}>
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span>Sistema Online</span>
+                        </div>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="text-xs sm:text-sm">
+                            {new Date().toLocaleDateString('pt-BR', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </span>
                     </div>
                 </div>
 
                 {/* Círculo de progresso */}
-                <div className="relative w-20 h-20 z-10">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 z-10">
                     <svg
                         className="w-full h-full transform -rotate-90"
                         viewBox="0 0 80 80"
@@ -126,7 +140,9 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                         />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-xl font-bold">{Math.round(((stats?.finishedBooks ?? 0) / (stats?.totalBooks || 1)) * 100)}</span>
+                        <span className="text-lg sm:text-xl font-bold">
+                            {Math.round(((stats?.finishedBooks ?? 0) / (stats?.totalBooks || 1)) * 100)}
+                        </span>
                     </div>
                 </div>
 

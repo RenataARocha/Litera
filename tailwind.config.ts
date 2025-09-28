@@ -1,3 +1,5 @@
+import lineClamp from '@tailwindcss/line-clamp'; // 💡 Use 'import' em vez de 'require'
+
 const config = {
   darkMode: "class",
   content: [
@@ -6,7 +8,10 @@ const config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  plugins: [],
+  plugins: [
+    // 💡 Use a variável importada:
+    lineClamp,
+  ],
 };
 
 export default config;

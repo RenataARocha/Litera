@@ -79,7 +79,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           transition: { type: "spring", stiffness: 300, damping: 20 },
         }}
         whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-        className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer transition-shadow"
+        className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer transition-shadow w-full min-w-0"
       >
         {/* Área da capa do livro */}
         <div className="relative">
@@ -109,12 +109,11 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
         {/* Informações do livro */}
         <div style={{ padding: "1.5rem" }}>
           <h3
-            className="font-bold text-gray-900 text-base leading-tight"
+            className="font-bold text-gray-900 text-base leading-tight overflow-hidden text-ellipsis line-clamp-2 min-w-0"
             style={{ marginBottom: "0.3rem" }}
           >
             {book.title}
           </h3>
-
           <p className="text-gray-600 text-xs" style={{ marginBottom: "0.4rem" }}>
             {book.author}
           </p>
