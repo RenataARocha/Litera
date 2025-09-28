@@ -38,6 +38,8 @@ enum book_status {
   READ
   READING
   TO_READ
+  ABANDONED
+  PAUSED
 }
 
 enum book_rating {

@@ -10,12 +10,14 @@ const mapStatusToDB = (status: string): BookStatus => {
     case 'lendo':
       return BookStatus.READING;
     case 'quero ler':
+    case 'não lido':
       return BookStatus.TO_READ; 
     case 'pausado':
-    case 'pausado':
-    case 'não lido': 
+      return BookStatus.PAUSED;
+    case 'abandonado':
+    return BookStatus.ABANDONED;
     default:
-      return BookStatus.TO_READ; 
+      return BookStatus.TO_READ;
   }
 };
 
