@@ -11,7 +11,6 @@ model author {
   id        Int      @id @default(autoincrement())
   name      String   @unique(map: "Author_name_key")
   createdAt DateTime @default(now())
-  book      book[]
 }
 
 model book {
@@ -29,7 +28,6 @@ model book {
   authorId    Int
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
-  author      author       @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
 
   @@index([authorId], map: "Book_authorId_fkey")
 }

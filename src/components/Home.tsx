@@ -73,7 +73,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
         >
             {/* Seção principal de boas-vindas */}
             <div
-                className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl"
+                className="text-white flex justify-between items-center relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-700 p-8 mb-8 shadow-2xl dark:from-slate-800 dark:via-slate-900 dark:to-slate-900
+                shadow-[#3b82f6] shadow-sm"
                 style={{ padding: "2rem", marginBottom: "2rem" }}
             >
                 <div className="z-10">
@@ -158,7 +159,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     role="region"
                     aria-labelledby="stat-total-books"
                     tabIndex={0}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
+                    dark:bg-slate-800/90 dark:border-slate-700 dark:text-blue-200 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
@@ -182,7 +184,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     role="region"
                     aria-labelledby="stat-reading-now"
                     tabIndex={0}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
+                    dark:bg-slate-800/90 dark:border-slate-700 dark:text-blue-200 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
@@ -206,7 +209,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     role="region"
                     aria-labelledby="stat-finished-books"
                     tabIndex={0}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
+                    dark:bg-slate-800/90 dark:border-slate-700 dark:text-blue-200 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
@@ -230,7 +234,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     role="region"
                     aria-labelledby="stat-pages-read"
                     tabIndex={0}
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
+                    dark:bg-slate-800/90 dark:border-slate-700 dark:text-blue-200 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.25rem' }}
                 >
                     <div className="flex items-center justify-between mb-3">
