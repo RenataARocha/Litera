@@ -12,7 +12,8 @@ export const metadata: Metadata = {
     default: 'Litera | Plataforma de Gestão Editorial e Literária',
     template: '%s | Litera'
   },
-  description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+  description:
+    'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
   keywords: [
     'gestão editorial',
     'plataforma literária',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     'literatura',
     'livros',
     'projetos literários',
-    'gerenciamento de livros'
+    'gerenciamento de livros',
   ],
   authors: [{ name: 'Litera Team' }],
   creator: 'Litera Team',
@@ -33,28 +34,30 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://litera.com.br',
+    url: 'https://litera-six.vercel.app',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
     siteName: 'Litera',
     images: [
       {
-        url: '/assets/litera-og-image.png',
+        url: '/images/litera-og.png', // ✅ atualizado
         width: 1200,
         height: 630,
-        alt: 'Litera - Plataforma de Gestão Editorial'
-      }
-    ]
+        alt: 'Litera - Plataforma de Gestão Editorial',
+      },
+    ],
   },
 
   // Twitter
   twitter: {
     card: 'summary_large_image',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
-    images: ['/assets/litera-twitter-card.png'],
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
+    images: ['/images/litera-og.png'], // ✅ atualizado
     creator: '@litera_oficial',
-    site: '@litera_oficial'
+    site: '@litera_oficial',
   },
 
   // Robots
@@ -83,16 +86,14 @@ export const metadata: Metadata = {
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
-    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     other: [
       {
         rel: 'mask-icon',
         url: '/safari-pinned-tab.svg',
-        color: '#6366f1'
-      }
-    ]
+        color: '#6366f1',
+      },
+    ],
   },
 
   // Manifest
@@ -102,7 +103,7 @@ export const metadata: Metadata = {
   themeColor: '#6366f1',
 
   // Canonical e Metadata base
-  metadataBase: new URL('https://litera.com.br'),
+  metadataBase: new URL('https://litera-six.vercel.app'),
 
   // Alternates
   alternates: {
@@ -118,21 +119,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-
     <html lang="pt-br" suppressHydrationWarning>
       <body className="min-h-screen transition-colors duration-300 dark:bg-[#1e2939]">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div className="flex flex-col min-h-screen ">
+          <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 py-8 mt-4 ">{children}</main>
-            <Toaster richColors position="top-right" />
+            <main className="flex-1 py-8 mt-4">{children}</main>
+            <ToasterClient />
             <ScrollToTopButton />
           </div>
         </ThemeProvider>
       </body>
     </html>
-          </ThemeProvider >
-        </body >
-      </html >
   );
 }
