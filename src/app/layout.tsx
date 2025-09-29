@@ -12,7 +12,8 @@ export const metadata: Metadata = {
     default: 'Litera | Plataforma de Gestão Editorial e Literária',
     template: '%s | Litera'
   },
-  description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+  description:
+    'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
   keywords: [
     'gestão editorial',
     'plataforma literária',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     'literatura',
     'livros',
     'projetos literários',
-    'gerenciamento de livros'
+    'gerenciamento de livros',
   ],
   authors: [{ name: 'Litera Team' }],
   creator: 'Litera Team',
@@ -33,28 +34,30 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://litera.com.br',
+    url: 'https://litera-six.vercel.app',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
     siteName: 'Litera',
     images: [
       {
-        url: '/assets/litera-og-image.png',
+        url: '/images/litera-og.png', // ✅ atualizado
         width: 1200,
         height: 630,
-        alt: 'Litera - Plataforma de Gestão Editorial'
-      }
-    ]
+        alt: 'Litera - Plataforma de Gestão Editorial',
+      },
+    ],
   },
 
   // Twitter
   twitter: {
     card: 'summary_large_image',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
-    images: ['/assets/litera-twitter-card.png'],
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
+    images: ['/images/litera-og.png'], // ✅ atualizado
     creator: '@litera_oficial',
-    site: '@litera_oficial'
+    site: '@litera_oficial',
   },
 
   // Robots
@@ -83,16 +86,14 @@ export const metadata: Metadata = {
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
-    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     other: [
       {
         rel: 'mask-icon',
         url: '/safari-pinned-tab.svg',
-        color: '#6366f1'
-      }
-    ]
+        color: '#6366f1',
+      },
+    ],
   },
 
   // Manifest
@@ -102,7 +103,7 @@ export const metadata: Metadata = {
   themeColor: '#6366f1',
 
   // Canonical e Metadata base
-  metadataBase: new URL('https://litera.com.br'),
+  metadataBase: new URL('https://litera-six.vercel.app'),
 
   // Alternates
   alternates: {
@@ -118,58 +119,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        {/* Schema.org JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              "name": "Litera",
-              "description": "Plataforma completa para gestão editorial e literária",
-              "url": "https://litera.com.br",
-              "applicationCategory": "ProductivityApplication",
-              "operatingSystem": "Web Browser",
-              "offers": {
-                "@type": "Offer",
-                "price": "0",
-                "priceCurrency": "BRL"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "Litera",
-                "url": "https://litera.com.br",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://litera.com.br/assets/logo.png",
-                  "caption": "Logo oficial do Litera"
-                }
-              },
-              "audience": {
-                "@type": "Audience",
-                "audienceType": "Escritores, Editores, Profissionais do mercado editorial"
-              },
-              "featureList": [
-                "Gestão de manuscritos",
-                "Organização de projetos literários",
-                "Colaboração em tempo real",
-                "Controle de versões",
-                "Biblioteca digital pessoal"
-              ]
-            })
-          }}
-        />
-
-        {/* Preconnect para performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* DNS prefetch */}
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
-      </head>
-      <body className="min-h-screen transition-colors duration-300">
+    <html lang="pt-br" suppressHydrationWarning>
+      <body className="min-h-screen transition-colors duration-300 dark:bg-[#1e2939]">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <div className="flex flex-col min-h-screen dark:bg-[#1e293be6]">
             <Header />

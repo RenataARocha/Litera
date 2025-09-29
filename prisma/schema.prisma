@@ -21,7 +21,7 @@ model book {
   genre       String?
   status      book_status  @default(TO_READ)
   rating      book_rating?
-  cover       String
+  cover       String       @db.Text
   isbn        String       @unique(map: "Book_isbn_key")
   description String       @db.Text
   notes       String?      @db.Text
@@ -36,6 +36,8 @@ enum book_status {
   READ
   READING
   TO_READ
+  ABANDONED
+  PAUSED
 }
 
 enum book_rating {

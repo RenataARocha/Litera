@@ -2,6 +2,7 @@ import Home from '../components/Home';
 import type { Book, Stats } from '@/types/types';
 import { prisma } from '@/_lib/db';
 
+
 function formatTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
 
@@ -71,6 +72,12 @@ export async function getDashboardData(): Promise<{ recentActivity: Book[], stat
           break;
         case "TO_READ":
           statusPt = "Quero ler";
+          break;
+        case "PAUSED":
+          statusPt = "Pausado";
+          break;
+          case "ABANDONED":
+            statusPt = "Abandonado";
           break;
         default:
           statusPt = "Desconhecido";

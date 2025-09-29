@@ -1,35 +1,38 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/_lib/db';
-import { BookStatus, BookRating } from '@prisma/client';
+import { book_status as BookStatus, book_rating as BookRating } from '@prisma/client';
 
 
-const mapStatusToDB = (status: string): string => {
+const mapStatusToDB = (status: string): BookStatus => {
   switch (status.toLowerCase()) {
     case 'lido':
       return BookStatus.READ;
     case 'lendo':
       return BookStatus.READING;
     case 'quero ler':
+    case 'não lido':
       return BookStatus.TO_READ; 
     case 'pausado':
-    case 'não lido': 
+      return BookStatus.PAUSED;
+    case 'abandonado':
+    return BookStatus.ABANDONED;
     default:
-      return BookStatus.TO_READ; 
+      return BookStatus.TO_READ;
   }
 };
 
 const mapRatingToDB = (rating: number): BookRating| null => {
   switch (rating) {
     case 5:
-      return 'FIVE_STARS';
+      return BookRating.FIVE_STARS;
     case 4:
-      return 'FOUR_STARS';
+      return BookRating.FOUR_STARS;
     case 3:
-      return 'THREE_STARS';
+      return BookRating.THREE_STARS;
     case 2:
-      return 'TWO_STARS';
+      return BookRating.TWO_STARS;
     case 1:
-      return 'ONE_STAR';
+      return BookRating.ONE_STAR;
     case 0:
     default: return null; 
   }
