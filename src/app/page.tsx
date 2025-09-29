@@ -219,8 +219,8 @@ const Home: React.FC = () => {
             </span>
           </div>
           <div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Total de Livros</p>
-            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.totalBooks}</p>
+            <p className="text-gray-500 dark:text-blue-200 text-sm mb-1">Total de Livros</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-blue-200">{stats.totalBooks}</p>
           </div>
         </div>
 
@@ -241,8 +241,8 @@ const Home: React.FC = () => {
             </span>
           </div>
           <div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Lendo Agora</p>
-            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.readingNow}</p>
+            <p className="text-gray-500 dark:text-blue-200 text-sm mb-1">Lendo Agora</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-blue-200">{stats.readingNow}</p>
           </div>
         </div>
 
@@ -263,8 +263,8 @@ const Home: React.FC = () => {
             </span>
           </div>
           <div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Concluídos</p>
-            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.finishedBooks}</p>
+            <p className="text-gray-500 dark:text-blue-200 text-sm mb-1">Concluídos</p>
+            <p className="text-3xl font-bold text-grey-500 dark:text-blue-200">{stats.finishedBooks}</p>
           </div>
         </div>
 
@@ -285,8 +285,8 @@ const Home: React.FC = () => {
             </span>
           </div>
           <div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Páginas Lidas</p>
-            <p className="text-3xl font-bold text-gray-800 dark:text-gray-100">{stats.totalPagesRead}</p>
+            <p className="text-gray-500 dark:text-blue-200 text-sm mb-1">Páginas Lidas</p>
+            <p className="text-3xl font-bold text-gray-800 dark:text-blue-200">{stats.totalPagesRead}</p>
           </div>
         </div>
       </div>

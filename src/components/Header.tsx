@@ -62,9 +62,9 @@ export default function Header() {
               ></div>
             </div>
             <div className="hidden lg:block">
-              <h1 className="text-lg lg:text-xl font-bold text-gradient">Litera</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">Litera</h1>
               <p
-                className="text-xs text-gray-500 dark:text-gray-400"
+                className="text-xs text-gray-500 dark:text-blue-200"
                 style={{ lineHeight: '1.3' }}
               >
                 Biblioteca Digital
@@ -85,7 +85,8 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group"
+                className="flex items-center text-sm font-medium text-gray-700 dark:text-blue-200  hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-all duration-100 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group
+                dark:hover:border dark:hover:border-ciano-400"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
