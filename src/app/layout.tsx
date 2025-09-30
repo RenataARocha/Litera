@@ -34,7 +34,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
+
     url: 'https://litera-six.vercel.app', // ✅ atualizado
+
+    url: 'https://litera-six.vercel.app',
+
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
     description:
       'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
@@ -103,7 +107,11 @@ export const metadata: Metadata = {
   themeColor: '#6366f1',
 
   // Canonical e Metadata base
+
   metadataBase: new URL('https://litera-six.vercel.app'), // ✅ atualizado
+
+  metadataBase: new URL('https://litera-six.vercel.app'),
+
 
   // Alternates
   alternates: {
@@ -119,6 +127,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
+
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
         {/* Schema.org JSON-LD */}
@@ -170,6 +179,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* DNS prefetch */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
+
+    <html lang="pt-br" suppressHydrationWarning>
+
       <body className="min-h-screen transition-colors duration-300 dark:bg-[#1e2939]">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <div className="flex flex-col min-h-screen dark:bg-[#1e293be6]">

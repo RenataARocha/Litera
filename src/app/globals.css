@@ -109,3 +109,8 @@ body {
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* .dark {
+  --color-text: #FFFFFF;
+  --color-bg: #1E293B;
+} */
