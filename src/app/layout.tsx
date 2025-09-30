@@ -171,7 +171,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-screen transition-colors duration-300">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-h-screen dark:bg-slate-800/90">
             <Header />
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />
