@@ -14,6 +14,7 @@ model author {
   book      book[]
 }
 
+// Modelo book CORRIGIDO (com a nova linha 'currentReading')
 model book {
   id          Int          @id @default(autoincrement())
   title       String
@@ -30,6 +31,9 @@ model book {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now())
   author      author       @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+
+  // NOVO: Relação para as leituras atuais
+  currentReading CurrentReading[] // <--- ESTA LINHA FOI INSERIDA NO MODELO ORIGINAL
 
   @@index([authorId], map: "Book_authorId_fkey")
 }
@@ -48,4 +52,46 @@ enum book_rating {
   THREE_STARS
   FOUR_STARS
   FIVE_STARS
+}
+
+// --- NOVOS MODELOS PARA LEITURAS ATUAIS ---
+
+model CurrentReading {
+  id Int @id @default(autoincrement())
+
+  bookId Int
+  book   book @relation(fields: [bookId], references: [id])
+
+  currentPage Int     @default(0)
+  isPaused    Boolean @default(false)
+
+  startedAt       DateTime  @default(now())
+  predictedFinish DateTime?
+
+  progressUpdates ProgressUpdate[]
+  notes           ReadingNote[]
+
+  @@unique([bookId])
+}
+
+model ProgressUpdate {
+  id Int @id @default(autoincrement())
+
+  readingId Int
+  reading   CurrentReading @relation(fields: [readingId], references: [id])
+
+  pagesRead      Int
+  readingTimeMin Int
+  date           DateTime @default(now())
+}
+
+model ReadingNote {
+  id Int @id @default(autoincrement())
+
+  readingId Int
+  reading   CurrentReading @relation(fields: [readingId], references: [id])
+
+  pageReference Int?
+  content       String   @db.Text
+  createdAt     DateTime @default(now())
 }
