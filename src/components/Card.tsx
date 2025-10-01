@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import BookCard from './BookCard';
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 
 type BooksGridProps = {
   books: Book[];

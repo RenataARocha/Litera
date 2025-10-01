@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Book, Stats, DashboardProps, GoalCircleProps, Color } from '@/types/types';
+import { Book, Stats, DashboardProps, GoalCircleProps, Color } from '@/components/types/types';
 
 // --- DisplayGoalCircle (Definição para uso dentro do Home) ---
 

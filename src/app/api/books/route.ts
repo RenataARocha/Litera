@@ -38,6 +38,51 @@ const mapRatingToDB = (rating: number): BookRating| null => {
   }
 };
 
+const mapStatusToFrontend = (dbStatus: BookStatus): string => {
+  switch (dbStatus) {
+    case BookStatus.READ:
+      return 'Lido';
+    case BookStatus.READING:
+      return 'Lendo';
+    case BookStatus.TO_READ:
+      return 'Quero Ler';
+    case BookStatus.PAUSED:
+      return 'Pausado';
+    case BookStatus.ABANDONED:
+      return 'Abandonado'; 
+      return 'Não Lido';
+  }
+};
+
+export async function GET() {
+  try {
+    const books = await prisma.book.findMany({
+      include: {
+        author: true,
+      },
+
+      orderBy: {
+        title: 'asc', 
+      },
+    });
+
+    const formattedBooks = books.map(book => ({
+      ...book,
+      author: book.author ? book.author.name : 'Autor Desconhecido', 
+      status: mapStatusToFrontend(book.status),
+      rating: book.rating ? book.rating.length : 0, 
+    }));
+
+    return NextResponse.json(formattedBooks, { status: 200 });
+  } catch (error) {
+    console.error('Erro ao buscar livros:', error);
+    return NextResponse.json(
+      { message: 'Erro interno do servidor ao buscar os livros.' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const bookData = await request.json();
