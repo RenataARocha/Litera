@@ -255,7 +255,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Atividade Recente */}
                 <div
-                    className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100"
+                    className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 
+                    dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.5rem' }}
                 >
                     <div className="flex justify-between items-center mb-6">
@@ -265,11 +266,12 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                         </Link>
                     </div>
 
-                    <div className="space-y-5">
+                    <div className="space-y-5 flex flex-col gap-y-4">
                         {(recentActivity ?? []).map((book, index) => (
                             <div
                                 key={index}
-                                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors"
+                                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors
+                                dark:bg-blue-200/10 dark:hover:bg-blue-200/20"
                                 style={{ padding: '0.75rem 0.5rem' }}
                             >
                                 <Image
@@ -282,13 +284,13 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                                 />
                                 <div className="flex-1 min-w-0">
                                     <h3
-                                        className="font-semibold text-gray-800 text-sm truncate"
+                                        className="font-semibold text-gray-800 text-sm truncate dark:text-blue-400"
                                         style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}
                                     >
                                         {book.title}
                                     </h3>
                                     <p
-                                        className="text-xs text-gray-500"
+                                        className="text-xs text-gray-500 dark:text-blue-200"
                                         style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}
                                     >
                                         {book.author}
@@ -296,9 +298,9 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
 
                                     <div className="flex items-center gap-2">
                                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
-                                            book.status === 'Lendo' ? 'bg-green-100 text-green-700' :
+                                            book.status === 'Lendo' ? 'bg-green-100 text-green-700 dark:text-green-400' :
                                                 'bg-gray-100 text-gray-700'
-                                            }`}>
+                                            } dark:bg-transparent dark:text-blue-200 `}>
                                             {book.status}
                                         </span>
 
