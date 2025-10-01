@@ -78,7 +78,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                 style={{ padding: "2rem", marginBottom: "2rem" }}
             >
                 <div className="z-10">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold dark:text-blue-400">
                         Bem-vindo de volta!
                     </h1>
                     <p
@@ -260,7 +260,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     style={{ padding: '1.5rem' }}
                 >
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-lg font-bold text-gray-800">Atividade Recente</h2>
+                        <h2 className="text-lg font-bold text-gray-800 dark:text-blue-400">Atividade Recente</h2>
                         <Link href="/books" className="text-sm text-blue-500 hover:text-blue-600 transition-colors">
                             Ver tudo
                         </Link>
@@ -328,30 +328,33 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
 
                 {/* Ações Rápidas */}
                 <div
-                    className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7"
-                    style={{ padding: '1.5rem', marginTop: '1rem' }}
+                    className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
+                    style={{ padding: '1.5rem'}}
                 >
-                    <h2 className="text-lg font-bold text-gray-800">Ações Rápidas</h2>
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-blue-400">Ações Rápidas</h2>
 
                     <div className="flex flex-col gap-3">
                         <Link
                             href="/books/new"
-                            className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group"
+                            className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
+                            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200"
                         >
                             <FaPlus className="text-sm group-hover:animate-bounce" />
                             Adicionar Livro
                         </Link>
 
-                        <button onClick={() => router.push('/books')} className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group">
-                            <FaSearch className="text-base text-gray-400 group-hover:animate-bounce" />
+                        <button onClick={() => router.push('/books')} className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group
+                        dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent">
+                            <FaSearch className="text-base text-gray-400 dark:text-blue-200 group-hover:animate-bounce" />
                             Explorar Biblioteca
                         </button>
 
                         <Link
                             href="/leituras-atuais"
-                            className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group"
+                            className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group
+                            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
                         >
-                            <FaBook className="text-base text-gray-400 group-hover:animate-bounce" />
+                            <FaBook className="text-base text-gray-400 dark:text-blue-200 group-hover:animate-bounce" />
                             Leituras Atuais
                         </Link>
                     </div>
@@ -361,11 +364,12 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
 
             {/* Metas de Leitura */}
             <div
-                className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg"
+                className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/20 shadow-lg
+                dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none dark:shadow-sm"
                 style={{ padding: "1.5rem" }}
             >
                 <h2
-                    className="text-xl font-bold text-gray-900"
+                    className="text-xl font-bold text-gray-900 dark:text-blue-400"
                     style={{ marginBottom: "1.5rem" }}
                 >
                     Metas de Leitura 2024
