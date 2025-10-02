@@ -18,7 +18,7 @@ export default function Cadastro() {
     return senha.length >= 6;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro('');
 
@@ -39,15 +39,35 @@ export default function Cadastro() {
 
     setCarregando(true);
 
-    setTimeout(() => {
-      console.log('Cadastro:', { nome, email, senha });
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome, email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao fazer cadastro');
+      }
+
+      // Salvar token e dados do usuário
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Redirecionar
+      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
+      localStorage.removeItem('redirectAfterLogin');
+      localStorage.removeItem('loginMessage');
       
-      localStorage.setItem('authToken', 'novo-usuario-token-123');
+      window.location.href = redirectPath;
       
-      window.location.href = '/';
-      
+    } catch (error) {
+      setErro(error.message);
+    } finally {
       setCarregando(false);
-    }, 1500);
+    }
   };
 
   const forcaSenha = () => {

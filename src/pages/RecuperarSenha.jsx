@@ -9,11 +9,10 @@ export default function RecuperarSenha() {
   const [enviado, setEnviado] = useState(false);
   const [erro, setErro] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro('');
     
-    // Validação básica de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErro('Por favor, insira um email válido');
@@ -22,16 +21,26 @@ export default function RecuperarSenha() {
 
     setCarregando(true);
 
-    // Simula envio de email
-    setTimeout(() => {
-      console.log('Recuperar senha para:', email);
-      
-      // Aqui você faria a chamada real para sua API
-      // await recuperarSenha(email);
-      
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao enviar email');
+      }
+
       setEnviado(true);
+      
+    } catch (error) {
+      setErro(error.message);
+    } finally {
       setCarregando(false);
-    }, 2000);
+    }
   };
 
   const handleVoltar = () => {

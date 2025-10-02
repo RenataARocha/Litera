@@ -9,14 +9,13 @@ export default function Login() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [lembrarMe, setLembrarMe] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(false);
 
   useEffect(() => {
-    // Pega a mensagem salva quando foi redirecionado
     const savedMessage = localStorage.getItem('loginMessage');
     if (savedMessage) {
       setMensagem(savedMessage);
-      // Remove após exibir
       setTimeout(() => {
         localStorage.removeItem('loginMessage');
         setMensagem('');
@@ -27,22 +26,37 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCarregando(true);
+    setErro('');
 
-    // Simula chamada de API
-    setTimeout(() => {
-      // Aqui você faria a chamada real para sua API
-      console.log('Login:', { email, senha, lembrarMe });
-      
-      // Exemplo: Salvar token
-      localStorage.setItem('authToken', 'exemplo-token-123');
-      
-      // Redirecionar de volta
-      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/login';
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao fazer login');
+      }
+
+      // Salvar token e dados do usuário
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Redirecionar para a página anterior ou home
+      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
       localStorage.removeItem('redirectAfterLogin');
+      localStorage.removeItem('loginMessage');
+      
       window.location.href = redirectPath;
       
+    } catch (error) {
+      setErro(error.message);
+    } finally {
       setCarregando(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -51,13 +65,11 @@ export default function Login() {
     style={{ padding: "1rem" }}
   >
     <div className="w-full max-w-md">
-      {/* Card Principal */}
       <div 
         className="bg-white rounded-2xl shadow-xl border border-blue-100" 
         style={{ padding: "2rem" }}
       >
         
-        {/* Header */}
         <div className="text-center" style={{ marginBottom: "2rem" }}>
           <div 
             className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg" 
@@ -73,7 +85,6 @@ export default function Login() {
           <p className="text-gray-600">Entre com suas credenciais para continuar</p>
         </div>
 
-        {/* Mensagem de Aviso */}
         {mensagem && (
           <div 
             className="bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm animate-pulse" 
@@ -83,10 +94,17 @@ export default function Login() {
           </div>
         )}
 
-        {/* Formulário */}
+        {erro && (
+          <div 
+            className="bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" 
+            style={{ marginBottom: "1.5rem", padding: "1rem" }}
+          >
+            {erro}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           
-          {/* Email */}
           <div>
             <label className="block text-sm font-semibold text-gray-700" style={{ marginBottom: "0.5rem" }}>
               Email
@@ -107,7 +125,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Senha */}
           <div>
             <label className="block text-sm font-semibold text-gray-700" style={{marginTop: '0.6rem'}}>
               Senha
@@ -136,7 +153,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Lembrar-me e Esqueceu senha */}
           <div className="flex items-center justify-between" style={{marginTop: '0.6rem'}}>
             <label className="flex items-center cursor-pointer group">
               <input
@@ -157,7 +173,6 @@ export default function Login() {
             </a>
           </div>
 
-          {/* Botão Entrar */}
           <button
             type="submit"
             disabled={carregando}
@@ -178,7 +193,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Cadastro */}
         <div className="text-center" style={{ marginTop: "1.5rem" }}>
           <p className="text-gray-600">
             Não tem uma conta?{' '}
@@ -192,12 +206,10 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Footer */}
       <p className="text-center text-gray-500 text-sm" style={{ marginTop: "1.5rem" }}>
         © 2024 Litera. Todos os direitos reservados.
       </p>
     </div>
   </div>
 );
-
 }
