@@ -18,7 +18,8 @@ model book {
   id          Int          @id @default(autoincrement())
   title       String
   year        Int?
-  pages       Int
+  pages       Int?
+  finishedPages Int? @default(0)
   genre       String?
   status      book_status  @default(TO_READ)
   rating      book_rating?

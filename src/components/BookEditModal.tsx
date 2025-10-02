@@ -1,91 +1,122 @@
 'use client';
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 import PersonalNotes from './PersonalNotes';
 
 type BookEditModalProps = {
-    book: Book;
-    isOpen: boolean;
-    onClose: () => void;
-    onSave?: (book: Book) => void;
-    onBack?: () => void;
+  book: Book | null; // mais seguro caso o parent passe null/undefined temporariamente
+  isOpen: boolean;
+  onClose: () => void;
+  onSave?: (book: Book) => void;
+  onBack?: () => void;
 };
 
 export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }: BookEditModalProps) {
-    // Estados controlados
-    const [title, setTitle] = useState(book.title || "");
-    const [author, setAuthor] = useState(book.author || "");
-    const [year, setYear] = useState<string | number>(book.year || "");
-    const [genre, setGenre] = useState(book.genre || "");
-    const [status] = useState(book.status || "não lido");
-    const [description, setDescription] = useState(book.description || "");
-    const [notes, setNotes] = useState(book.notes || "");
-    const [isbn, setIsbn] = useState(book.isbn || "");
-    const [rating, setRating] = useState(book.rating || 0);
-    const [coverUrl, setCoverUrl] = useState(book.cover || "");
-    const [coverFile, setCoverFile] = useState<string | null>(null);
-    const [progress, setProgress] = useState(0);
-    const [message, setMessage] = useState("");
+  if (!isOpen) return null;
+  if (!book) return null;
 
-    // Salvar alterações
-    // Salvar alterações
-    const handleSave = (e: React.FormEvent) => {
-        e.preventDefault();
-        const updatedBook: Book = {
-            ...book,
-            title,
-            author,
-            year: year ? Number(year) : undefined,
-            genre,
-            status,
-            description,
-            notes,
-            isbn,
-            rating,
-            cover: coverFile || coverUrl
-        };
-        if (onSave) onSave(updatedBook);
-        onClose();
-    };
-    // Atualiza progresso dinamicamente
-    useEffect(() => {
-        let filled = 0;
+  const [title, setTitle] = useState<string>(() => book?.title ?? "");
+  const [author, setAuthor] = useState<string>(() => book?.author ?? "");
+  const [year, setYear] = useState<string | number>(() => book?.year ?? "");
+  const [genre, setGenre] = useState<string>(() => book?.genre ?? "");
+  const [status, setStatus] = useState<string>(() => book?.status ?? "não lido");
+  const [description, setDescription] = useState<string>(() => book?.description ?? "");
+  const [notes, setNotes] = useState<string>(() => book?.notes ?? "");
+  const [isbn, setIsbn] = useState<string>(() => book?.isbn ?? "");
+  const [rating, setRating] = useState<number>(() => Number(book?.rating ?? 0));
+  const [coverUrl, setCoverUrl] = useState<string>(() => book?.cover ?? "");
+  const [coverFile, setCoverFile] = useState<string | null>(null);
+  // pages e finishedPages tratados com segurança — convertemos para number evitando erros
+  const [pages, setPages] = useState<number>(() => {
+    const p = (book as any)?.pages;
+    return (p !== undefined && p !== null) ? Number(p) || 0 : 0;
+  });
+  const [finishedPages, setFinishedPages] = useState<number>(() => {
+    const fp = (book as any)?.finishedPages;
+    return (fp !== undefined && fp !== null) ? Number(fp) || 0 : 0;
+  });
 
-        if (title.trim() !== "") filled++;
-        if (author.trim() !== "") filled++;
-        if (year.toString().trim() !== "" && Number(year) > 0) filled++;
-        if (genre.trim() !== "") filled++;
-        if (description.trim() !== "") filled++;
-        if (notes.trim() !== "") filled++;
-        if (isbn.trim() !== "") filled++;
-        if (rating && rating > 0) filled++;
-        if ((coverUrl && coverUrl.trim() !== "") || coverFile) filled++;
+  const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState("");
 
-        const total = 8;
-        const percent = Math.min(Math.round((filled / total) * 100), 100); // nunca passa de 100
-        setProgress(percent);
+  // Sincroniza os estados quando a prop `book` mudar (fetch async / seleção diferente)
+  useEffect(() => {
+    if (!book) return;
 
-        if (percent === 0) setMessage("Comece preenchendo o formulário! 📖");
-        else if (percent < 50) setMessage("Ótimo começo! Continue ✨");
-        else if (percent < 100) setMessage("Quase lá, não desista 💪");
-        else setMessage("Parabéns, tudo pronto! 🎉");
-    }, [title, author, year, genre, description, notes, rating, coverUrl, coverFile, isbn]);
+    setTitle(book.title ?? "");
+    setAuthor(book.author ?? "");
+    setYear(book.year ?? "");
+    setGenre(book.genre ?? "");
+    setStatus(book.status ?? "não lido");
+    setDescription(book.description ?? "");
+    setNotes(book.notes ?? "");
+    setIsbn(book.isbn ?? "");
+    setRating(Number(book.rating ?? 0));
+    setCoverUrl(book.cover ?? "");
+    setCoverFile(null);
+    setPages(book.pages);
+    setFinishedPages(book.finishedPages);
+  }, [book]);
 
+  // Salvar alterações (local via onSave, sem PUT automático — mantenho seu comportamento atual)
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    // Upload de capa
-    const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setCoverFile(url);
-        }
+    const updatedBook: Book = {
+      ...book,
+      title,
+      author,
+      year: year ? Number(year) : undefined,
+      genre,
+      status,
+      description,
+      notes,
+      isbn,
+      rating,
+      cover: coverFile || coverUrl,
+      pages,
+      finishedPages,
     };
 
-    const progressColor =
-        progress < 50 ? "bg-red-400" : progress < 100 ? "bg-yellow-400" : "bg-green-500";
+    if (onSave) onSave(updatedBook);
+    onClose();
+  };
 
-    if (!isOpen) return null;
+  // Atualiza progresso dinamicamente (inclui pages/finishedPages nos dependentes)
+  useEffect(() => {
+    let filled = 0;
+    if (title.trim() !== "") filled++;
+    if (author.trim() !== "") filled++;
+    if (String(year).trim() !== "" && Number(year) > 0) filled++;
+    if (genre.trim() !== "") filled++;
+    if (description.trim() !== "") filled++;
+    if (notes.trim() !== "") filled++;
+    if (isbn.trim() !== "") filled++;
+    if (rating && rating > 0) filled++;
+    if ((coverUrl && coverUrl.trim() !== "") || coverFile) filled++;
+
+    const total = 8;
+    const percent = Math.min(Math.round((filled / total) * 100), 100);
+    setProgress(percent);
+
+    if (percent === 0) setMessage("Comece preenchendo o formulário! 📖");
+    else if (percent < 50) setMessage("Ótimo começo! Continue ✨");
+    else if (percent < 100) setMessage("Quase lá, não desista 💪");
+    else setMessage("Parabéns, tudo pronto! 🎉");
+  }, [title, author, year, genre, description, notes, rating, coverUrl, coverFile, isbn, pages, finishedPages]);
+
+  // Upload de capa
+  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setCoverFile(url);
+    }
+  };
+
+  const progressColor = progress < 50 ? "bg-red-400" : progress < 100 ? "bg-yellow-400" : "bg-green-500";
+
 
     return (
         <div
@@ -199,12 +230,25 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     </label>
                                     <input
                                         type="number"
-                                        defaultValue="250"
+                                        defaultValue={pages}
+                                        onChange={(e) => setPages(Number(e.target.value))}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Ex: 300"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     />
                                 </div>
+
+                                <div>
+                                    <label>Páginas Lidas</label>
+                                    <input
+                                        type="number"
+                                        value={finishedPages}
+                                        onChange={(e) => setFinishedPages(Number(e.target.value))}
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Ex: 120"
+                                        />
+                                    </div>
+
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.25rem' }}>
                                         Gênero
@@ -238,7 +282,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     </label>
                                     <select
                                         value={status}
-                                        onChange={(e) => setYear(e.target.value)}
+                                        onChange={(e) => setStatus(e.target.value)}
                                         className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     >

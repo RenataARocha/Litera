@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 import BookCover from './BookCover';
 import StatusBadge from './StatusBadge';
 import StarRating from './StarRating';
