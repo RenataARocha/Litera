@@ -104,7 +104,8 @@ export default function FilterBar({
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300
+            dark:bg-blue-200/20 dark:group-hover:bg-blue-200/20"
             style={{
                 paddingLeft: '0.9rem',
                 paddingRight: '2.5rem',
@@ -142,7 +143,13 @@ export default function FilterBar({
                         value={query}
                         onChange={(e) => onQueryChange(e.target.value)}
                         aria-label="Campo de busca"
-                        className="w-full h-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 placeholder-gray-400 transition-all duration-300"
+                        className="  w-full h-12 rounded-xl 
+  border border-gray-200 dark:border-slate-600
+  bg-white dark:bg-slate-800
+  text-gray-700 dark:text-blue-200
+  placeholder-gray-400 dark:placeholder-blue-200
+  focus:outline-none focus:ring-2 focus:ring-blue-500
+  transition-all duration-300"
                         style={{
                             paddingLeft: '2.75rem',
                             paddingRight: query ? '2.5rem' : '1rem',

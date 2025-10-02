@@ -83,10 +83,10 @@ export default function BooksPage() {
 
       {/* Header da página */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="text-3xl font-bold text-gray-900" style={{ marginBottom: '0.5rem' }}>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-blue-400" style={{ marginBottom: '0.5rem' }}>
           Sua Biblioteca
         </h1>
-        <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
+        <p className="text-gray-600 dark:text-blue-200" style={{ marginBottom: '1.5rem' }}>
           Descubra, organize e acompanhe sua jornada literária
         </p>
       </div>
