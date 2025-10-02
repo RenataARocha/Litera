@@ -3,15 +3,20 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun } from 'react-icons/fa';
+import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun, FaSignInAlt } from 'react-icons/fa';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+
+    // Verifica se o usuário está logado
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
   }, []);
 
   const navLinks = [
@@ -27,6 +32,23 @@ export default function Header() {
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setIsLoggedIn(false);
+    window.location.href = '/';
+  };
+
+  // Função para proteger rotas
+  const handleProtectedAction = (href) => {
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', href);
+      localStorage.setItem('loginMessage', 'Faça login para continuar');
+      window.location.href = '/login';
+    } else {
+      window.location.href = href;
+    }
   };
 
   return (
@@ -50,7 +72,7 @@ export default function Header() {
             style={{ gap: '0.5rem' }}
           >
             <div className="relative">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg  animate-glow">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
                 <FaBookOpen className="text-white text-sm lg:text-lg" />
               </div>
               <div
@@ -107,9 +129,9 @@ export default function Header() {
               }}
             ></div>
 
-            {/* Botão Novo Livro */}
-            <Link
-              href="/books/new"
+            {/* Botão Novo Livro - com proteção de login */}
+            <button
+              onClick={() => handleProtectedAction('/books/new')}
               className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               style={{
                 gap: '0.5rem',
@@ -118,7 +140,34 @@ export default function Header() {
             >
               <FaPlus className="text-xs" />
               <span className="hidden xl:inline">Novo Livro</span>
-            </Link>
+            </button>
+
+            {/* Botão Login/Logout */}
+            {!isLoggedIn ? (
+              <Link
+                href="/login"
+                className="flex items-center text-primary-600 dark:text-primary-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                style={{
+                  gap: '0.5rem',
+                  padding: '0.5rem 0.75rem'
+                }}
+              >
+                <FaSignInAlt className="text-sm" />
+                <span className="hidden xl:inline">Faça login</span>
+              </Link>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                style={{
+                  gap: '0.5rem',
+                  padding: '0.5rem 0.75rem'
+                }}
+              >
+                <FaSignInAlt className="text-sm rotate-180" />
+                <span className="hidden xl:inline">Sair</span>
+              </button>
+            )}
 
             {/* Botão Tema */}
             <button
@@ -199,11 +248,13 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* Botão Novo Livro mobile */}
-            <Link
-              href="/books/new"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
+            {/* Botão Novo Livro mobile - com proteção */}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                handleProtectedAction('/books/new');
+              }}
+              className="w-full flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
               style={{
                 gap: '0.75rem',
                 padding: '0.5rem 0.75rem',
@@ -212,7 +263,41 @@ export default function Header() {
             >
               <FaPlus className="text-sm" />
               <span className="text-sm font-medium">Novo Livro</span>
-            </Link>
+            </button>
+
+            {/* Divisor */}
+            <div className="border-t border-white/20 dark:border-gray-700 my-2"></div>
+
+            {/* Botão Login/Logout mobile */}
+            {!isLoggedIn ? (
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center text-primary-600 dark:text-primary-400 font-medium rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                style={{
+                  gap: '0.75rem',
+                  padding: '0.5rem 0.75rem'
+                }}
+              >
+                <FaSignInAlt className="text-sm" />
+                <span className="text-sm font-medium">Faça login</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                style={{
+                  gap: '0.75rem',
+                  padding: '0.5rem 0.75rem'
+                }}
+              >
+                <FaSignInAlt className="text-sm rotate-180" />
+                <span className="text-sm font-medium">Sair</span>
+              </button>
+            )}
           </div>
         </nav>
       )}

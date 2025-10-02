@@ -16,26 +16,27 @@ model author {
 
 // Modelo book CORRIGIDO (com a nova linha 'currentReading')
 model book {
-  id          Int          @id @default(autoincrement())
-  title       String
-  year        Int?
-  pages       Int
-  genre       String?
-  status      book_status  @default(TO_READ)
-  rating      book_rating?
-  cover       String       @db.Text
-  isbn        String       @unique(map: "Book_isbn_key")
-  description String       @db.Text
-  notes       String?      @db.Text
-  authorId    Int
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
-  author      author       @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
-
-  // NOVO: Relação para as leituras atuais
-  currentReading CurrentReading[] // <--- ESTA LINHA FOI INSERIDA NO MODELO ORIGINAL
+  id             Int              @id @default(autoincrement())
+  title          String
+  year           Int?
+  pages          Int
+  genre          String?
+  status         book_status      @default(TO_READ)
+  rating         book_rating?
+  cover          String           @db.Text
+  isbn           String           @unique(map: "Book_isbn_key")
+  description    String           @db.Text
+  notes          String?          @db.Text
+  authorId       Int
+  userId         String? // ← Adicione este campo
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  author         author           @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+  user           User?            @relation(fields: [userId], references: [id]) // ← Adicione esta relação
+  currentReading CurrentReading[]
 
   @@index([authorId], map: "Book_authorId_fkey")
+  @@index([userId]) // ← Adicione este índice
 }
 
 enum book_status {
@@ -94,4 +95,17 @@ model ReadingNote {
   pageReference Int?
   content       String   @db.Text
   createdAt     DateTime @default(now())
+}
+
+model User {
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  password         String
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  books book[]
 }
