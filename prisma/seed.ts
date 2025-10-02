@@ -1,5 +1,4 @@
-import { PrismaClient, BookStatus, BookRating } from '@prisma/client';
-
+import { PrismaClient, book_status, book_rating } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -23,7 +22,7 @@ async function main() {
       update: {},
       create: { name },
     });
-    authors[name] = author.id; // salvar o ID real do autor
+    authors[name] = author.id;
   }
 
   console.log("Autores criados.");
@@ -35,8 +34,8 @@ async function main() {
       year: 1996,
       pages: 694,
       genre: 'Fantasia',
-      status: BookStatus.READ,
-      rating: BookRating.FIVE_STARS,
+      status: book_status.READ,  // ← Mudei para book_status
+      rating: book_rating.FIVE_STARS,  // ← Mudei para book_rating
       cover: 'url_da_capa_1',
       isbn: '978-85-8041-356-2',
       description: 'Primeiro livro da série As Crônicas de Gelo e Fogo.',
@@ -48,8 +47,8 @@ async function main() {
       year: 1954,
       pages: 1178,
       genre: 'Fantasia',
-      status: BookStatus.READING,
-      rating: BookRating.FIVE_STARS,
+      status: book_status.READING,  // ← Mudei
+      rating: book_rating.FIVE_STARS,  // ← Mudei
       cover: 'url_da_capa_2',
       isbn: '978-85-3330-221-5',
       description: 'A épica jornada de Frodo Bolseiro.',
@@ -61,8 +60,8 @@ async function main() {
       year: 1949,
       pages: 328,
       genre: 'Distopia',
-      status: BookStatus.TO_READ,
-      rating: BookRating.FIVE_STARS,
+      status: book_status.TO_READ,  // ← Mudei
+      rating: book_rating.FIVE_STARS,  // ← Mudei
       cover: 'url_da_capa_3',
       isbn: '978-85-3590-942-0',
       description: 'Um clássico sobre totalitarismo.',
@@ -74,8 +73,8 @@ async function main() {
       year: 1997,
       pages: 223,
       genre: 'Fantasia',
-      status: BookStatus.READ,
-      rating: BookRating.FOUR_STARS,
+      status: book_status.READ,  // ← Mudei
+      rating: book_rating.FOUR_STARS,  // ← Mudei
       cover: 'url_da_capa_4',
       isbn: '978-85-3251-101-0',
       description: 'O início da saga do bruxo mais famoso.',
@@ -87,8 +86,8 @@ async function main() {
       year: 1899,
       pages: 256,
       genre: 'Romance',
-      status: BookStatus.READ,
-      rating: BookRating.FOUR_STARS,
+      status: book_status.READ,  // ← Mudei
+      rating: book_rating.FOUR_STARS,  // ← Mudei
       cover: 'url_da_capa_5',
       isbn: '978-85-8285-060-0',
       description: 'Machado de Assis e a dúvida sobre Capitu.',
