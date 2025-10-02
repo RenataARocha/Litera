@@ -140,7 +140,7 @@ const handleDelete = async (bookId: number) => {
 
       {/* Informações dos resultados */}
       <div style={{ marginBottom: '0.9rem', marginTop: '1rem' }}>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-blue-400">
           Mostrando {filtered.length} de {books.length} livros
           {hasActiveFilters && (
             <span className="text-sm text-blue-600" style={{ marginLeft: '0.5rem' }}>
@@ -172,7 +172,8 @@ const handleDelete = async (bookId: number) => {
         </div>
       ) : (
         <div
-          className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl shadow-md"
+          className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl 
+          shadow-md"
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
           <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
