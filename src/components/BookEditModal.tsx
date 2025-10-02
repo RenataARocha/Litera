@@ -265,6 +265,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                         onChange={(e) => setFinishedPages(Number(e.target.value))}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Ex: 120"
+                                        style={{ padding: '0.5rem 0.7rem' }}
                                         />
                                     </div>
 
