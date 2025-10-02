@@ -144,12 +144,12 @@ export default function FilterBar({
                         onChange={(e) => onQueryChange(e.target.value)}
                         aria-label="Campo de busca"
                         className="  w-full h-12 rounded-xl 
-  border border-gray-200 dark:border-slate-600
-  bg-white dark:bg-slate-800
-  text-gray-700 dark:text-blue-200
-  placeholder-gray-400 dark:placeholder-blue-200
-  focus:outline-none focus:ring-2 focus:ring-blue-500
-  transition-all duration-300"
+                                    border border-gray-200 dark:border-blue-200/20
+                                    bg-white dark:bg-slate-800/20 dark:hover:border-[#3b82f6]
+                                    text-gray-700 dark:text-blue-200
+                                    placeholder-gray-400 dark:placeholder-blue-200
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                                    transition-all duration-300"
                         style={{
                             paddingLeft: '2.75rem',
                             paddingRight: query ? '2.5rem' : '1rem',
@@ -262,7 +262,7 @@ export default function FilterBar({
             {/* Filtros */}
             <motion.div
                 variants={itemVariants}
-                className="flex flex-wrap items-center"
+                className="flex flex-wrap items-center "
                 style={{ gap: '1rem', paddingLeft: '1rem' }}
                 role="group"
                 aria-label="Filtros de busca"
@@ -275,7 +275,10 @@ export default function FilterBar({
                     <motion.select
                         id="genre-filter"
                         aria-label="Filtro de gênero"
-                        className="w-full h-12 cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300"
+                        className="w-full h-12 cursor-pointer rounded-xl border border-gray-200 focus:outline-none 
+                        focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none 
+                        transition-all duration-200 hover:border-gray-300 dark:hover:border-[#3b82f6]
+                        dark:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
                         value={genre}
                         onChange={(e) => onGenreChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}
@@ -307,7 +310,11 @@ export default function FilterBar({
                     <motion.select
                         id="status-filter"
                         aria-label="Filtro de status"
-                        className="w-full h-12 cursor-pointer rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all duration-200 hover:border-gray-300"
+                        className="w-full h-12 cursor-pointer rounded-xl border border-gray-200 focus:outline-none 
+                        focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 min-w-[160px] appearance-none transition-all 
+                        duration-200 hover:border-gray-300
+                        dark:hover:border-[#3b82f6]
+                        dark:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
                         value={status}
                         onChange={(e) => onStatusChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}
