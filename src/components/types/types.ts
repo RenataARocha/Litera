@@ -13,6 +13,8 @@ export type Book = {
   status: string;
   lastRead: string
   isbn?: string
+  pages: number;          
+  finishedPages: number;
 };
 
 export type Color = 'blue' | 'green' | 'purple' | 'orange';

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import BookCard from "@/components/BookCard";
 import FilterBar from "@/components/FilterBar";
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 
 export default function BooksPage() {
   const router = useRouter();
@@ -13,13 +13,26 @@ export default function BooksPage() {
   const [genre, setGenre] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  // Consumo do JSON
-  useEffect(() => {
-    fetch("/books.json")
-      .then((res) => res.json())
-      .then((data: Book[]) => setBooks(data))
-      .catch((err) => console.error("Erro ao carregar livros: ", err));
-  }, []);
+// Consumo da API Route
+useEffect(() => {
+  const fetchBooks = async () => {
+    try {
+      // Mude para o caminho da sua API Route
+      const res = await fetch("/api/books"); 
+
+      if (!res.ok) {
+        throw new Error("Falha ao buscar livros da API");
+      }
+
+      const data: Book[] = await res.json();
+      setBooks(data);
+    } catch (err) {
+      console.error("Erro ao carregar livros: ", err);
+    }
+  };
+
+  fetchBooks();
+}, []);
 
   //Mapeia todos os gêneros
     const allGenresWithNull = books.map((b) => b.genre);
@@ -57,10 +70,32 @@ export default function BooksPage() {
     router.push(`/books/edit/${book.id}`);
   };
 
-  const handleDelete = (bookId: number) => {
-    console.log("Excluindo livro:", bookId);
-    setBooks(books.filter(book => book.id !== bookId));
-  };
+// app/books/page.tsx (dentro da função BooksPage)
+
+// Handlers
+// ... (handleEdit, handleDetails)
+
+const handleDelete = async (bookId: number) => {
+    if (!window.confirm("Tem certeza que deseja remover este livro da sua biblioteca?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/books/${bookId}`, {
+            method: 'DELETE',
+        });
+
+        if (!res.ok) {
+            throw new Error("Falha ao excluir o livro no servidor.");
+        }
+        setBooks(books.filter(book => book.id !== bookId));
+        alert('Livro removido com sucesso!');
+        
+    } catch (error) {
+        console.error("Erro ao excluir livro:", error);
+        alert('Erro ao excluir livro. Tente novamente.');
+    }
+};
 
   const handleDetails = (book: Book) => {
     router.push(`/books/${book.id}`);
@@ -83,10 +118,10 @@ export default function BooksPage() {
 
       {/* Header da página */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="text-3xl font-bold text-gray-900" style={{ marginBottom: '0.5rem' }}>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-blue-400" style={{ marginBottom: '0.5rem' }}>
           Sua Biblioteca
         </h1>
-        <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
+        <p className="text-gray-600 dark:text-blue-200" style={{ marginBottom: '1.5rem' }}>
           Descubra, organize e acompanhe sua jornada literária
         </p>
       </div>

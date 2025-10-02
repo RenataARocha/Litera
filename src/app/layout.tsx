@@ -173,10 +173,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* DNS prefetch */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
+      <body className="min-h-screen transition-colors duration-300">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <div className="flex flex-col min-h-screen dark:bg-slate-800/90 ">
 
-      <body className="min-h-screen transition-colors duration-300 dark:bg-[#1e2939]">
-        <ThemeWrapper>
-          <div className="flex flex-col min-h-screen dark:bg-[#1e293be6]">
             <Header />
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />

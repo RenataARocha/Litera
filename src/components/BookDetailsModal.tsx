@@ -1,6 +1,6 @@
 'use client';
 import Image from "next/image";
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 import StarRating from './StarRating';
 import Timer from "./TimerBook";
 
