@@ -15,6 +15,7 @@ export type Book = {
   isbn?: string
   pages: number;          
   finishedPages: number;
+  createdAt: string;
 };
 
 export type Color = 'blue' | 'green' | 'purple' | 'orange';

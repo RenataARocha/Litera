@@ -123,7 +123,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             style={{ marginBottom: "0.75rem" }}
           >
             <span>📅 {book.year}</span>
-            <span>📄 250p</span>
+            <span>📄 {book.pages}</span>
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
