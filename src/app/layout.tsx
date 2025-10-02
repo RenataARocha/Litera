@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import Header from "@/components/Header";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import ToasterClient from "@/components/ToasterClient";
-import ThemeWrapper from "@/components/ThemeWrapper";
+import {ThemeProvider} from 'next-themes';
 
 const SITE_URL = 'https://litera-six.vercel.app';
 
@@ -182,7 +182,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ToasterClient />
             <ScrollToTopButton />
           </div>
-        </ThemeWrapper>
+        </ThemeProvider>
 
         {/* PONTO CRÍTICO: Raiz para Modais (React Portals) */}
         <div id="modal-root" />
