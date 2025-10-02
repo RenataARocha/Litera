@@ -1,9 +1,56 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Importado 'useCallback'
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
 
-// Componente de transição para páginas
+// =================================================================
+// 1. INTERFACES (Definição dos tipos de dados que virão da API)
+// =================================================================
+
+interface Book {
+    id: number;
+    title: string;
+    pages: number; // Total de páginas do livro
+    cover: string | null;
+    author: {
+        name: string;
+    };
+}
+
+interface ProgressUpdate {
+    id: number;
+    pagesRead: number;
+    readingTimeMin: number;
+    date: string; // Ex: "2024-09-29T10:00:00.000Z"
+}
+
+interface CurrentReading {
+    id: number;
+    bookId: number;
+    currentPage: number;
+    startedAt: string; // Data de início
+    isPaused: boolean;
+    book: Book;
+    progressUpdates: ProgressUpdate[];
+}
+
+// Interface para o livro com o progresso já calculado (para uso no frontend)
+interface BookWithProgress extends CurrentReading {
+    percentage: number;
+    authorName: string;
+}
+
+// Interface para as estatísticas agregadas
+interface ReadingStats {
+    pagesToday: number;
+    consecutiveDays: number;
+    weeklyPace: number;
+    averageTimeMin: number;
+}
+
+// =================================================================
+// Componente de transição para páginas (Mantido)
+// =================================================================
 const PageTransition = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
     return (
         <div
@@ -17,41 +64,119 @@ const PageTransition = ({ children, isVisible }: { children: React.ReactNode; is
     );
 };
 
+// =================================================================
+// 2. COMPONENTE PRINCIPAL
+// =================================================================
 const LeiturasAtuais = () => {
-    const [readingData, setReadingData] = useState({
-        paginasHoje: 25,
-        diasConsecutivos: 7,
-        ritmoSemanal: 180,
-        tempoMedio: 45
+    // ESTADOS REAIS VINDO DA API
+    const [currentReadings, setCurrentReadings] = useState<BookWithProgress[]>([]);
+    const [stats, setStats] = useState<ReadingStats>({
+        pagesToday: 0,
+        consecutiveDays: 0,
+        weeklyPace: 0,
+        averageTimeMin: 0
     });
+    // O livro principal a ser exibido no card
+    const [mainReading, setMainReading] = useState<BookWithProgress | null>(null);
 
-    // Estado removido pois não é usado nesta versão demonstrativa
+    // ESTADOS DO MODAL E INPUTS (Mantidos)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-    const [selectedBook, setSelectedBook] = useState('');
     const [pagesRead, setPagesRead] = useState('');
     const [readingTime, setReadingTime] = useState('');
     const [noteText, setNoteText] = useState('');
-    const [bookProgress, setBookProgress] = useState({
-        currentPage: 150,
-        totalPages: 250,
-        percentage: 60
-    });
     const [feedback, setFeedback] = useState('');
-    const [isPaused, setIsPaused] = useState(false);
+    const [isPaused, setIsPaused] = useState(false); // Refletirá mainReading.isPaused
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
     const [isVisible, setIsVisible] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
 
-    // Animação de entrada da página
+    // --- FUNÇÕES DE LÓGICA DE DADOS ---
+
+    // Função para calcular estatísticas e o progresso (roda após o fetch)
+    const calculateData = (readings: CurrentReading[]): { readings: BookWithProgress[], stats: ReadingStats } => {
+        if (!readings.length) {
+            return { readings: [], stats: { pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 } };
+        }
+
+        let totalPagesToday = 0;
+        let totalTimeMin = 0;
+
+        // Data de hoje no formato 'YYYY-MM-DD'
+        const today = new Date().toISOString().split('T')[0];
+
+        readings.forEach(reading => {
+            reading.progressUpdates.forEach(update => {
+                const updateDate = new Date(update.date).toISOString().split('T')[0];
+                totalTimeMin += update.readingTimeMin;
+
+                if (updateDate === today) {
+                    totalPagesToday += update.pagesRead;
+                }
+            });
+        });
+
+        // Simulação de cálculo de tempo médio (só usa as atualizações para o cálculo)
+        const numUpdates = readings.flatMap(r => r.progressUpdates).length;
+        const averageTimeMin = numUpdates > 0 ? Math.round(totalTimeMin / numUpdates) : 0;
+
+        const readingsWithProgress = readings.map(reading => {
+            const percentage = Math.round((reading.currentPage / reading.book.pages) * 100);
+            return {
+                ...reading,
+                percentage,
+                authorName: reading.book.author.name,
+            };
+        });
+
+        return {
+            readings: readingsWithProgress,
+            stats: {
+                pagesToday: totalPagesToday,
+                consecutiveDays: 7, // MOCK: Idealmente do backend
+                weeklyPace: 180, // MOCK: Idealmente do backend
+                averageTimeMin: averageTimeMin
+            }
+        };
+    };
+
+    // --- FUNÇÃO DE FETCH CORRIGIDA COM useCallback ---
+    const fetchReadings = useCallback(async () => {
+        try {
+            const response = await fetch('/api/current-readings');
+            if (!response.ok) {
+                throw new Error('Falha ao carregar leituras.');
+            }
+            const data: CurrentReading[] = await response.json();
+
+            const { readings, stats } = calculateData(data);
+            setCurrentReadings(readings);
+            setStats(stats);
+
+            // Define o livro principal como o primeiro da lista
+            if (readings.length > 0) {
+                setMainReading(readings[0]);
+                setIsPaused(readings[0].isPaused);
+            } else {
+                setMainReading(null);
+            }
+
+        } catch (error) {
+            console.error(error);
+            showFeedback('Erro ao carregar os dados. Tente novamente.');
+        }
+    }, [setCurrentReadings, setStats, setMainReading]); // Dependências do useCallback: apenas setters e showFeedback (se fosse estável)
+
+    // Animação de entrada da página e CARREGAMENTO DE DADOS
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(true);
+            fetchReadings(); // Agora fetchReadings está incluído nas dependências via useCallback
         }, 100);
         return () => clearTimeout(timer);
-    }, []);
+    }, [fetchReadings]); // 'fetchReadings' é a dependência obrigatória
 
-    // Função para navegação com transição (simulada)
+    // Função para navegação com transição (simulada) - Mantida
     const navigateWithTransition = (path: string) => {
         setIsLeaving(true);
         setIsVisible(false);
@@ -64,14 +189,15 @@ const LeiturasAtuais = () => {
         }, 400);
     };
 
-    const openUpdateModal = (bookTitle: string) => {
-        setSelectedBook(bookTitle);
-        setIsModalOpen(true);
+    // Função corrigida: removido o parâmetro bookTitle não utilizado
+    const openUpdateModal = () => {
+        if (mainReading) {
+            setIsModalOpen(true);
+        }
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedBook('');
         setPagesRead('');
         setReadingTime('');
     };
@@ -83,33 +209,53 @@ const LeiturasAtuais = () => {
 
     const saveNote = () => {
         if (noteText.trim()) {
+            // Lógica para salvar a anotação via API (POST /api/notes)
             showFeedback('Anotação salva com sucesso!');
             closeNoteModal();
         }
     };
 
-    const handleSubmit = () => {
+    // --- FUNÇÃO DE SUBMISSÃO REAL: Atualiza o progresso via API ---
+    const handleSubmit = async () => {
+        if (!mainReading) return;
+
         const pages = parseInt(pagesRead);
         const time = parseInt(readingTime);
 
-        if (pages && time) {
-            setReadingData(prev => ({
-                ...prev,
-                paginasHoje: prev.paginasHoje + pages
-            }));
+        // Novo total de páginas lidas
+        const newCurrentPage = mainReading.currentPage + pages;
 
-            setBookProgress(prev => {
-                const newCurrentPage = Math.min(prev.currentPage + pages, prev.totalPages);
-                const newPercentage = Math.round((newCurrentPage / prev.totalPages) * 100);
-                return {
-                    ...prev,
-                    currentPage: newCurrentPage,
-                    percentage: newPercentage
-                };
-            });
+        if (pages > 0 && time > 0) {
+            try {
+                const response = await fetch('/api/current-readings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        currentReadingId: mainReading.id, // ID da CurrentReading
+                        pagesRead: pages,
+                        readingTimeMin: time,
+                        // Não é necessário enviar a novaCurrentPage, o backend deve calculá-la, mas enviaremos para robustez
+                        newCurrentPage: newCurrentPage,
+                    }),
+                });
 
-            closeModal();
-            showFeedback(`Progresso atualizado! +${pages} páginas lidas`);
+                if (!response.ok) {
+                    throw new Error('Falha ao registrar progresso.');
+                }
+
+                closeModal();
+                await fetchReadings(); // Recarrega os dados para atualizar a interface
+
+                showFeedback(`Progresso atualizado! +${pages} páginas lidas de ${mainReading.book.title}`);
+
+            } catch (error) {
+                console.error('Erro ao salvar progresso:', error);
+                showFeedback('Erro ao salvar progresso. Tente novamente.');
+            }
+        } else {
+            showFeedback('Por favor, insira páginas e tempo de leitura válidos.');
         }
     };
 
@@ -118,7 +264,9 @@ const LeiturasAtuais = () => {
         setTimeout(() => setFeedback(''), 3000);
     };
 
+    // Função de Pausa (mantida com mock para isPaused)
     const togglePause = () => {
+        // Implementação real exigiria um PATCH para /api/current-readings/
         setIsPaused(!isPaused);
         if (!isPaused) {
             showFeedback('Leitura pausada. Você pode retomar a qualquer momento!');
@@ -127,8 +275,12 @@ const LeiturasAtuais = () => {
         }
     };
 
+    // =================================================================
+    // 3. JSX (RENDERIZAÇÃO)
+    // =================================================================
     return (
         <div className={`min-h-screen transition-all duration-500 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
+
             {/* Botão Voltar para Home com transição */}
             <PageTransition isVisible={isVisible}>
                 <div style={{ margin: '0.5rem' }}>
@@ -156,44 +308,17 @@ const LeiturasAtuais = () => {
                         </div>
                     </PageTransition>
 
-                    {/* Estatísticas com animação escalonada - Grid responsivo */}
+                    {/* Estatísticas com animação escalonada - USANDO O NOVO ESTADO 'stats' */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6" style={{ marginBottom: '32px' }}>
                         {[
-                            {
-                                icon: BookOpen,
-                                value: readingData.paginasHoje,
-                                label: 'Páginas Hoje',
-                                color: 'from-blue-500 to-cyan-500',
-                                animationClass: 'hover:animate-bounce'
-                            },
-                            {
-                                icon: Calendar,
-                                value: readingData.diasConsecutivos,
-                                label: 'Dias Consecutivos',
-                                color: 'from-emerald-500 to-teal-500',
-                                animationClass: 'hover:animate-pulse'
-                            },
-                            {
-                                icon: TrendingUp,
-                                value: readingData.ritmoSemanal,
-                                label: 'Páginas/Semana',
-                                color: 'from-purple-500 to-pink-500',
-                                animationClass: 'hover:animate-ping'
-                            },
-                            {
-                                icon: Clock,
-                                value: readingData.tempoMedio,
-                                label: 'Min/Dia',
-                                color: 'from-orange-500 to-red-500',
-                                animationClass: 'hover:animate-spin'
-                            }
+                            { icon: BookOpen, value: stats.pagesToday, label: 'Páginas Hoje', color: 'from-blue-500 to-cyan-500', animationClass: 'hover:animate-bounce' },
+                            { icon: Calendar, value: stats.consecutiveDays, label: 'Dias Consecutivos', color: 'from-emerald-500 to-teal-500', animationClass: 'hover:animate-pulse' },
+                            { icon: TrendingUp, value: stats.weeklyPace, label: 'Páginas/Semana', color: 'from-purple-500 to-pink-500', animationClass: 'hover:animate-ping' },
+                            { icon: Clock, value: stats.averageTimeMin, label: 'Min/Sessão', color: 'from-orange-500 to-red-500', animationClass: 'hover:animate-spin' }
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible
-                                    ? 'opacity-100 translate-y-0'
-                                    : 'opacity-0 translate-y-8'
-                                    }`}
+                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                                 style={{
                                     padding: '16px 12px',
                                     transitionDelay: `${index * 150}ms`
@@ -213,7 +338,7 @@ const LeiturasAtuais = () => {
                         ))}
                     </div>
 
-                    {/* Card do Livro com animação */}
+                    {/* Card do Livro com animação - USANDO O NOVO ESTADO 'mainReading' */}
                     <PageTransition isVisible={isVisible}>
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-500 hover:shadow-lg" style={{ padding: '20px md:40px' }}>
                             <div className="text-center" style={{ marginBottom: '1rem', padding: '1rem' }}>
@@ -223,105 +348,111 @@ const LeiturasAtuais = () => {
                                 </h2>
                             </div>
 
-                            <div className="max-w-7xl mx-auto flex items-center justify-center">
-                                {/* **AJUSTE 1: MUDANÇA DE COR DO FUNDO AZUL PARA CINZA/BRANCO SUAVE** */}
-                                <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 transition-all duration-500 hover:shadow-lg w-full max-w-2xl" style={{ marginBottom: '1rem', padding: '2rem' }}>
+                            {mainReading ? (
+                                <div className="max-w-7xl mx-auto flex items-center justify-center">
+                                    <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 transition-all duration-500 hover:shadow-lg w-full max-w-2xl" style={{ marginBottom: '1rem', padding: '2rem' }}>
 
-                                    {/* Informações do Livro */}
-                                    <div className="text-center" style={{ marginBottom: '24px' }}>
-                                        <div
-                                            className="w-16 h-20 md:w-20 md:h-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                                            style={{ marginBottom: '16px', padding: '6px md:8px' }}
-                                        >
-                                            DOM<br />CASMURRO
-                                        </div>
-
-                                        <h3 className="text-xl md:text-2xl font-semibold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
-                                            Dom Casmurro
-                                        </h3>
-                                        <p className="text-base md:text-lg text-gray-600 transition-all duration-300" style={{ marginBottom: '12px' }}>
-                                            Machado de Assis
-                                        </p>
-
-                                        <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600">
-                                            <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
-                                                📅 <strong>Iniciado:</strong> 15 Set 2024
-                                            </span>
-                                            <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
-                                                ⏱️ <strong>Previsão:</strong> 5 Out 2024
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Status de Pausa */}
-                                    {isPaused && (
-                                        <div className="bg-orange-100 border-l-4 border-orange-400 text-orange-700 text-center font-medium rounded-r-lg transition-all duration-500 transform hover:scale-105 text-sm md:text-base" style={{ padding: '12px md:16px', marginBottom: '20px' }}>
-                                            📚 Leitura pausada - Clique em &quot;Retomar&quot; para continuar
-                                        </div>
-                                    )}
-
-                                    {/* Progresso */}
-                                    <div style={{ marginBottom: '28px' }}>
-                                        <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
-                                            <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base">
-                                                {bookProgress.currentPage} de {bookProgress.totalPages} páginas
-                                            </span>
-                                            <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500">
-                                                {bookProgress.percentage}%
-                                            </span>
-                                        </div>
-                                        <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                                        {/* Informações do Livro */}
+                                        <div className="text-center" style={{ marginBottom: '24px' }}>
                                             <div
-                                                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-1000 ease-out"
-                                                style={{ width: `${bookProgress.percentage}%` }}
-                                            />
+                                                className="w-16 h-20 md:w-20 md:h-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                                                style={{ marginBottom: '16px', padding: '6px md:8px' }}
+                                            >
+                                                {/* Exibindo as primeiras letras do título */}
+                                                {mainReading.book.title.toUpperCase().substring(0, 10).split(' ').join('<br/>')}
+                                            </div>
+
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
+                                                {mainReading.book.title}
+                                            </h3>
+                                            <p className="text-base md:text-lg text-gray-600 transition-all duration-300" style={{ marginBottom: '12px' }}>
+                                                {mainReading.authorName}
+                                            </p>
+
+                                            <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600">
+                                                <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
+                                                    📅 <strong>Iniciado:</strong> {new Date(mainReading.startedAt).toLocaleDateString('pt-BR')}
+                                                </span>
+                                                <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
+                                                    ⏱️ <strong>Previsão:</strong> 5 Out 2024
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {/* **AJUSTE 2: REVISÃO DO GRID E DO TEXTO DOS BOTÕES PARA RESPONSIVIDADE** */}
-                                    <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-4 gap-3">
-                                        <button
-                                            onClick={() => openUpdateModal('Dom Casmurro')}
-                                            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm active:scale-95 sm:col-span-2 md:col-span-1"
-                                            style={{ padding: '10px 14px' }}
-                                            disabled={isPaused}
-                                        >
-                                            <Edit className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                                            <span className="hidden md:inline">Atualizar Progresso</span>
-                                            <span className="md:hidden">Atualizar</span>
-                                        </button>
+                                        {/* Status de Pausa */}
+                                        {isPaused && (
+                                            <div className="bg-orange-100 border-l-4 border-orange-400 text-orange-700 text-center font-medium rounded-r-lg transition-all duration-500 transform hover:scale-105 text-sm md:text-base" style={{ padding: '12px md:16px', marginBottom: '20px' }}>
+                                                📚 Leitura pausada - Clique em &quot;Retomar&quot; para continuar
+                                            </div>
+                                        )}
 
-                                        <button
-                                            onClick={() => { setNoteMode('write'); setIsNoteModalOpen(true); }}
-                                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95"
-                                            style={{ padding: '10px 14px' }}
-                                        >
-                                            <StickyNote className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                                            <span className="hidden md:inline">Fazer Anotação</span>
-                                            <span className="md:hidden">Anotar</span>
-                                        </button>
+                                        {/* Progresso */}
+                                        <div style={{ marginBottom: '28px' }}>
+                                            <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
+                                                <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base">
+                                                    {mainReading.currentPage} de {mainReading.book.pages} páginas
+                                                </span>
+                                                <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500">
+                                                    {mainReading.percentage}%
+                                                </span>
+                                            </div>
+                                            <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-1000 ease-out"
+                                                    style={{ width: `${mainReading.percentage}%` }}
+                                                />
+                                            </div>
+                                        </div>
 
-                                        <button
-                                            onClick={() => { setNoteMode('view'); setIsNoteModalOpen(true); }}
-                                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95"
-                                            style={{ padding: '10px 14px' }}
-                                        >
-                                            <StickyNote className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                                            <span className="hidden md:inline">Ver Anotações</span>
-                                            <span className="md:hidden">Anotações</span>
-                                        </button>
+                                        {/* Botões */}
+                                        <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-4 gap-3">
+                                            <button
+                                                onClick={openUpdateModal} // CORRIGIDO: Removido o argumento bookTitle
+                                                className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm active:scale-95 sm:col-span-2 md:col-span-1"
+                                                style={{ padding: '10px 14px' }}
+                                                disabled={isPaused}
+                                            >
+                                                <Edit className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
+                                                <span className="hidden md:inline">Atualizar Progresso</span>
+                                                <span className="md:hidden">Atualizar</span>
+                                            </button>
 
-                                        <button
-                                            onClick={togglePause}
-                                            className={`${isPaused ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'} text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95`}
-                                            style={{ padding: '10px 14px' }}
-                                        >
-                                            {isPaused ? <Play className="w-4 h-4 transition-transform duration-300" /> : <Pause className="w-4 h-4 transition-transform duration-300" />}
-                                            {isPaused ? 'Retomar' : 'Pausar'}
-                                        </button>
+                                            <button
+                                                onClick={() => { setNoteMode('write'); setIsNoteModalOpen(true); }}
+                                                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95"
+                                                style={{ padding: '10px 14px' }}
+                                            >
+                                                <StickyNote className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
+                                                <span className="hidden md:inline">Fazer Anotação</span>
+                                                <span className="md:hidden">Anotar</span>
+                                            </button>
+
+                                            <button
+                                                onClick={() => { setNoteMode('view'); setIsNoteModalOpen(true); }}
+                                                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95"
+                                                style={{ padding: '10px 14px' }}
+                                            >
+                                                <StickyNote className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
+                                                <span className="hidden md:inline">Ver Anotações</span>
+                                                <span className="md:hidden">Anotações</span>
+                                            </button>
+
+                                            <button
+                                                onClick={togglePause}
+                                                className={`${isPaused ? 'bg-green-600 hover:bg-green-700' : 'bg-orange-600 hover:bg-orange-700'} text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95`}
+                                                style={{ padding: '10px 14px' }}
+                                            >
+                                                {isPaused ? <Play className="w-4 h-4 transition-transform duration-300" /> : <Pause className="w-4 h-4 transition-transform duration-300" />}
+                                                {isPaused ? 'Retomar' : 'Pausar'}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="text-center p-8 text-gray-500">
+                                    {currentReadings.length === 0 ? "Carregando dados..." : "Nenhuma leitura em andamento. Adicione um livro para começar!"}
+                                </div>
+                            )}
                         </div>
                     </PageTransition>
                 </div>
@@ -331,7 +462,7 @@ const LeiturasAtuais = () => {
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
-                                <h3 className="text-lg md:text-xl font-semibold text-gray-800">Atualizar: {selectedBook}</h3>
+                                <h3 className="text-lg md:text-xl font-semibold text-gray-800">Atualizar: {mainReading?.book.title || 'Livro'}</h3>
                                 <button onClick={closeModal} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110">
                                     <X className="w-5 h-5 text-gray-500" />
                                 </button>
@@ -391,7 +522,7 @@ const LeiturasAtuais = () => {
                     </div>
                 )}
 
-                {/* Modal de Anotação com animação - Responsivo  */}
+                {/* Modal de Anotação com animação - Responsivo  (Mantido) */}
                 {isNoteModalOpen && (
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
@@ -408,7 +539,7 @@ const LeiturasAtuais = () => {
                                 {noteMode === 'write' ? (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '6px' }}>
-                                            Suas reflexões sobre &quot;Dom Casmurro&quot;:
+                                            Suas reflexões sobre &quot;{mainReading?.book.title || 'o livro'}&quot;:
                                         </label>
                                         <textarea
                                             value={noteText}
@@ -470,7 +601,7 @@ const LeiturasAtuais = () => {
                     </div>
                 )}
 
-                {/* Feedback com animação melhorada - Responsivo */}
+                {/* Feedback com animação melhorada - Responsivo (Mantido) */}
                 {feedback && (
                     <div className="fixed top-4 right-4 left-4 sm:left-auto sm:right-6 bg-green-500 text-white rounded-lg shadow-lg z-50 font-medium transform animate-slideInRight text-center sm:text-left max-w-sm mx-auto sm:mx-0" style={{ padding: '14px 18px' }}>
                         {feedback}
@@ -478,7 +609,7 @@ const LeiturasAtuais = () => {
                 )}
             </div>
 
-            {/* CSS personalizado para animações */}
+            {/* CSS personalizado para animações (Mantido) */}
             <style jsx>{`
             @keyframes fadeIn {
                 from { opacity: 0; }

@@ -14,24 +14,29 @@ model author {
   book      book[]
 }
 
+// Modelo book CORRIGIDO (com a nova linha 'currentReading')
 model book {
-  id          Int          @id @default(autoincrement())
-  title       String
-  year        Int?
-  pages       Int
-  genre       String?
-  status      book_status  @default(TO_READ)
-  rating      book_rating?
-  cover       String       @db.Text
-  isbn        String       @unique(map: "Book_isbn_key")
-  description String       @db.Text
-  notes       String?      @db.Text
-  authorId    Int
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
-  author      author       @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+  id             Int              @id @default(autoincrement())
+  title          String
+  year           Int?
+  pages          Int
+  genre          String?
+  status         book_status      @default(TO_READ)
+  rating         book_rating?
+  cover          String           @db.Text
+  isbn           String           @unique(map: "Book_isbn_key")
+  description    String           @db.Text
+  notes          String?          @db.Text
+  authorId       Int
+  userId         String? // ← Adicione este campo
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now())
+  author         author           @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+  user           User?            @relation(fields: [userId], references: [id]) // ← Adicione esta relação
+  currentReading CurrentReading[]
 
   @@index([authorId], map: "Book_authorId_fkey")
+  @@index([userId]) // ← Adicione este índice
 }
 
 enum book_status {
@@ -48,4 +53,59 @@ enum book_rating {
   THREE_STARS
   FOUR_STARS
   FIVE_STARS
+}
+
+// --- NOVOS MODELOS PARA LEITURAS ATUAIS ---
+
+model CurrentReading {
+  id Int @id @default(autoincrement())
+
+  bookId Int
+  book   book @relation(fields: [bookId], references: [id])
+
+  currentPage Int     @default(0)
+  isPaused    Boolean @default(false)
+
+  startedAt       DateTime  @default(now())
+  predictedFinish DateTime?
+
+  progressUpdates ProgressUpdate[]
+  notes           ReadingNote[]
+
+  @@unique([bookId])
+}
+
+model ProgressUpdate {
+  id Int @id @default(autoincrement())
+
+  readingId Int
+  reading   CurrentReading @relation(fields: [readingId], references: [id])
+
+  pagesRead      Int
+  readingTimeMin Int
+  date           DateTime @default(now())
+}
+
+model ReadingNote {
+  id Int @id @default(autoincrement())
+
+  readingId Int
+  reading   CurrentReading @relation(fields: [readingId], references: [id])
+
+  pageReference Int?
+  content       String   @db.Text
+  createdAt     DateTime @default(now())
+}
+
+model User {
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  password         String
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  books book[]
 }

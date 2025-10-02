@@ -1,6 +1,8 @@
 'use client';
 
-import { toast } from "sonner";
+import { useEffect, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { toast } from 'sonner';
 
 type DeleteConfirmModalProps = {
     isOpen: boolean;
@@ -9,36 +11,69 @@ type DeleteConfirmModalProps = {
     onConfirm: () => Promise<void> | void;
 };
 
+const TRANSITION_DURATION_MS = 300;
+
 export default function DeleteConfirmModal({
     isOpen,
     bookTitle,
     onClose,
     onConfirm
 }: DeleteConfirmModalProps) {
-    if (!isOpen) return null;
+    const [modalRootElement, setModalRootElement] = useState<HTMLElement | null>(null);
+    const [isAnimatingIn, setIsAnimatingIn] = useState(false);
 
-    const handleConfirm = async () => {
+    useEffect(() => {
+        setModalRootElement(document.getElementById('modal-root'));
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) {
+            const timeoutId = setTimeout(() => setIsAnimatingIn(true), 50);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [isOpen]);
+
+    const handleClose = useCallback(() => {
+        setIsAnimatingIn(false);
+        setTimeout(onClose, TRANSITION_DURATION_MS);
+    }, [onClose]);
+
+    const handleConfirm = useCallback(async () => {
+        setIsAnimatingIn(false);
         try {
+            await new Promise(resolve => setTimeout(resolve, TRANSITION_DURATION_MS));
             await onConfirm();
             toast.success(`"${bookTitle}" foi excluído com sucesso!`);
             onClose();
         } catch (err) {
             console.error(err);
             toast.error("Erro ao excluir o livro. Tente novamente.");
+            setIsAnimatingIn(true);
         }
-    };
+    }, [bookTitle, onClose, onConfirm]);
 
-    return (
+    if (!isOpen || !modalRootElement) return null;
+
+    const dialogClasses = isAnimatingIn
+        ? 'opacity-100 scale-100'
+        : 'opacity-0 scale-95';
+
+    const backdropClasses = isAnimatingIn
+        ? 'opacity-100'
+        : 'opacity-0';
+
+    const modalContent = (
         <div
-            className="flex items-center justify-center z-50"
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)" }}
+            className={`flex items-center justify-center fixed inset-0 z-50 transition-opacity duration-300 ${backdropClasses}`}
+            style={{ background: "rgba(0,0,0,0.3)" }}
+            onClick={handleClose}
         >
             <div
-                className="bg-white rounded-xl shadow-lg"
+                className={`bg-white rounded-xl shadow-2xl transform transition-all ease-out duration-300 ${dialogClasses}`}
                 style={{ padding: "1.5rem", maxWidth: "24rem", width: "100%" }}
+                onClick={(e) => e.stopPropagation()}
             >
                 <div className="text-center">
-                    {/* Ícone de alerta */}
                     <div
                         className="mx-auto flex items-center justify-center rounded-full"
                         style={{
@@ -63,27 +98,17 @@ export default function DeleteConfirmModal({
                         </svg>
                     </div>
 
-                    {/* Título */}
-                    <h3
-                        className="text-lg font-semibold text-gray-900"
-                        style={{ marginBottom: "0.5rem" }}
-                    >
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         Excluir Livro
                     </h3>
 
-                    {/* Mensagem */}
-                    <p
-                        className="text-sm text-gray-600"
-                        style={{ marginBottom: "1.5rem" }}
-                    >
-                        Tem certeza que deseja excluir &quot;{bookTitle}&quot;? Esta ação não
-                        pode ser desfeita.
+                    <p className="text-sm text-gray-600 mb-6">
+                        Tem certeza que deseja excluir &quot;{bookTitle}&quot;? Esta ação não pode ser desfeita.
                     </p>
 
-                    {/* Botões */}
                     <div className="flex gap-3">
                         <button
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="flex-1 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                             style={{ padding: "0.5rem 1rem" }}
                         >
@@ -101,4 +126,6 @@ export default function DeleteConfirmModal({
             </div>
         </div>
     );
+
+    return createPortal(modalContent, modalRootElement);
 }

@@ -1,5 +1,5 @@
 import Home from '../components/Home';
-import type { Book, Stats } from '@/types/types';
+import type { Book, Stats } from '@/components/types/types';
 import { prisma } from '@/_lib/db';
 
 

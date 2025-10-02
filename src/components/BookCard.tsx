@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Book } from '@/types/types';
+import { Book } from '@/components/types/types';
 import BookCover from './BookCover';
 import StatusBadge from './StatusBadge';
 import StarRating from './StarRating';
@@ -79,10 +79,12 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           transition: { type: "spring", stiffness: 300, damping: 20 },
         }}
         whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-        className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer transition-shadow w-full min-w-0"
+        className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer 
+        transition-shadow w-full min-w-0 dark:border-transparent
+        dark:bg-blue-200/10 dark:group-hover:bg-blue-200/10 dark:hover:border-[#3b82f6]"
       >
         {/* Área da capa do livro */}
-        <div className="relative">
+        <div className="relative bg-gray-200 dark:bg-gray-800 p-1">
           <BookCover cover={book.cover} title={book.title} />
           <StatusBadge status={book.status} />
 
@@ -100,7 +102,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <span className="text-xs text-gray-700 font-medium">
+            <span className="text-xs text-gray-700 dark:text-blue-200 font-medium">
               {book.rating}
             </span>
           </div>
@@ -109,17 +111,18 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
         {/* Informações do livro */}
         <div style={{ padding: "1.5rem" }}>
           <h3
-            className="font-bold text-gray-900 text-base leading-tight overflow-hidden text-ellipsis line-clamp-2 min-w-0"
+            className="font-bold text-gray-900 text-base leading-tight overflow-hidden text-ellipsis 
+            dark:text-blue-400 line-clamp-2 min-w-0"
             style={{ marginBottom: "0.3rem" }}
           >
             {book.title}
           </h3>
-          <p className="text-gray-600 text-xs" style={{ marginBottom: "0.4rem" }}>
+          <p className="text-gray-600 text-xs dark:text-blue-200" style={{ marginBottom: "0.4rem" }}>
             {book.author}
           </p>
 
           <div
-            className="flex items-center justify-between text-sm text-gray-400"
+            className="flex items-center justify-between text-sm text-gray-400 dark:text-blue-200"
             style={{ marginBottom: "0.75rem" }}
           >
             <span>📅 {book.year}</span>
@@ -128,7 +131,8 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
 
           <div style={{ marginBottom: "1rem" }}>
             <span
-              className="inline-block bg-blue-50 text-blue-600 text-sm rounded font-medium w-full text-center"
+              className="inline-block bg-blue-50 text-blue-600 text-sm rounded font-medium w-full text-center
+              dark:bg-blue-200/10 dark:text-blue-200"
               style={{ padding: "0.25rem 0.5rem" }}
             >
               {book.genre}
@@ -145,8 +149,10 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               onClick={() => setShowDetailsModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-blue-50 text-blue-600 rounded-md text-sm cursor-pointer font-medium hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
-              style={{ padding: "0.5rem", height: "2rem" }}
+              className="flex-1 bg-blue-50 text-blue-600 rounded-md text-sm cursor-pointer font-medium 
+              hover:bg-blue-100 transition-colors flex items-center justify-center gap-2
+              dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
+              style={{ padding: "0.5rem" }}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -159,7 +165,9 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               onClick={handleEdit}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-gray-50 text-gray-600 rounded-lg text-sm cursor-pointer font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-gray-50 text-gray-600 rounded-lg text-sm cursor-pointer font-medium 
+              hover:bg-gray-100 transition-colors flex items-center justify-center gap-2
+              dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
               style={{ padding: "0.5rem" }}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
@@ -173,7 +181,9 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               onClick={handleDelete}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-red-100 text-red-600 cursor-pointer rounded-lg text-sm hover:bg-red-50 transition-colors flex items-center justify-center"
+              className="bg-red-100 text-red-600 cursor-pointer rounded-lg text-sm hover:bg-red-50 
+              transition-colors flex items-center justify-center
+              dark:bg-red-200/10 dark:hover:bg-red-200/30 dark:border-transparent dark:hover:border-red-400 dark:text-red-200"
               style={{ padding: "0.4rem", width: "2rem", height: "2rem" }}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
