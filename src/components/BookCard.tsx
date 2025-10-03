@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Book } from '@/components/types/types';
 import BookCover from './BookCover';
 import StatusBadge from './StatusBadge';
@@ -17,9 +18,7 @@ type BookCardProps = {
   onDetails: (book: Book) => void;
 };
 
-// Variantes de animação de entrada, saída e interação
 const cardVariants: Variants = {
-  // Animação de entrada: mais suave (mola mais relaxada)
   hidden: {
     opacity: 0,
     y: 40,
@@ -30,32 +29,67 @@ const cardVariants: Variants = {
     y: 0,
     scale: 1,
     transition: {
-      // Removida 'duration', pois 'spring' ignora.
-      ease: [0.17, 0.67, 0.83, 0.67], // Mantido o efeito elástico
+      ease: [0.17, 0.67, 0.83, 0.67],
       type: "spring",
-      stiffness: 80, // REDUZIDO: Movimento mais lento e suave
-      damping: 20, // AUMENTADO: Amortecimento maior para uma parada mais suave
+      stiffness: 80,
+      damping: 20,
     }
   },
-  // Animação de saída: desvanecer e ir para cima um pouco mais devagar
   exit: {
     opacity: 0,
     y: -30,
     scale: 0.95,
     transition: {
-      duration: 0.4, // AUMENTADO para 0.4s
+      duration: 0.4,
       ease: "easeOut"
     }
   },
 };
 
 export default function BookCard({ book, onDelete }: BookCardProps) {
+  const router = useRouter();
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleEdit = () => setShowEditModal(true);
-  const handleDelete = () => setShowDeleteModal(true);
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleProtectedAction = (action: 'details' | 'edit' | 'delete') => {
+    if (!isLoggedIn) {
+      const messages = {
+        details: 'Faça login para ver os detalhes do livro',
+        edit: 'Faça login para editar o livro',
+        delete: 'Faça login para excluir o livro'
+      };
+      localStorage.setItem('redirectAfterLogin', '/books');
+      localStorage.setItem('loginMessage', messages[action]);
+      router.push('/login');
+      return false;
+    }
+    return true;
+  };
+
+  const handleDetails = () => {
+    if (handleProtectedAction('details')) {
+      setShowDetailsModal(true);
+    }
+  };
+
+  const handleEdit = () => {
+    if (handleProtectedAction('edit')) {
+      setShowEditModal(true);
+    }
+  };
+
+  const handleDelete = () => {
+    if (handleProtectedAction('delete')) {
+      setShowDeleteModal(true);
+    }
+  };
 
   const confirmDelete = () => {
     if (onDelete) onDelete(book.id);
@@ -146,7 +180,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           {/* Botões */}
           <div className="flex gap-2">
             <motion.button
-              onClick={() => setShowDetailsModal(true)}
+              onClick={handleDetails}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex-1 bg-blue-50 text-blue-600 rounded-md text-sm cursor-pointer font-medium 
@@ -194,22 +228,19 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
         </div>
       </motion.div>
 
-      {/* --- Modais com backdrop --- */}
+      {/* Modais permanecem iguais */}
       <AnimatePresence>
         {showDetailsModal && (
           <motion.div
             key="detailsModal"
             className="fixed inset-0 flex items-center justify-center z-50"
           >
-            {/* Backdrop */}
             <motion.div
               className="absolute inset-0 bg-black/40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-
-            {/* Modal */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -299,5 +330,4 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
       </AnimatePresence>
     </>
   );
-
 }

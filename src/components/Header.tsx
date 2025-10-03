@@ -135,7 +135,7 @@ export default function Header() {
 
             <button
               onClick={() => handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro')}
-              className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
               style={{
                 gap: '0.5rem',
                 padding: '0.5rem 0.75rem'
@@ -159,8 +159,11 @@ export default function Header() {
               </Link>
             ) : (
               <button
-                onClick={handleLogout}
-                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                onClick={() => {
+                  const confirmed = window.confirm('Tem certeza que deseja sair?');
+                  if (confirmed) handleLogout();
+                }}
+                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
@@ -173,7 +176,7 @@ export default function Header() {
 
             <button
               onClick={toggleTheme}
-              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
+              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800 cursor-pointer"
               style={{ padding: '0.5rem' }}
               aria-label="Alterar tema"
             >

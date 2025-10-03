@@ -1,12 +1,13 @@
 'use client'; // 👈 Essencial para usar hooks e interatividade
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-icons/fa';
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Book, Stats, DashboardProps, GoalCircleProps, Color } from '@/components/types/types';
+import { DashboardProps, GoalCircleProps, Color } from '@/components/types/types';
+
 
 // --- DisplayGoalCircle (Definição para uso dentro do Home) ---
 
@@ -61,6 +62,22 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
 // --- Home (Componente Principal) ---
 const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
     const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        setIsLoggedIn(!!token);
+    }, []);
+
+    const handleProtectedAction = (path: string, message: string) => {
+        if (!isLoggedIn) {
+            localStorage.setItem('redirectAfterLogin', path);
+            localStorage.setItem('loginMessage', message);
+            router.push('/login');
+        } else {
+            router.push(path);
+        }
+    };
 
     return (
         <motion.div
@@ -256,7 +273,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                 {/* Atividade Recente */}
                 <div
                     className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 
-                    dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
+    dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
                     style={{ padding: '1.5rem' }}
                 >
                     <div className="flex justify-between items-center mb-6">
@@ -266,12 +283,16 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                         </Link>
                     </div>
 
-                    <div className="space-y-5 flex flex-col gap-y-4">
+                    {/* Container com scroll */}
+                    <div
+                        className="space-y-5 flex flex-col gap-y-4 overflow-y-auto"
+                        style={{ maxHeight: '400px', paddingRight: '0.25rem' }} // maxHeight define o tamanho antes do scroll aparecer
+                    >
                         {(recentActivity ?? []).map((book, index) => (
                             <div
                                 key={index}
                                 className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors
-                                dark:bg-blue-200/10 dark:hover:bg-blue-200/20"
+                dark:bg-blue-200/10 dark:hover:bg-blue-200/20"
                                 style={{ padding: '0.75rem 0.5rem' }}
                             >
                                 <Image
@@ -329,34 +350,34 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                 {/* Ações Rápidas */}
                 <div
                     className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-7 dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
-                    style={{ padding: '1.5rem'}}
+                    style={{ padding: '1.5rem' }}
                 >
                     <h2 className="text-lg font-bold text-gray-800 dark:text-blue-400">Ações Rápidas</h2>
-
                     <div className="flex flex-col gap-3">
-                        <Link
-                            href="/books/new"
+                        <button
+                            onClick={() => handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro')}
                             className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-600 hover:shadow-lg font-medium text-sm hover:transform hover:scale-105 transition-all duration-200 cursor-pointer group
-                            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200"
+            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200"
                         >
                             <FaPlus className="text-sm group-hover:animate-bounce" />
                             Adicionar Livro
-                        </Link>
-
-                        <button onClick={() => router.push('/books')} className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group
-                        dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent">
+                        </button>
+                        <button
+                            onClick={() => router.push('/books')}
+                            className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group
+            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
+                        >
                             <FaSearch className="text-base text-gray-400 dark:text-blue-200 group-hover:animate-bounce" />
                             Explorar Biblioteca
                         </button>
-
-                        <Link
-                            href="/leituras-atuais"
+                        <button
+                            onClick={() => handleProtectedAction('/leituras-atuais', 'Faça login para ver suas leituras atuais')}
                             className="w-full h-12 flex items-center justify-center gap-3 px-4 rounded-xl bg-white text-gray-600 hover:bg-teal-50 hover:shadow-md font-medium text-sm border border-gray-200 hover:border-cyan-200 cursor-pointer hover:transform transition-all duration-200 group
-                            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
+            dark:bg-blue-200/20 dark:hover:bg-blue-200/20 dark:text-blue-200 dark:border-transparent"
                         >
                             <FaBook className="text-base text-gray-400 dark:text-blue-200 group-hover:animate-bounce" />
                             Leituras Atuais
-                        </Link>
+                        </button>
                     </div>
                 </div>
 

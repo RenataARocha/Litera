@@ -181,7 +181,7 @@ export default function NewBookPage() {
       >
         <motion.button
           onClick={() => router.push("/")}
-          className="px-4 py-2 text-blue-600 rounded-lg hover:underline transition-colors cursor-pointer"
+          className="px-4 py-2 text-blue-600 rounded-lg hover:underline transition-colors cursor-pointer" style={{ padding: '1rem' }}
           whileHover={{ scale: 1.05, x: 5 }}
           whileTap={{ scale: 0.95 }}
           aria-label="Voltar para página inicial"

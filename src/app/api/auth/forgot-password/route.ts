@@ -1,68 +1,68 @@
 // src/app/api/auth/forgot-password/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/_lib/prisma';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
 export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
-        const { email } = body;
+  try {
+    const body = await request.json();
+    const { email } = body;
 
-        if (!email) {
-            return NextResponse.json(
-                { error: 'Email é obrigatório' },
-                { status: 400 }
-            );
-        }
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Email é obrigatório' },
+        { status: 400 }
+      );
+    }
 
-        // Buscar usuário
-        const user = await prisma.user.findUnique({
-            where: { email: email.toLowerCase() },
-        });
+    // Buscar usuário
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
 
-        // Por segurança, sempre retornar sucesso (não revelar se o email existe)
-        if (!user) {
-            return NextResponse.json({
-                success: true,
-                message: 'Se o email existir, você receberá um link de recuperação',
-            });
-        }
+    // Por segurança, sempre retornar sucesso (não revelar se o email existe)
+    if (!user) {
+      return NextResponse.json({
+        success: true,
+        message: 'Se o email existir, você receberá um link de recuperação',
+      });
+    }
 
-        // Gerar token de recuperação
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hora
+    // Gerar token de recuperação
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hora
 
-        // Salvar token no banco
-        await prisma.user.update({
-            where: { email: email.toLowerCase() },
-            data: {
-                resetToken,
-                resetTokenExpiry,
-            },
-        });
+    // Salvar token no banco
+    await prisma.user.update({
+      where: { email: email.toLowerCase() },
+      data: {
+        resetToken,
+        resetTokenExpiry,
+      },
+    });
 
-        // Configurar transporte de email
-        const transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-            port: Number(process.env.EMAIL_PORT) || 587,
-            secure: false,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
+    // Configurar transporte de email
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: Number(process.env.EMAIL_PORT) || 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
-        // URL de redefinição
-        const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/recuperar-senha?token=${resetToken}`;
+    // URL de redefinição
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/recuperar-senha?token=${resetToken}`;
 
-        // Enviar email
-        await transporter.sendMail({
-            from: process.env.EMAIL_FROM || 'Litera <noreply@litera.com>',
-            to: email,
-            subject: 'Recuperação de Senha - Litera',
-            html: `
+    // Enviar email
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'Litera <noreply@litera.com>',
+      to: email,
+      subject: 'Recuperação de Senha - Litera',
+      html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -103,18 +103,18 @@ export async function POST(request: NextRequest) {
         </body>
         </html>
       `,
-        });
+    });
 
-        return NextResponse.json({
-            success: true,
-            message: 'Email de recuperação enviado com sucesso!',
-        });
+    return NextResponse.json({
+      success: true,
+      message: 'Email de recuperação enviado com sucesso!',
+    });
 
-    } catch (error) {
-        console.error('Erro ao recuperar senha:', error);
-        return NextResponse.json(
-            { error: 'Erro ao enviar email de recuperação' },
-            { status: 500 }
-        );
-    }
+  } catch (error) {
+    console.error('Erro ao recuperar senha:', error);
+    return NextResponse.json(
+      { error: 'Erro ao enviar email de recuperação' },
+      { status: 500 }
+    );
+  }
 }
