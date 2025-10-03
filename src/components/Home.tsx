@@ -96,7 +96,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
             >
                 <div className="z-10">
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold dark:text-blue-400">
-                        Bem-vindo de volta!
+                        {isLoggedIn ? 'Bem-vindo de volta!' : 'Bem-vindo à sua biblioteca pessoal!'}
                     </h1>
                     <p
                         className="text-base sm:text-lg md:text-xl text-blue-100"
