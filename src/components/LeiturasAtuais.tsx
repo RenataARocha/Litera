@@ -3,7 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
 
-// Componente de transição para páginas
+type Book = {
+    id: number;
+    title: string;
+    author: string;
+    pages: number;
+    finishedPages: number;
+    startedAt: string;
+    predictedEnd?: string;
+    status: string;
+};
+
 const PageTransition = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
     return (
         <div
@@ -18,60 +28,78 @@ const PageTransition = ({ children, isVisible }: { children: React.ReactNode; is
 };
 
 const LeiturasAtuais = () => {
+    const [books, setBooks ] = useState<Book[]>([]);
+    const [loading, setLoading] = useState(true);
+
     const [readingData, setReadingData] = useState({
-        paginasHoje: 25,
-        diasConsecutivos: 7,
-        ritmoSemanal: 180,
-        tempoMedio: 45
+        paginasHoje: 0,
+        diasConsecutivos: 0,
+        ritmoSemanal: 0,
+        tempoMedio: 0
     });
 
-    // Estado removido pois não é usado nesta versão demonstrativa
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-    const [selectedBook, setSelectedBook] = useState('');
+    const [selectedBook, setSelectedBook] = useState<number | null>(null);
     const [pagesRead, setPagesRead] = useState('');
     const [readingTime, setReadingTime] = useState('');
     const [noteText, setNoteText] = useState('');
-    const [bookProgress, setBookProgress] = useState({
-        currentPage: 150,
-        totalPages: 250,
-        percentage: 60
-    });
     const [feedback, setFeedback] = useState('');
     const [isPaused, setIsPaused] = useState(false);
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
     const [isVisible, setIsVisible] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
 
+    const showFeedback = (message: string) => {
+    setFeedback(message);
+    setTimeout(() => setFeedback(''), 3000); // some após 3s
+};
+
     // Animação de entrada da página
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-        }, 100);
+        const timer = setTimeout(() => setIsVisible(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    // Função para navegação com transição (simulada)
+    useEffect(() => {
+    const fetchReadingBooks = async () => {
+        try {
+            const res = await fetch('/api/books?status=READING');
+            if (!res.ok) throw new Error('Erro ao buscar livros');
+            const data: Book[] = await res.json();
+
+            // Filtra apenas os livros com status 'reading'
+            const readingBooks = data.filter(book => book.status === 'Lendo');
+            setBooks(readingBooks);
+
+            // Atualiza estatísticas gerais
+            const paginasHoje = readingBooks.reduce((acc, book) => acc + book.finishedPages, 0);
+            setReadingData(prev => ({ ...prev, paginasHoje }));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchReadingBooks();
+}, []);
+
+
     const navigateWithTransition = (path: string) => {
         setIsLeaving(true);
         setIsVisible(false);
-
         setTimeout(() => {
-
-            console.log(`Navegando para: ${path}`);
-
             alert(`Navegação simulada para: ${path === '/' ? 'Home' : path}`);
         }, 400);
     };
 
-    const openUpdateModal = (bookTitle: string) => {
-        setSelectedBook(bookTitle);
+    const openUpdateModal = (bookId: number) => {
+        setSelectedBook(bookId);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedBook('');
         setPagesRead('');
         setReadingTime('');
     };
@@ -88,44 +116,43 @@ const LeiturasAtuais = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const pages = parseInt(pagesRead);
-        const time = parseInt(readingTime);
+        if (!selectedBook || !pages) return;
 
-        if (pages && time) {
-            setReadingData(prev => ({
-                ...prev,
-                paginasHoje: prev.paginasHoje + pages
-            }));
-
-            setBookProgress(prev => {
-                const newCurrentPage = Math.min(prev.currentPage + pages, prev.totalPages);
-                const newPercentage = Math.round((newCurrentPage / prev.totalPages) * 100);
-                return {
-                    ...prev,
-                    currentPage: newCurrentPage,
-                    percentage: newPercentage
-                };
+         try {
+            const res = await fetch(`/api/books/${selectedBook}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ finishedPages: pages })
             });
+            if (!res.ok) throw new Error('Erro ao atualizar livro');
 
+            // Atualiza localmente
+            setBooks(prev =>
+                prev.map(book =>
+                    book.id === selectedBook
+                        ? { ...book, finishedPages: book.finishedPages + pages }
+                        : book
+                )
+            );
+
+            setReadingData(prev => ({ ...prev, paginasHoje: prev.paginasHoje + pages }));
+
+            showFeedback(`Progresso atualizado! +${pages} páginas`);
             closeModal();
-            showFeedback(`Progresso atualizado! +${pages} páginas lidas`);
-        }
-    };
+        } catch (err) {
+            console.error(err);
+            showFeedback('Erro ao atualizar livro.');
+            }
+        };
 
-    const showFeedback = (message: string) => {
-        setFeedback(message);
-        setTimeout(() => setFeedback(''), 3000);
-    };
-
-    const togglePause = () => {
+        const togglePause = () => {
         setIsPaused(!isPaused);
-        if (!isPaused) {
-            showFeedback('Leitura pausada. Você pode retomar a qualquer momento!');
-        } else {
-            showFeedback('Leitura retomada! Continue sua jornada literária!');
-        }
+        showFeedback(!isPaused ? 'Leitura pausada.' : 'Leitura retomada!');
     };
+
+    if (loading) return <p className="text-center mt-20 text-gray-600">Carregando livros...</p>;
 
     return (
         <div className={`min-h-screen transition-all duration-500 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
@@ -222,33 +249,39 @@ const LeiturasAtuais = () => {
                                     Livros em Andamento
                                 </h2>
                             </div>
-
+                        </div> 
+                        </PageTransition>
+                            
                             <div className="max-w-7xl mx-auto flex items-center justify-center">
-                                {/* **AJUSTE 1: MUDANÇA DE COR DO FUNDO AZUL PARA CINZA/BRANCO SUAVE** */}
-                                <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 transition-all duration-500 hover:shadow-lg w-full max-w-2xl" style={{ marginBottom: '1rem', padding: '2rem' }}>
-
+                                {books.length> 0 ? (
+                                    books.map((book) => (
+                                <div
+                                    key={book.id}
+                                    className="bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-200 transition-all duration-500 hover:shadow-lg w-full mb-4 p-8"
+                                    style={{ marginBottom: '1rem', padding: '2rem' }}
+                                >
                                     {/* Informações do Livro */}
                                     <div className="text-center" style={{ marginBottom: '24px' }}>
                                         <div
                                             className="w-16 h-20 md:w-20 md:h-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                                             style={{ marginBottom: '16px', padding: '6px md:8px' }}
                                         >
-                                            DOM<br />CASMURRO
+                                            {book.title.toUpperCase()}
                                         </div>
 
                                         <h3 className="text-xl md:text-2xl font-semibold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
-                                            Dom Casmurro
+                                            {book.title}
                                         </h3>
                                         <p className="text-base md:text-lg text-gray-600 transition-all duration-300" style={{ marginBottom: '12px' }}>
-                                            Machado de Assis
+                                            {book.author}
                                         </p>
 
                                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600">
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
-                                                📅 <strong>Iniciado:</strong> 15 Set 2024
+                                                📅 <strong>Iniciado:</strong> {book.startedAt}
                                             </span>
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
-                                                ⏱️ <strong>Previsão:</strong> 5 Out 2024
+                                                ⏱️ <strong>Previsão:</strong> {book.predictedEnd}
                                             </span>
                                         </div>
                                     </div>
@@ -264,24 +297,23 @@ const LeiturasAtuais = () => {
                                     <div style={{ marginBottom: '28px' }}>
                                         <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
                                             <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base">
-                                                {bookProgress.currentPage} de {bookProgress.totalPages} páginas
+                                                {book.finishedPages} de {book.pages} páginas
                                             </span>
                                             <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500">
-                                                {bookProgress.percentage}%
+                                                {Math.round((book.finishedPages / book.pages) * 100)}%
                                             </span>
                                         </div>
                                         <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
                                             <div
                                                 className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-1000 ease-out"
-                                                style={{ width: `${bookProgress.percentage}%` }}
+                                                style={{ width: `${(book.finishedPages / book.pages) * 100}%` }}
                                             />
                                         </div>
-                                    </div>
 
                                     {/* **AJUSTE 2: REVISÃO DO GRID E DO TEXTO DOS BOTÕES PARA RESPONSIVIDADE** */}
                                     <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-4 gap-3">
                                         <button
-                                            onClick={() => openUpdateModal('Dom Casmurro')}
+                                            onClick={() => openUpdateModal(book.id)}
                                             className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm active:scale-95 sm:col-span-2 md:col-span-1"
                                             style={{ padding: '10px 14px' }}
                                             disabled={isPaused}
@@ -310,6 +342,8 @@ const LeiturasAtuais = () => {
                                             <span className="hidden md:inline">Ver Anotações</span>
                                             <span className="md:hidden">Anotações</span>
                                         </button>
+                                        </div>
+                                        </div>
 
                                         <button
                                             onClick={togglePause}
@@ -320,14 +354,15 @@ const LeiturasAtuais = () => {
                                             {isPaused ? 'Retomar' : 'Pausar'}
                                         </button>
                                     </div>
-                                </div>
+                            ))
+                        ):(
+                                 <p className="text-center text-gray-500">Nenhum livro em andamento</p>
+                            )} 
                             </div>
-                        </div>
-                    </PageTransition>
                 </div>
 
                 {/* Modal de Progresso com animação - Responsivo */}
-                {isModalOpen && (
+                {isModalOpen && selectedBook && (
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
@@ -349,7 +384,7 @@ const LeiturasAtuais = () => {
                                         className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105"
                                         style={{ padding: '10px 14px' }}
                                         placeholder="Ex: 15"
-                                        min="1"
+                                        min={1}
                                         required
                                     />
                                 </div>
@@ -365,7 +400,7 @@ const LeiturasAtuais = () => {
                                         className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105"
                                         style={{ padding: '10px 14px' }}
                                         placeholder="Ex: 30"
-                                        min="1"
+                                        min={1}
                                         required
                                     />
                                 </div>
@@ -392,7 +427,7 @@ const LeiturasAtuais = () => {
                 )}
 
                 {/* Modal de Anotação com animação - Responsivo  */}
-                {isNoteModalOpen && (
+                {isNoteModalOpen && selectedBook && (
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
