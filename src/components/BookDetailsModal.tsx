@@ -93,7 +93,7 @@ export default function BookDetailsModal({
                                     </div>
                                     <div>
                                         <span className="font-medium text-gray-700">Páginas:</span>
-                                        <p className="text-gray-600">250p</p>
+                                        <p className="text-gray-600">{book.pages}</p>
                                     </div>
                                     <div>
                                         <span className="font-medium text-gray-700">Gênero:</span>
@@ -159,7 +159,7 @@ export default function BookDetailsModal({
                                 <h4 className="font-semibold text-green-800 text-lg">Notas Pessoais</h4>
                             </div>
                             <p className="text-black text-sm leading-relaxed">
-                                Uma obra-prima da literatura brasileira que explora temas universais como amor, ciúme e memória. A narrativa envolvente de Machado de Assis revela camadas profundas da natureza humana através dos olhos de Bentinho.
+                                {book.notes}
                             </p>
                         </div>
 
@@ -173,9 +173,9 @@ export default function BookDetailsModal({
                             </div>
                             <div className="text-black text-sm space-y-1">
                                 <p><span className="font-medium">Editora:</span> Companhia das Letras</p>
-                                <p><span className="font-medium">ISBN:</span> 978-85-359-0277-5</p>
+                                <p><span className="font-medium">ISBN:</span> {book.isbn}</p>
                                 <p><span className="font-medium">Idioma:</span> Português</p>
-                                <p><span className="font-medium">Data de leitura:</span> Março 2024</p>
+                                <p><span className="font-medium">Data de leitura:</span> {new Date(book.createdAt).toLocaleDateString('pt-BR')}</p>
                             </div>
                         </div>
                     </div>
