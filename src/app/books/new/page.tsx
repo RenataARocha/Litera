@@ -172,23 +172,6 @@ export default function NewBookPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Botão Voltar para Home */}
-      <motion.div
-        style={{ margin: "1rem" }}
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <motion.button
-          onClick={() => router.push("/")}
-          className="px-4 py-2 text-blue-600 rounded-lg hover:underline transition-colors cursor-pointer" style={{ padding: '1rem' }}
-          whileHover={{ scale: 1.05, x: 5 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Voltar para página inicial"
-        >
-          ← Voltar para Home
-        </motion.button>
-      </motion.div>
 
       <div
         className="flex items-center justify-center min-h-screen"

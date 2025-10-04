@@ -1,11 +1,19 @@
-
-
 'use client';
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun, FaSignInAlt } from 'react-icons/fa';
+import {
+  FaBookOpen,
+  FaChartLine,
+  FaPlus,
+  FaBars,
+  FaTimes,
+  FaBook,
+  FaMoon,
+  FaSun,
+  FaSignInAlt
+} from 'react-icons/fa';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -71,14 +79,16 @@ export default function Header() {
           className="flex justify-between items-center"
           style={{ height: '4.5rem' }}
         >
-          {/* Logo */}
-          <div
-            className="flex items-center"
+          {/* Logo com Link para Home */}
+          <Link
+            href="/"
+            aria-label="Ir para a página inicial"
+            className="flex items-center rounded-md"
             style={{ gap: '0.5rem' }}
           >
             <div className="relative">
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
-                <FaBookOpen className="text-white text-sm lg:text-lg" />
+                <FaBookOpen className="text-white text-sm lg:text-lg" aria-hidden="true" />
               </div>
               <div
                 className="absolute w-3 h-3 bg-green-400 rounded-full animate-pulse"
@@ -86,10 +96,13 @@ export default function Header() {
                   top: '-0.125rem',
                   right: '-0.125rem'
                 }}
+                aria-hidden="true"
               ></div>
             </div>
             <div className="hidden lg:block">
-              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">Litera</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">
+                Litera
+              </h1>
               <p
                 className="text-xs text-gray-500 dark:text-blue-200"
                 style={{ lineHeight: '1.3' }}
@@ -100,7 +113,7 @@ export default function Header() {
             <div className="lg:hidden">
               <h1 className="text-lg font-bold text-gradient">Litera</h1>
             </div>
-          </div>
+          </Link>
 
           {/* Menu Desktop */}
           <nav

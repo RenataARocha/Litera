@@ -16,6 +16,7 @@ type BookCardProps = {
   onEdit?: (book: Book) => void;
   onDelete?: (bookId: number) => void;
   onDetails: (book: Book) => void;
+  isExposicao?: boolean; // Nova prop para identificar se é livro de exposição
 };
 
 const cardVariants: Variants = {
@@ -46,7 +47,7 @@ const cardVariants: Variants = {
   },
 };
 
-export default function BookCard({ book, onDelete }: BookCardProps) {
+export default function BookCard({ book, onDelete, isExposicao = false }: BookCardProps) {
   const router = useRouter();
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -59,11 +60,12 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
   }, []);
 
   const handleProtectedAction = (action: 'details' | 'edit' | 'delete') => {
-    if (!isLoggedIn) {
+    // Se é livro de exposição, sempre redireciona para login
+    if (isExposicao || !isLoggedIn) {
       const messages = {
-        details: 'Faça login para ver os detalhes do livro',
-        edit: 'Faça login para editar o livro',
-        delete: 'Faça login para excluir o livro'
+        details: 'Faça login para ver os detalhes completos do livro',
+        edit: 'Faça login para editar este livro',
+        delete: 'Faça login para gerenciar seus livros'
       };
       localStorage.setItem('redirectAfterLogin', '/books');
       localStorage.setItem('loginMessage', messages[action]);
@@ -122,6 +124,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
           <BookCover cover={book.cover} title={book.title} />
           <StatusBadge status={book.status} />
 
+
           {/* Rating */}
           <div
             className="absolute w-8 top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full shadow"
@@ -177,7 +180,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
             <StarRating rating={book.rating} />
           </div>
 
-          {/* Botões */}
+          {/* Botões - Sempre visíveis, mas com ações diferentes */}
           <div className="flex gap-2">
             <motion.button
               onClick={handleDetails}
@@ -187,6 +190,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               hover:bg-blue-100 transition-colors flex items-center justify-center gap-2
               dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
               style={{ padding: "0.5rem" }}
+              title={isExposicao ? "Faça login para ver detalhes" : "Ver detalhes"}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -203,6 +207,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               hover:bg-gray-100 transition-colors flex items-center justify-center gap-2
               dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
               style={{ padding: "0.5rem" }}
+              title={isExposicao ? "Faça login para editar" : "Editar livro"}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 8.207l-3-3L12.146.146zM11.207 9l-3-3-6.5 6.5-.5 3 3-.5 6.5-6.5z" />
@@ -219,6 +224,7 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
               transition-colors flex items-center justify-center
               dark:bg-red-200/10 dark:hover:bg-red-200/30 dark:border-transparent dark:hover:border-red-400 dark:text-red-200"
               style={{ padding: "0.4rem", width: "2rem", height: "2rem" }}
+              title={isExposicao ? "Faça login para gerenciar" : "Excluir livro"}
             >
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
@@ -228,106 +234,110 @@ export default function BookCard({ book, onDelete }: BookCardProps) {
         </div>
       </motion.div>
 
-      {/* Modais permanecem iguais */}
-      <AnimatePresence>
-        {showDetailsModal && (
-          <motion.div
-            key="detailsModal"
-            className="fixed inset-0 flex items-center justify-center z-50"
-          >
-            <motion.div
-              className="absolute inset-0 bg-black/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="relative z-10"
-            >
-              <BookDetailsModal
-                book={book}
-                isOpen={showDetailsModal}
-                onClose={() => setShowDetailsModal(false)}
-                onEdit={() => {
-                  setShowDetailsModal(false);
-                  setShowEditModal(true);
-                }}
-                onDelete={() => {
-                  setShowDetailsModal(false);
-                  setShowDeleteModal(true);
-                }}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Modais - Só aparecem se NÃO for livro de exposição */}
+      {!isExposicao && (
+        <>
+          <AnimatePresence>
+            {showDetailsModal && (
+              <motion.div
+                key="detailsModal"
+                className="fixed inset-0 flex items-center justify-center z-50"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-black/40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  <BookDetailsModal
+                    book={book}
+                    isOpen={showDetailsModal}
+                    onClose={() => setShowDetailsModal(false)}
+                    onEdit={() => {
+                      setShowDetailsModal(false);
+                      setShowEditModal(true);
+                    }}
+                    onDelete={() => {
+                      setShowDetailsModal(false);
+                      setShowDeleteModal(true);
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      <AnimatePresence>
-        {showEditModal && (
-          <motion.div
-            key="editModal"
-            className="fixed inset-0 flex items-center justify-center z-50"
-          >
-            <motion.div
-              className="absolute inset-0 bg-black/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="relative z-10"
-            >
-              <BookEditModal
-                book={book}
-                isOpen={showEditModal}
-                onClose={() => setShowEditModal(false)}
-                onBack={() => {
-                  setShowEditModal(false);
-                  setShowDetailsModal(true);
-                }}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {showEditModal && (
+              <motion.div
+                key="editModal"
+                className="fixed inset-0 flex items-center justify-center z-50"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-black/40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  <BookEditModal
+                    book={book}
+                    isOpen={showEditModal}
+                    onClose={() => setShowEditModal(false)}
+                    onBack={() => {
+                      setShowEditModal(false);
+                      setShowDetailsModal(true);
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      <AnimatePresence>
-        {showDeleteModal && (
-          <motion.div
-            key="deleteModal"
-            className="fixed inset-0 flex items-center justify-center z-50"
-          >
-            <motion.div
-              className="absolute inset-0 bg-black/40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className="relative z-10"
-            >
-              <DeleteConfirmModal
-                isOpen={showDeleteModal}
-                bookTitle={book.title}
-                onClose={() => setShowDeleteModal(false)}
-                onConfirm={confirmDelete}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {showDeleteModal && (
+              <motion.div
+                key="deleteModal"
+                className="fixed inset-0 flex items-center justify-center z-50"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-black/40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  className="relative z-10"
+                >
+                  <DeleteConfirmModal
+                    isOpen={showDeleteModal}
+                    bookTitle={book.title}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={confirmDelete}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </>
   );
 }

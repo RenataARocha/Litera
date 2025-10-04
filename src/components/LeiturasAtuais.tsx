@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
 
 // =================================================================
@@ -64,8 +63,6 @@ const PageTransition = ({ children, isVisible }: { children: React.ReactNode; is
 // 3. COMPONENTE PRINCIPAL
 // =================================================================
 const LeiturasAtuais = () => {
-    const router = useRouter();
-
     // Estados
     const [currentReadings, setCurrentReadings] = useState<BookWithProgress[]>([]);
     const [stats, setStats] = useState<ReadingStats>({ pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 });
@@ -80,7 +77,7 @@ const LeiturasAtuais = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
     const [isVisible, setIsVisible] = useState(false);
-    const [isLeaving, setIsLeaving] = useState(false);
+    const [isLeaving] = useState(false);
 
     // =================================================================
     // Função para calcular dados e progresso
@@ -152,18 +149,6 @@ const LeiturasAtuais = () => {
     }, [fetchReadings]);
 
     // =================================================================
-    // Função de navegação com animação
-    // =================================================================
-    const navigateWithTransition = (path: string) => {
-        setIsLeaving(true);
-        setIsVisible(false);
-
-        setTimeout(() => {
-            router.push(path); // Navegação real
-        }, 400);
-    };
-
-    // =================================================================
     // Funções de modal e feedback
     // =================================================================
     const openUpdateModal = () => { if (mainReading) setIsModalOpen(true); };
@@ -205,18 +190,6 @@ const LeiturasAtuais = () => {
     // =================================================================
     return (
         <div className={`min-h-screen transition-all duration-500 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
-
-            {/* Botão Voltar para Home com transição */}
-            <PageTransition isVisible={isVisible}>
-                <div style={{ margin: '0.5rem', padding: '1rem' }}>
-                    <button
-                        onClick={() => navigateWithTransition('/')}
-                        className="px-3 py-2 text-blue-600 rounded-lg hover:underline transition-all duration-300 hover:bg-blue-50 cursor-pointer transform hover:scale-105 text-sm md:text-base"
-                    >
-                        ← Voltar para Home
-                    </button>
-                </div>
-            </PageTransition>
 
             <div className="flex items-center justify-center min-h-screen" style={{ margin: '0.5rem' }}>
                 <div className="w-full max-w-4xl mx-auto" style={{ padding: '20px 10px' }}>

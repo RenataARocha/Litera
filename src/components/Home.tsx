@@ -1,4 +1,4 @@
-'use client'; // 👈 Essencial para usar hooks e interatividade
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -7,10 +7,13 @@ import { FaBook, FaBookOpen, FaCheck, FaFileAlt, FaPlus, FaSearch } from 'react-
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { DashboardProps, GoalCircleProps, Color } from '@/components/types/types';
+import {
+    metasExposicao,
+    statsExposicao,
+    formatLivrosParaAtividade
+} from "@/app/utils/dadosExposicao";
 
-
-// --- DisplayGoalCircle (Definição para uso dentro do Home) ---
-
+// --- DisplayGoalCircle ---
 const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subtitle, color = "blue" }) => {
     const colorMap: Record<Color, string> = {
         blue: "#3B82F6",
@@ -59,7 +62,7 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
     );
 };
 
-// --- Home (Componente Principal) ---
+// --- Home ---
 const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,6 +71,58 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
         const token = localStorage.getItem('authToken');
         setIsLoggedIn(!!token);
     }, []);
+
+    // ✅ Decidir quais dados usar baseado no login
+    const dadosAtividade = isLoggedIn ? recentActivity : formatLivrosParaAtividade();
+    const dadosStats = isLoggedIn ? stats : statsExposicao;
+
+    // ✅ Calcular metas dinamicamente quando logado
+    const calcularMetasReais = () => {
+        if (!isLoggedIn) {
+            return metasExposicao; // Metas de exposição quando não logado
+        }
+
+        // Quando logado, calcular com base nos dados reais
+        const livrosConcluidos = dadosStats?.finishedBooks || 0;
+        const paginasLidas = dadosStats?.totalPagesRead || 0;
+
+        // Meta: 50 livros por ano
+        const metaLivrosAno = 50;
+        const progressoLivros = Math.min(Math.round((livrosConcluidos / metaLivrosAno) * 100), 100);
+
+        // Meta: 2000 páginas por mês (assumindo que paginasLidas é do ano, dividimos por 12)
+        const metaPaginasMes = 2000;
+        const paginasEsteMes = Math.round(paginasLidas / 12); // Estimativa
+        const progressoPaginas = Math.min(Math.round((paginasEsteMes / metaPaginasMes) * 100), 100);
+
+        // Meta: 10 gêneros diversos (aqui você pode ajustar quando tiver dados de gêneros)
+        const metaGeneros = 10;
+        const generosLidos = 0; // TODO: implementar contagem de gêneros quando disponível
+        const progressoGeneros = Math.min(Math.round((generosLidos / metaGeneros) * 100), 100);
+
+        return [
+            {
+                title: "Livros por Ano",
+                percentage: progressoLivros,
+                subtitle: `${livrosConcluidos} de ${metaLivrosAno} livros`,
+                color: "blue" as const,
+            },
+            {
+                title: "Páginas por Mês",
+                percentage: progressoPaginas,
+                subtitle: `${paginasEsteMes} de ${metaPaginasMes} páginas`,
+                color: "green" as const,
+            },
+            {
+                title: "Gêneros Diversos",
+                percentage: progressoGeneros,
+                subtitle: `${generosLidos} de ${metaGeneros} gêneros`,
+                color: "purple" as const,
+            },
+        ];
+    };
+
+    const dadosMetas = calcularMetasReais();
 
     const handleProtectedAction = (path: string, message: string) => {
         if (!isLoggedIn) {
@@ -78,6 +133,11 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
             router.push(path);
         }
     };
+
+    // Cálculo do progresso geral
+    const progressoGeral = dadosStats
+        ? Math.round(((dadosStats.finishedBooks || 0) / (dadosStats.totalBooks || 1)) * 100)
+        : 0;
 
     return (
         <motion.div
@@ -106,7 +166,9 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             marginBottom: "0.75rem",
                         }}
                     >
-                        Gerencie sua biblioteca pessoal com estilo
+                        {isLoggedIn
+                            ? 'Gerencie sua biblioteca pessoal com estilo'
+                            : 'Faça login para começar a organizar suas leituras'}
                     </p>
                     <div
                         className="flex flex-col sm:flex-row sm:items-center text-sm sm:text-base text-blue-100"
@@ -154,12 +216,12 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             fill="none"
                             strokeLinecap="round"
                             strokeDasharray={2 * Math.PI * 36}
-                            strokeDashoffset={2 * Math.PI * 36 * (1 - ((stats?.finishedBooks ?? 0) / (stats?.totalBooks || 1)) * 100 / 100)}
+                            strokeDashoffset={2 * Math.PI * 36 * (1 - progressoGeral / 100)}
                         />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-lg sm:text-xl font-bold">
-                            {Math.round(((stats?.finishedBooks ?? 0) / (stats?.totalBooks || 1)) * 100)}
+                            {progressoGeral}%
                         </span>
                     </div>
                 </div>
@@ -184,13 +246,13 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             <FaBook aria-hidden="true" className="text-blue-500 text-lg group-hover:animate-bounce" />
                         </div>
                         <span className="text-xs font-medium text-green-600 bg-green-50 dark:bg-transparent dark:text-green-400 px-2 py-1 rounded-full">
-                            +12% este mês
+                            {isLoggedIn ? '+12% este mês' : 'Demo'}
                         </span>
                     </div>
                     <div>
                         <p id="stat-total-books" className="text-gray-500 dark:text-blue-200 text-sm mb-1">Total de Livros</p>
-                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Total de livros: ${stats?.totalBooks ?? 0}`}>
-                            {stats?.totalBooks ?? 0}
+                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Total de livros: ${dadosStats?.totalBooks ?? 0}`}>
+                            {dadosStats?.totalBooks ?? 0}
                         </p>
                     </div>
                 </div>
@@ -213,8 +275,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     </div>
                     <div>
                         <p id="stat-reading-now" className="text-gray-500 dark:text-blue-200 text-sm mb-1">Lendo Agora</p>
-                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Livros em leitura: ${stats?.readingNow ?? 0}`}>
-                            {stats?.readingNow ?? 0}
+                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Livros em leitura: ${dadosStats?.readingNow ?? 0}`}>
+                            {dadosStats?.readingNow ?? 0}
                         </p>
                     </div>
                 </div>
@@ -237,8 +299,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     </div>
                     <div>
                         <p id="stat-finished-books" className="text-gray-500 dark:text-blue-200 text-sm mb-1">Concluídos</p>
-                        <p className="text-3xl font-bold dark:text-blue-200 text-gray-800" aria-label={`Livros concluídos: ${stats?.finishedBooks ?? 0}`}>
-                            {stats?.finishedBooks ?? 0}
+                        <p className="text-3xl font-bold dark:text-blue-200 text-gray-800" aria-label={`Livros concluídos: ${dadosStats?.finishedBooks ?? 0}`}>
+                            {dadosStats?.finishedBooks ?? 0}
                         </p>
                     </div>
                 </div>
@@ -261,13 +323,12 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     </div>
                     <div>
                         <p id="stat-pages-read" className="text-gray-500 dark:text-blue-200 text-sm mb-1">Páginas Lidas</p>
-                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Total de páginas lidas: ${stats?.totalPagesRead ?? 0}`}>
-                            {stats?.totalPagesRead ?? 0}
+                        <p className="text-3xl font-bold text-gray-800 dark:text-blue-200" aria-label={`Total de páginas lidas: ${dadosStats?.totalPagesRead ?? 0}`}>
+                            {dadosStats?.totalPagesRead ?? 0}
                         </p>
                     </div>
                 </div>
             </div>
-
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Atividade Recente */}
@@ -277,7 +338,9 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     style={{ padding: '1.5rem' }}
                 >
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-lg font-bold text-gray-800 dark:text-blue-400">Atividade Recente</h2>
+                        <h2 className="text-lg font-bold text-gray-800 dark:text-blue-400">
+                            {isLoggedIn ? 'Atividade Recente' : 'Livros em Destaque'}
+                        </h2>
                         <Link href="/books" className="text-sm text-blue-500 hover:text-blue-600 transition-colors">
                             Ver tudo
                         </Link>
@@ -286,64 +349,70 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     {/* Container com scroll */}
                     <div
                         className="space-y-5 flex flex-col gap-y-4 overflow-y-auto"
-                        style={{ maxHeight: '400px', paddingRight: '0.25rem' }} // maxHeight define o tamanho antes do scroll aparecer
+                        style={{ maxHeight: '400px', paddingRight: '0.25rem' }}
                     >
-                        {(recentActivity ?? []).map((book, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors
+                        {(dadosAtividade && dadosAtividade.length > 0) ? (
+                            dadosAtividade.map((book, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-4 rounded-xl hover:bg-gray-50 transition-colors
                 dark:bg-blue-200/10 dark:hover:bg-blue-200/20"
-                                style={{ padding: '0.75rem 0.5rem' }}
-                            >
-                                <Image
-                                    src={book.cover || '/path/to/placeholder-cover.jpg'}
-                                    alt={book.title}
-                                    width={48}
-                                    height={64}
-                                    className="object-cover rounded-lg shadow-sm flex-shrink-0"
-                                    unoptimized
-                                />
-                                <div className="flex-1 min-w-0">
-                                    <h3
-                                        className="font-semibold text-gray-800 text-sm truncate dark:text-blue-400"
-                                        style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}
-                                    >
-                                        {book.title}
-                                    </h3>
-                                    <p
-                                        className="text-xs text-gray-500 dark:text-blue-200"
-                                        style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}
-                                    >
-                                        {book.author}
-                                    </p>
+                                    style={{ padding: '0.75rem 0.5rem' }}
+                                >
+                                    <Image
+                                        src={book.cover || '/path/to/placeholder-cover.jpg'}
+                                        alt={book.title}
+                                        width={48}
+                                        height={64}
+                                        className="object-cover rounded-lg shadow-sm flex-shrink-0"
+                                        unoptimized
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <h3
+                                            className="font-semibold text-gray-800 text-sm truncate dark:text-blue-400"
+                                            style={{ marginBottom: '0.25rem', lineHeight: '1.2' }}
+                                        >
+                                            {book.title}
+                                        </h3>
+                                        <p
+                                            className="text-xs text-gray-500 dark:text-blue-200"
+                                            style={{ marginBottom: '0.5rem', lineHeight: '1.3' }}
+                                        >
+                                            {book.author}
+                                        </p>
 
-                                    <div className="flex items-center gap-2">
-                                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
-                                            book.status === 'Lendo' ? 'bg-green-100 text-green-700 dark:text-green-400' :
-                                                'bg-gray-100 text-gray-700'
-                                            } dark:bg-transparent dark:text-blue-200 `}>
-                                            {book.status}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${book.status === 'Lido' ? 'bg-blue-100 text-blue-700' :
+                                                book.status === 'Lendo' ? 'bg-green-100 text-green-700 dark:text-green-400' :
+                                                    'bg-gray-100 text-gray-700'
+                                                } dark:bg-transparent dark:text-blue-200 `}>
+                                                {book.status}
+                                            </span>
 
-                                        {/* Estrelas de rating */}
-                                        <div className="flex items-center gap-1">
-                                            {[...Array(5)].map((_, i) => (
-                                                <span
-                                                    key={i}
-                                                    className={`text-xs ${i < book.rating ? 'text-yellow-400' : 'text-gray-300'
-                                                        }`}
-                                                >
-                                                    ★
-                                                </span>
-                                            ))}
+                                            {/* Estrelas de rating */}
+                                            <div className="flex items-center gap-1">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className={`text-xs ${i < book.rating ? 'text-yellow-400' : 'text-gray-300'
+                                                            }`}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="text-xs text-gray-400 whitespace-nowrap">
+                                        {book.lastRead}
+                                    </div>
                                 </div>
-                                <div className="text-xs text-gray-400 whitespace-nowrap">
-                                    {book.lastRead}
-                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-8 text-gray-500 dark:text-blue-200">
+                                Nenhuma atividade recente
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 
@@ -380,7 +449,6 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                         </button>
                     </div>
                 </div>
-
             </div>
 
             {/* Metas de Leitura */}
@@ -393,28 +461,19 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                     className="text-xl font-bold text-gray-900 dark:text-blue-400"
                     style={{ marginBottom: "1.5rem" }}
                 >
-                    Metas de Leitura 2024
+                    Metas de Leitura 2025
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <DisplayGoalCircle
-                        percentage={20}
-                        title="Livros por Ano"
-                        subtitle="10 de 50 livros"
-                        color="blue"
-                    />
-                    <DisplayGoalCircle
-                        percentage={40}
-                        title="Páginas por Mês"
-                        subtitle="800 de 2000 páginas"
-                        color="green"
-                    />
-                    <DisplayGoalCircle
-                        percentage={50}
-                        title="Gêneros Diversos"
-                        subtitle="5 de 10 gêneros"
-                        color="purple"
-                    />
+                    {dadosMetas.map((meta, index) => (
+                        <DisplayGoalCircle
+                            key={index}
+                            percentage={meta.percentage}
+                            title={meta.title}
+                            subtitle={meta.subtitle}
+                            color={meta.color}
+                        />
+                    ))}
                 </div>
             </div>
         </motion.div>
