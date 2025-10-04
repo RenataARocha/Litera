@@ -14,6 +14,7 @@ import {
   FaSun,
   FaSignInAlt
 } from 'react-icons/fa';
+import { GiChocolateBar } from 'react-icons/gi';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,7 +36,14 @@ export default function Header() {
 
   const toggleTheme = () => {
     if (!mounted) return;
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+
+    if (resolvedTheme === "light") {
+      setTheme("dark");
+    } else if (resolvedTheme === "dark") {
+      setTheme("wood");
+    } else {
+      setTheme("light");
+    }
   };
 
   const toggleMenu = () => {
@@ -194,9 +202,13 @@ export default function Header() {
               aria-label="Alterar tema"
             >
               {mounted ? (
-                resolvedTheme === 'light' ?
-                  <FaMoon className="text-gray-700 text-sm" /> :
+                resolvedTheme === 'light' ? (
+                  <FaMoon className="text-gray-700 text-sm" />
+                ) : resolvedTheme === 'dark' ? (
                   <FaSun className="text-yellow-400 text-sm" />
+                ) : (
+                  <GiChocolateBar className="text-yellow-800 text-sm" />
+                )
               ) : null}
             </button>
           </nav>

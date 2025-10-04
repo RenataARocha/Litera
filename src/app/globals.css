@@ -13,7 +13,7 @@
   --color-primary-700: #0369a1;
   --color-primary-800: #075985;
   --color-primary-900: #0c4a6e;
-  
+
   --color-dark-50: #f8fafc;
   --color-dark-100: #f1f5f9;
   --color-dark-200: #e2e8f0;
@@ -30,20 +30,64 @@
   --animate-slide-down: slideDown 0.3s ease-out;
 }
 
+:root[data-theme="wood"] {
+  --color-primary-50: #fdf6f0;
+  --color-primary-100: #f4e1d2;
+  --color-primary-200: #e8cbb0;
+  --color-primary-300: #d9ab7d;
+  --color-primary-400: #c68c53;
+  --color-primary-500: #a47148;
+  --color-primary-600: #855f3a;
+  --color-primary-700: #6b4b2d;
+  --color-primary-800: #523820;
+  --color-primary-900: #3a2614;
+
+  --color-dark-50: #faf6f1;
+  --color-dark-100: #ede5dd;
+  --color-dark-200: #d9cfc3;
+  --color-dark-300: #b9a99b;
+  --color-dark-400: #8c7a6a;
+  --color-dark-500: #6b5e4d;
+  --color-dark-600: #554a3c;
+  --color-dark-700: #41372c;
+  --color-dark-800: #2c241c;
+  --color-dark-900: #1a140e;
+}
+
+
 /* Keyframes */
 @keyframes glow {
-  0% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); }
-  100% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6); }
+  0% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.6);
+  }
 }
 
 @keyframes bounceSubtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes slideDown {
-  0% { transform: translateY(-20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Reset básico */
@@ -77,6 +121,7 @@ body {
 
 @utility mobile-only {
   display: block;
+
   @media (min-width: 768px) {
     display: none;
   }
@@ -84,6 +129,7 @@ body {
 
 @utility desktop-only {
   display: none;
+
   @media (min-width: 768px) {
     display: block;
   }
