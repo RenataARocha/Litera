@@ -338,7 +338,9 @@ export default function FilterBar({
                             whileHover={{ scale: 1.05, backgroundColor: "#f9fafb" }}
                             whileTap={{ scale: 0.95 }}
                             onClick={onClearFilters}
-                            className="text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="text-sm text-gray-600 hover:text-gray-800 border border-gray-200 
+                            rounded-lg hover:bg-gray-50 transition-colors
+                            dark:bg-blue-200/20 dark:text-blue-200 dark:border-blue-200"
                             style={{ padding: '0.5rem 1rem' }}
                         >
                             Limpar filtros
