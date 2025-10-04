@@ -173,14 +173,14 @@ const handleDelete = async (bookId: number) => {
       ) : (
         <div
           className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl 
-          shadow-md"
+          shadow-md dark:bg-gray-800 dark:border-[#3b82f6] dark:border"
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
           <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
-          <h3 className="text-2xl font-semibold text-gray-900" style={{ marginBottom: '0.5rem' }}>
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-blue-400" style={{ marginBottom: '0.5rem' }}>
             Nenhum livro encontrado
           </h3>
-          <p className="text-gray-600" style={{ marginBottom: '1.5rem' }}>
+          <p className="text-gray-600 dark:text-blue-200" style={{ marginBottom: '1.5rem' }}>
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
           <button

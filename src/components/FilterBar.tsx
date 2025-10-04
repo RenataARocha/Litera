@@ -283,22 +283,22 @@ export default function FilterBar({
                         onChange={(e) => onGenreChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}
                     >
-                        <option value="">Todos os Gêneros 🏷️</option>
-                        <option value="Literatura Brasileira">Literatura Brasileira 📚</option>
-                        <option value="Ficção Científica">Ficção Científica 🚀</option>
-                        <option value="Realismo Mágico">Realismo Mágico ✨</option>
-                        <option value="Ficção">Ficção 📖</option>
-                        <option value="Fantasia">Fantasia 🐉</option>
-                        <option value="Romance">Romance 💕</option>
-                        <option value="Biografia">Biografia 👤</option>
-                        <option value="História">História 🏛️</option>
-                        <option value="Autoajuda">Autoajuda 💪</option>
-                        <option value="Tecnologia">Tecnologia 💻</option>
-                        <option value="Programação">Programação ⌨️</option>
-                        <option value="Negócios">Negócios 💼</option>
-                        <option value="Psicologia">Psicologia 🧠</option>
-                        <option value="Filosofia">Filosofia 🤔</option>
-                        <option value="Poesia">Poesia 🎭</option>
+                        <option value="" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" >Todos os Gêneros 🏷️</option>
+                        <option value="Literatura Brasileira" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Literatura Brasileira 📚</option>
+                        <option value="Ficção Científica" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Ficção Científica 🚀</option>
+                        <option value="Realismo Mágico" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Realismo Mágico ✨</option>
+                        <option value="Ficção" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Ficção 📖</option>
+                        <option value="Fantasia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Fantasia 🐉</option>
+                        <option value="Romance" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Romance 💕</option>
+                        <option value="Biografia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Biografia 👤</option>
+                        <option value="História" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">História 🏛️</option>
+                        <option value="Autoajuda" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Autoajuda 💪</option>
+                        <option value="Tecnologia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Tecnologia 💻</option>
+                        <option value="Programação" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Programação ⌨️</option>
+                        <option value="Negócios" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Negócios 💼</option>
+                        <option value="Psicologia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Psicologia 🧠</option>
+                        <option value="Filosofia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Filosofia 🤔</option>
+                        <option value="Poesia" className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200">Poesia 🎭</option>
                     </motion.select>
                 </div>
 
@@ -319,13 +319,13 @@ export default function FilterBar({
                         onChange={(e) => onStatusChange(e.target.value)}
                         style={{ paddingLeft: '1rem', paddingRight: '2.5rem' }}
                     >
-                        <option value="">Todos os Status 📊</option>
-                        <option value="não lido">Não Lido 📚</option>
-                        <option value="quero ler">Quero Ler 🎯</option>
-                        <option value="lendo">Lendo 📖</option>
-                        <option value="lido">Lido ✅</option>
-                        <option value="pausado">Pausado ⏸️</option>
-                        <option value="abandonado">Abandonado ❌</option>
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="">Todos os Status 📊</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="não lido">Não Lido 📚</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="quero ler">Quero Ler 🎯</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lendo">Lendo 📖</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lido">Lido ✅</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="pausado">Pausado ⏸️</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="abandonado">Abandonado ❌</option >
                     </motion.select>
                 </div>
 
@@ -338,7 +338,9 @@ export default function FilterBar({
                             whileHover={{ scale: 1.05, backgroundColor: "#f9fafb" }}
                             whileTap={{ scale: 0.95 }}
                             onClick={onClearFilters}
-                            className="text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                            className="text-sm text-gray-600 hover:text-gray-800 border border-gray-200 
+                            rounded-lg hover:bg-gray-50 transition-colors
+                            dark:bg-blue-200/20 dark:text-blue-200 dark:border-blue-200"
                             style={{ padding: '0.5rem 1rem' }}
                         >
                             Limpar filtros
