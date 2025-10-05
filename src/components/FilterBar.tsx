@@ -339,13 +339,13 @@ export default function FilterBar({
                         onChange={(e) => onStatusChange(e.target.value)}
                         style={{ paddingLeft: "1rem", paddingRight: "2.5rem" }}
                     >
-                        <option value="">Todos os Status 📊</option>
-                        <option value="não lido">Não Lido 📚</option>
-                        <option value="quero ler">Quero Ler 🎯</option>
-                        <option value="lendo">Lendo 📖</option>
-                        <option value="lido">Lido ✅</option>
-                        <option value="pausado">Pausado ⏸️</option>
-                        <option value="abandonado">Abandonado ❌</option>
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="">Todos os Status 📊</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="não lido">Não Lido 📚</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="quero ler">Quero Ler 🎯</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lendo">Lendo 📖</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lido">Lido ✅</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="pausado">Pausado ⏸️</option >
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="abandonado">Abandonado ❌</option >
                     </motion.select>
 
                     {/* Ícone da setinha customizado */}

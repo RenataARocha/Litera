@@ -197,10 +197,10 @@ const LeiturasAtuais = () => {
                     {/* Título da Página com animação */}
                     <PageTransition isVisible={isVisible}>
                         <div className="text-center" style={{ marginBottom: '32px' }}>
-                            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 transform transition-all duration-700" style={{ marginBottom: '8px' }}>
+                            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-blue-400 transform transition-all duration-700" style={{ marginBottom: '8px' }}>
                                 Leituras Atuais
                             </h1>
-                            <p className="text-sm md:text-lg text-gray-600 transition-all duration-700 delay-200" style={{ padding: '0 16px' }}>
+                            <p className="text-sm md:text-lg text-gray-600 dark:text-blue-200 transition-all duration-700 delay-200" style={{ padding: '0 16px' }}>
                                 Acompanhe seu progresso e mantenha o foco nos livros que está lendo
                             </p>
                         </div>
@@ -216,7 +216,7 @@ const LeiturasAtuais = () => {
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 dark:bg-transparent dark:border-transparent dark:shadow-[#3b82f6] hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                                 style={{
                                     padding: '16px 12px',
                                     transitionDelay: `${index * 150}ms`
@@ -228,19 +228,19 @@ const LeiturasAtuais = () => {
                                 >
                                     <stat.icon className={`w-4 h-4 md:w-6 md:h-6 text-white transition-all duration-200 ${stat.animationClass}`} />
                                 </div>
-                                <div className="text-lg md:text-2xl font-bold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
+                                <div className="text-lg md:text-2xl font-bold text-gray-800 dark:text-blue-600 transition-all duration-300" style={{ marginBottom: '4px' }}>
                                     {stat.value}
                                 </div>
-                                <div className="text-xs md:text-sm text-gray-600 font-medium">{stat.label}</div>
+                                <div className="text-xs md:text-sm text-gray-600 dark:text-blue-400 font-medium">{stat.label}</div>
                             </div>
                         ))}
                     </div>
 
                     {/* Card do Livro com animação - USANDO O NOVO ESTADO 'mainReading' */}
                     <PageTransition isVisible={isVisible}>
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-500 hover:shadow-lg" style={{ padding: '20px md:40px' }}>
+                        <div className="bg-white dark:bg-blue-200/10 dark:border-blue-400 rounded-2xl shadow-sm border border-gray-100 transition-all duration-500 hover:shadow-lg" style={{ padding: '20px md:40px' }}>
                             <div className="text-center" style={{ marginBottom: '1rem', padding: '1rem' }}>
-                                <h2 className="text-xl md:text-2xl font-semibold flex items-center justify-center gap-3 text-gray-800">
+                                <h2 className="text-xl md:text-2xl font-semibold flex dark:text-blue-400 items-center justify-center gap-3 text-gray-800">
                                     <BookOpen className="w-6 h-6 md:w-7 md:h-7 text-blue-600 transition-all duration-300" />
                                     Livros em Andamento
                                 </h2>
@@ -260,10 +260,10 @@ const LeiturasAtuais = () => {
                                                 {mainReading.book.title.toUpperCase().substring(0, 10).split(' ').join('<br/>')}
                                             </div>
 
-                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-800 dark:text-blue-400 transition-all duration-300" style={{ marginBottom: '4px' }}>
                                                 {mainReading.book.title}
                                             </h3>
-                                            <p className="text-base md:text-lg text-gray-600 transition-all duration-300" style={{ marginBottom: '12px' }}>
+                                            <p className="text-base md:text-lg text-gray-600 dark:text-blue-200 transition-all duration-300" style={{ marginBottom: '12px' }}>
                                                 {mainReading.authorName}
                                             </p>
 
@@ -287,7 +287,7 @@ const LeiturasAtuais = () => {
                                         {/* Progresso */}
                                         <div style={{ marginBottom: '28px' }}>
                                             <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
-                                                <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base">
+                                                <span className="text-gray-700 dark:text-blue-500 font-medium transition-all duration-300 text-sm md:text-base">
                                                     {mainReading.currentPage} de {mainReading.book.pages} páginas
                                                 </span>
                                                 <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500">
@@ -347,7 +347,7 @@ const LeiturasAtuais = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="text-center p-8 text-gray-500">
+                                <div className="text-center p-8 text-gray-500 dark:text-blue-300">
                                     {currentReadings.length === 0 ? "Carregando dados..." : "Nenhuma leitura em andamento. Adicione um livro para começar!"}
                                 </div>
                             )}

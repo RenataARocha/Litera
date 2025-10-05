@@ -231,8 +231,7 @@ export default function BooksPage() {
         </div>
       ) : (
         <div
-          className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 dark:bg-slate-800/50 rounded-2xl 
-          shadow-md"
+
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
           <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
