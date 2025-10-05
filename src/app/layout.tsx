@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import Header from "@/components/Header";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 import ToasterClient from "@/components/ToasterClient";
-import {ThemeProvider} from 'next-themes';
+import { ThemeProvider } from 'next-themes';
 
 const SITE_URL = 'https://litera-six.vercel.app';
 
@@ -174,9 +174,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
       <body className="min-h-screen transition-colors duration-300">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div className="flex flex-col min-h-screen dark:bg-slate-800/90 ">
-
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          themes={["light", "dark", "wood"]}
+        >
+          <div className="flex flex-col min-h-screen dark:bg-slate-800/90">
             <Header />
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />

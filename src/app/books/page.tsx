@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import BookCard from "@/components/BookCard";
 import FilterBar from "@/components/FilterBar";
 import { Book } from '@/components/types/types';
+import { livrosExposicao } from '@/app/utils/dadosExposicao';
 
 export default function BooksPage() {
   const router = useRouter();
@@ -12,39 +13,74 @@ export default function BooksPage() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-// Consumo da API Route
-useEffect(() => {
-  const fetchBooks = async () => {
-    try {
-      // Mude para o caminho da sua API Route
-      const res = await fetch("/api/books"); 
+  // Verificar login
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
 
-      if (!res.ok) {
-        throw new Error("Falha ao buscar livros da API");
+  // Converter livros de exposição para o formato Book
+  const livrosExposicaoFormatados: Book[] = livrosExposicao.map((livro, index) => ({
+    id: index + 1000,
+    title: livro.title,
+    author: livro.author,
+    cover: livro.cover,
+    status: livro.status,
+    rating: livro.rating,
+    year: 2024,
+    genre: livro.genre,
+    description: "Este é um livro de exemplo para demonstração.",
+    pages: livro.totalPages,
+    finishedPages: livro.pagesRead,
+    lastRead: livro.lastRead,
+    notes: "",
+    isbn: "",
+  }));
+
+  // Buscar livros da API (apenas se logado)
+  useEffect(() => {
+    const fetchBooks = async () => {
+      if (!isLoggedIn) {
+        setLoading(false);
+        return;
       }
 
-      const data: Book[] = await res.json();
-      setBooks(data);
-    } catch (err) {
-      console.error("Erro ao carregar livros: ", err);
-    }
-  };
+      try {
+        const res = await fetch("/api/books");
 
-  fetchBooks();
-}, []);
+        if (!res.ok) {
+          throw new Error("Falha ao buscar livros da API");
+        }
 
-  //Mapeia todos os gêneros
-    const allGenresWithNull = books.map((b) => b.genre);
+        const data: Book[] = await res.json();
+        setBooks(data);
+      } catch (err) {
+        console.error("Erro ao carregar livros: ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //Removendo todos os valores null
-    const validGenres = allGenresWithNull.filter((g): g is string => g !== null);
+    fetchBooks();
+  }, [isLoggedIn]);
 
-  //Cria o Set para ter apenas valores únicos
-    const genres = Array.from(new Set(validGenres));
+  // Decidir quais livros mostrar
+  const livrosParaMostrar = isLoggedIn ? books : livrosExposicaoFormatados;
+
+  // Mapeia todos os gêneros
+  const allGenresWithNull = livrosParaMostrar.map((b) => b.genre);
+
+  // Removendo todos os valores null
+  const validGenres = allGenresWithNull.filter((g): g is string => g !== null);
+
+  // Cria o Set para ter apenas valores únicos
+  const genres = Array.from(new Set(validGenres));
 
   // Filtrar
-  const filtered = books.filter((book) => {
+  const filtered = livrosParaMostrar.filter((book) => {
     const matchesQuery =
       book.title.toLowerCase().includes(query.toLowerCase()) ||
       book.author.toLowerCase().includes(query.toLowerCase());
@@ -67,54 +103,76 @@ useEffect(() => {
 
   // Handlers
   const handleEdit = (book: Book) => {
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', '/books');
+      localStorage.setItem('loginMessage', 'Faça login para editar livros');
+      router.push('/login');
+      return;
+    }
     router.push(`/books/edit/${book.id}`);
   };
 
-// app/books/page.tsx (dentro da função BooksPage)
+  const handleDelete = async (bookId: number) => {
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', '/books');
+      localStorage.setItem('loginMessage', 'Faça login para gerenciar seus livros');
+      router.push('/login');
+      return;
+    }
 
-// Handlers
-// ... (handleEdit, handleDetails)
-
-const handleDelete = async (bookId: number) => {
     if (!window.confirm("Tem certeza que deseja remover este livro da sua biblioteca?")) {
-        return;
+      return;
     }
 
     try {
-        const res = await fetch(`/api/books/${bookId}`, {
-            method: 'DELETE',
-        });
+      const res = await fetch(`/api/books/${bookId}`, {
+        method: 'DELETE',
+      });
 
-        if (!res.ok) {
-            throw new Error("Falha ao excluir o livro no servidor.");
-        }
-        setBooks(books.filter(book => book.id !== bookId));
-        alert('Livro removido com sucesso!');
-        
+      if (!res.ok) {
+        throw new Error("Falha ao excluir o livro no servidor.");
+      }
+      setBooks(books.filter(book => book.id !== bookId));
+      alert('Livro removido com sucesso!');
+
     } catch (error) {
-        console.error("Erro ao excluir livro:", error);
-        alert('Erro ao excluir livro. Tente novamente.');
+      console.error("Erro ao excluir livro:", error);
+      alert('Erro ao excluir livro. Tente novamente.');
     }
-};
+  };
 
   const handleDetails = (book: Book) => {
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', '/books');
+      localStorage.setItem('loginMessage', 'Faça login para ver os detalhes completos');
+      router.push('/login');
+      return;
+    }
     router.push(`/books/${book.id}`);
+  };
+
+  const handleAddBook = () => {
+    if (!isLoggedIn) {
+      localStorage.setItem('redirectAfterLogin', '/books/new');
+      localStorage.setItem('loginMessage', 'Faça login para adicionar novos livros');
+      router.push('/login');
+    } else {
+      router.push('/books/new');
+    }
   };
 
   const hasActiveFilters = query || genre || statusFilter;
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '2rem' }}>
-      {/* Botão Voltar para Home */}
-      <div style={{ marginBottom: '2rem' }}>
-        <button
-          onClick={() => router.push('/')}
-          className="text-blue-600 cursor-pointer rounded-lg hover:underline transition-colors"
-          style={{ padding: '1rem 1rem' }}
-        >
-          ← Voltar para Home
-        </button>
-      </div>
 
       {/* Header da página */}
       <div style={{ marginBottom: '2rem' }}>
@@ -141,7 +199,7 @@ const handleDelete = async (bookId: number) => {
       {/* Informações dos resultados */}
       <div style={{ marginBottom: '0.9rem', marginTop: '1rem' }}>
         <p className="text-gray-600 dark:text-blue-400">
-          Mostrando {filtered.length} de {books.length} livros
+          Mostrando {filtered.length} de {livrosParaMostrar.length} livros
           {hasActiveFilters && (
             <span className="text-sm text-blue-600" style={{ marginLeft: '0.5rem' }}>
               (filtros ativos)
@@ -165,6 +223,7 @@ const handleDelete = async (bookId: number) => {
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                   onDetails={handleDetails}
+                  isExposicao={!isLoggedIn}
                 />
               ))}
             </div>
@@ -172,8 +231,7 @@ const handleDelete = async (bookId: number) => {
         </div>
       ) : (
         <div
-          className="text-center flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 rounded-2xl 
-          shadow-md dark:bg-gray-800 dark:border-[#3b82f6] dark:border"
+
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
           <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
@@ -184,8 +242,9 @@ const handleDelete = async (bookId: number) => {
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
           <button
-            onClick={() => router.push('/books/new')}
-            className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md cursor-pointer"
+            onClick={handleAddBook}
+            className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md cursor-pointer
+            dark:bg-blue-200/20 dark:hover:bg-blue-200/30 dark:text-blue-200"
             style={{ marginTop: "1rem", padding: "0.75rem 1.5rem" }}
           >
             Adicionar Novo Livro

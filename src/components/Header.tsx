@@ -3,7 +3,18 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { FaBookOpen, FaChartLine, FaPlus, FaBars, FaTimes, FaBook, FaMoon, FaSun, FaSignInAlt } from 'react-icons/fa';
+import {
+  FaBookOpen,
+  FaChartLine,
+  FaPlus,
+  FaBars,
+  FaTimes,
+  FaBook,
+  FaMoon,
+  FaSun,
+  FaSignInAlt
+} from 'react-icons/fa';
+import { GiChocolateBar } from 'react-icons/gi';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,21 +24,26 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true);
-
-    // Verifica se o usuário está logado
     const token = localStorage.getItem('authToken');
     setIsLoggedIn(!!token);
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Dashboard', icon: <FaChartLine /> },
-    { href: '/books', label: 'Biblioteca', icon: <FaBook /> },
-    { href: '/leituras-atuais', label: 'Leituras Atuais', icon: <FaBookOpen /> }
+    { href: '/', label: 'Dashboard', icon: <FaChartLine />, protected: false },
+    { href: '/books', label: 'Biblioteca', icon: <FaBook />, protected: false },
+    { href: '/leituras-atuais', label: 'Leituras Atuais', icon: <FaBookOpen />, protected: true }
   ];
 
   const toggleTheme = () => {
     if (!mounted) return;
-    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+
+    if (resolvedTheme === "light") {
+      setTheme("dark");
+    } else if (resolvedTheme === "dark") {
+      setTheme("wood");
+    } else {
+      setTheme("light");
+    }
   };
 
   const toggleMenu = () => {
@@ -36,24 +52,30 @@ export default function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
     setIsLoggedIn(false);
     window.location.href = '/';
   };
 
-  // Função para proteger rotas
-  const handleProtectedAction = (href) => {
+  const handleProtectedAction = (href: string, message: string = 'Faça login para continuar') => {
     if (!isLoggedIn) {
       localStorage.setItem('redirectAfterLogin', href);
-      localStorage.setItem('loginMessage', 'Faça login para continuar');
+      localStorage.setItem('loginMessage', message);
       window.location.href = '/login';
     } else {
       window.location.href = href;
     }
   };
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isProtected: boolean) => {
+    if (isProtected && !isLoggedIn) {
+      e.preventDefault();
+      handleProtectedAction(href, 'Faça login para acessar suas leituras atuais');
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 glass-morphism dark:bg-gray-900/70 dark:backdrop-blur-md">
-      {/* Container principal - responsivo */}
       <div
         className="max-w-7xl mx-auto"
         style={{
@@ -65,15 +87,16 @@ export default function Header() {
           className="flex justify-between items-center"
           style={{ height: '4.5rem' }}
         >
-
-          {/* Logo - compacto */}
-          <div
-            className="flex items-center"
+          {/* Logo com Link para Home */}
+          <Link
+            href="/"
+            aria-label="Ir para a página inicial"
+            className="flex items-center rounded-md"
             style={{ gap: '0.5rem' }}
           >
             <div className="relative">
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
-                <FaBookOpen className="text-white text-sm lg:text-lg" />
+                <FaBookOpen className="text-white text-sm lg:text-lg" aria-hidden="true" />
               </div>
               <div
                 className="absolute w-3 h-3 bg-green-400 rounded-full animate-pulse"
@@ -81,10 +104,13 @@ export default function Header() {
                   top: '-0.125rem',
                   right: '-0.125rem'
                 }}
+                aria-hidden="true"
               ></div>
             </div>
             <div className="hidden lg:block">
-              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">Litera</h1>
+              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">
+                Litera
+              </h1>
               <p
                 className="text-xs text-gray-500 dark:text-blue-200"
                 style={{ lineHeight: '1.3' }}
@@ -92,13 +118,12 @@ export default function Header() {
                 Biblioteca Digital
               </p>
             </div>
-            {/* Logo mobile mais compacto */}
             <div className="lg:hidden">
               <h1 className="text-lg font-bold text-gradient">Litera</h1>
             </div>
-          </div>
+          </Link>
 
-          {/* Menu Desktop - mais compacto */}
+          {/* Menu Desktop */}
           <nav
             className="hidden lg:flex items-center"
             style={{ gap: '0.25rem' }}
@@ -107,6 +132,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={(e) => handleNavClick(e, link.href, link.protected)}
                 className="flex items-center text-sm font-medium text-gray-700 border-transparent dark:hover:border-r dark:hover:border-b dark:hover:border-[#3b82f6] dark:text-blue-200 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group"
                 style={{
                   gap: '0.5rem',
@@ -120,7 +146,6 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* Divisor */}
             <div
               className="w-px h-6 bg-white/30 dark:bg-gray-700"
               style={{
@@ -129,10 +154,9 @@ export default function Header() {
               }}
             ></div>
 
-            {/* Botão Novo Livro - com proteção de login */}
             <button
-              onClick={() => handleProtectedAction('/books/new')}
-              className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              onClick={() => handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro')}
+              className="flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg text-sm font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
               style={{
                 gap: '0.5rem',
                 padding: '0.5rem 0.75rem'
@@ -142,7 +166,6 @@ export default function Header() {
               <span className="hidden xl:inline">Novo Livro</span>
             </button>
 
-            {/* Botão Login/Logout */}
             {!isLoggedIn ? (
               <Link
                 href="/login"
@@ -157,8 +180,11 @@ export default function Header() {
               </Link>
             ) : (
               <button
-                onClick={handleLogout}
-                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                onClick={() => {
+                  const confirmed = window.confirm('Tem certeza que deseja sair?');
+                  if (confirmed) handleLogout();
+                }}
+                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
@@ -169,27 +195,29 @@ export default function Header() {
               </button>
             )}
 
-            {/* Botão Tema */}
             <button
               onClick={toggleTheme}
-              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
+              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800 cursor-pointer"
               style={{ padding: '0.5rem' }}
               aria-label="Alterar tema"
             >
               {mounted ? (
-                resolvedTheme === 'light' ?
-                  <FaMoon className="text-gray-700 text-sm" /> :
+                resolvedTheme === 'light' ? (
+                  <FaMoon className="text-gray-700 text-sm" />
+                ) : resolvedTheme === 'dark' ? (
                   <FaSun className="text-yellow-400 text-sm" />
+                ) : (
+                  <GiChocolateBar className="text-yellow-800 text-sm" />
+                )
               ) : null}
             </button>
           </nav>
 
-          {/* Menu Mobile - compacto */}
+          {/* Menu Mobile */}
           <div
             className="flex items-center lg:hidden"
             style={{ gap: '0.5rem' }}
           >
-            {/* Botão tema mobile */}
             <button
               onClick={toggleTheme}
               className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
@@ -203,7 +231,6 @@ export default function Header() {
               ) : null}
             </button>
 
-            {/* Botão menu hamburger */}
             <button
               onClick={toggleMenu}
               className="rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-colors"
@@ -236,7 +263,10 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => {
+                  handleNavClick(e, link.href, link.protected);
+                  setMenuOpen(false);
+                }}
                 className="flex items-center text-gray-700 dark:text-gray-200 rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
                 style={{
                   gap: '0.75rem',
@@ -248,11 +278,10 @@ export default function Header() {
               </Link>
             ))}
 
-            {/* Botão Novo Livro mobile - com proteção */}
             <button
               onClick={() => {
                 setMenuOpen(false);
-                handleProtectedAction('/books/new');
+                handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro');
               }}
               className="w-full flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
               style={{
@@ -265,10 +294,8 @@ export default function Header() {
               <span className="text-sm font-medium">Novo Livro</span>
             </button>
 
-            {/* Divisor */}
             <div className="border-t border-white/20 dark:border-gray-700 my-2"></div>
 
-            {/* Botão Login/Logout mobile */}
             {!isLoggedIn ? (
               <Link
                 href="/login"

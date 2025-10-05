@@ -60,7 +60,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
   }, [book]);
 
   // Salvar alterações (local via onSave, sem PUT automático — mantenho seu comportamento atual)
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const updatedBook: Book = {
@@ -79,8 +79,27 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
       finishedPages,
     };
 
-    if (onSave) onSave(updatedBook);
+    try {
+    const response = await fetch(`/api/books/${book.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedBook),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao salvar alterações");
+    }
+
+    const savedBook = await response.json();
+    console.log("Livro atualizado:", savedBook);
+
+    if (onSave) onSave(savedBook); // ainda avisa o pai se precisar atualizar a lista
     onClose();
+  } catch (error) {
+    console.error(error);
+    alert("Não foi possível salvar as alterações.");
+  }
+
   };
 
   // Atualiza progresso dinamicamente (inclui pages/finishedPages nos dependentes)

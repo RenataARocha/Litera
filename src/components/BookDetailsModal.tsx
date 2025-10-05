@@ -92,8 +92,9 @@ export default function BookDetailsModal({
                                         <p className="text-gray-600 dark:text-blue-200">{book.year}</p>
                                     </div>
                                     <div>
+
                                         <span className="font-medium text-gray-700 dark:text-blue-300">Páginas:</span>
-                                        <p className="text-gray-600 dark:text-blue-200">250p</p>
+                                        <p className="text-gray-600 dark:text-blue-200">{book.pages}</p>
                                     </div>
                                     <div>
                                         <span className="font-medium text-gray-700 dark:text-blue-300">Gênero:</span>
@@ -159,7 +160,8 @@ export default function BookDetailsModal({
                                 <h4 className="font-semibold text-green-800 dark:text-green-400 text-lg">Notas Pessoais</h4>
                             </div>
                             <p className="text-black text-sm dark:text-blue-200 leading-relaxed">
-                                Uma obra-prima da literatura brasileira que explora temas universais como amor, ciúme e memória. A narrativa envolvente de Machado de Assis revela camadas profundas da natureza humana através dos olhos de Bentinho.
+                                {book.notes}
+
                             </p>
                         </div>
 
@@ -173,9 +175,9 @@ export default function BookDetailsModal({
                             </div>
                             <div className="text-black dark:text-blue-200 text-sm space-y-1">
                                 <p><span className="font-medium">Editora:</span> Companhia das Letras</p>
-                                <p><span className="font-medium">ISBN:</span> 978-85-359-0277-5</p>
+                                <p><span className="font-medium">ISBN:</span> {book.isbn}</p>
                                 <p><span className="font-medium">Idioma:</span> Português</p>
-                                <p><span className="font-medium">Data de leitura:</span> Março 2024</p>
+                                <p><span className="font-medium">Data de leitura:</span> {new Date(book.createdAt).toLocaleDateString('pt-BR')}</p>
                             </div>
                         </div>
                     </div>
