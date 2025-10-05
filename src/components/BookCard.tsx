@@ -115,19 +115,21 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
           transition: { type: "spring", stiffness: 300, damping: 20 },
         }}
         whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-        className="group bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden cursor-pointer 
-        transition-shadow w-full min-w-0 dark:border-transparent
-        dark:bg-blue-200/10 dark:group-hover:bg-blue-200/10 dark:hover:border-[#3b82f6]"
+        className="
+    group bg-white wood:bg-[var(--color-primary-900)] rounded-lg shadow-sm border border-gray-200 
+    wood:border-transparent overflow-hidden cursor-pointer transition-shadow w-full min-w-0
+    dark:border-transparent dark:bg-blue-200/10 dark:group-hover:bg-blue-200/10 dark:hover:border-[#3b82f6]
+    wood:group-hover:bg-[var(--color-background)] wood:hover:border-[var(--color-accent-500)]
+  "
       >
         {/* Área da capa do livro */}
-        <div className="relative bg-gray-200 dark:bg-gray-800 p-1">
+        <div className="relative bg-gray-200 dark:bg-gray-800 p-1 wood:bg-[var(--color-secondary-800)]">
           <BookCover cover={book.cover} title={book.title} />
           <StatusBadge status={book.status} />
 
-
           {/* Rating */}
           <div
-            className="absolute w-8 top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full shadow"
+            className="absolute w-8 top-2 right-2 flex items-center gap-1 bg-white/90 wood:bg-[var(--color-secondary-50)] backdrop-blur-sm rounded-full shadow"
             style={{ padding: "0.3rem" }}
           >
             <svg
@@ -139,7 +141,7 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <span className="text-xs text-gray-700 dark:text-blue-200 font-medium">
+            <span className="text-xs text-gray-700 dark:text-blue-200 wood:text-[var(--color-foreground)] font-medium">
               {book.rating}
             </span>
           </div>
@@ -149,17 +151,17 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
         <div style={{ padding: "1.5rem" }}>
           <h3
             className="font-bold text-gray-900 text-base leading-tight overflow-hidden text-ellipsis 
-            dark:text-blue-400 line-clamp-2 min-w-0"
+      dark:text-blue-400 line-clamp-2 min-w-0 wood:text-[var(--color-accent-500)]"
             style={{ marginBottom: "0.3rem" }}
           >
             {book.title}
           </h3>
-          <p className="text-gray-600 text-xs dark:text-blue-200" style={{ marginBottom: "0.4rem" }}>
+          <p className="text-gray-600 text-xs dark:text-blue-200 wood:text-[var(--color-primary-100)]" style={{ marginBottom: "0.4rem" }}>
             {book.author}
           </p>
 
           <div
-            className="flex items-center justify-between text-sm text-gray-400 dark:text-blue-200"
+            className="flex items-center justify-between text-sm text-gray-400 dark:text-blue-200 wood:text-[var(--color-primary-100)]"
             style={{ marginBottom: "0.75rem" }}
           >
             <span>📅 {book.year}</span>
@@ -169,7 +171,7 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
           <div style={{ marginBottom: "1rem" }}>
             <span
               className="inline-block bg-blue-50 text-blue-600 text-sm rounded font-medium w-full text-center
-              dark:bg-blue-200/10 dark:text-blue-200"
+        dark:bg-blue-200/10 dark:text-blue-200 wood:bg-[var(--color-primary-700)] wood:text-[var(--color-accent-50)]"
               style={{ padding: "0.25rem 0.5rem" }}
             >
               {book.genre}
@@ -180,22 +182,21 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
             <StarRating rating={book.rating} />
           </div>
 
-          {/* Botões - Sempre visíveis, mas com ações diferentes */}
+          {/* Botões */}
           <div className="flex gap-2">
             <motion.button
               onClick={handleDetails}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-blue-50 text-blue-600 rounded-md text-sm cursor-pointer font-medium 
-              hover:bg-blue-100 transition-colors flex items-center justify-center gap-2
-              dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
+              className="
+          flex-1 bg-blue-50 text-blue-600 rounded-md text-sm cursor-pointer font-medium 
+          hover:bg-blue-100 transition-colors flex items-center justify-center gap-2
+          dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200
+          wood:bg-[var(--color-primary-700)] wood:hover:bg-[var(--color-primary-600)] wood:text-[var(--color-accent-50)]
+        "
               style={{ padding: "0.5rem" }}
               title={isExposicao ? "Faça login para ver detalhes" : "Ver detalhes"}
             >
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM8 2a6 6 0 1 1 0 12A6 6 0 0 1 8 2z" />
-              </svg>
               Detalhes
             </motion.button>
 
@@ -203,15 +204,15 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
               onClick={handleEdit}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 bg-gray-50 text-gray-600 rounded-lg text-sm cursor-pointer font-medium 
-              hover:bg-gray-100 transition-colors flex items-center justify-center gap-2
-              dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200"
+              className="
+          flex-1 bg-gray-50 text-gray-600 rounded-lg text-sm cursor-pointer font-medium 
+          hover:bg-gray-100 transition-colors flex items-center justify-center gap-2
+          dark:bg-blue-200/10 dark:hover:bg-blue-200/20 dark:text-blue-200
+          wood:bg-[var(--color-secondary-700)] wood:hover:bg-[var(--color-secondary-600)] wood:text-[var(--color-accent-50)]
+        "
               style={{ padding: "0.5rem" }}
               title={isExposicao ? "Faça login para editar" : "Editar livro"}
             >
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708L10.5 8.207l-3-3L12.146.146zM11.207 9l-3-3-6.5 6.5-.5 3 3-.5 6.5-6.5z" />
-              </svg>
               Editar
             </motion.button>
 
@@ -220,19 +221,21 @@ export default function BookCard({ book, onDelete, isExposicao = false }: BookCa
               onClick={handleDelete}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-red-100 text-red-600 cursor-pointer rounded-lg text-sm hover:bg-red-50 
-              transition-colors flex items-center justify-center
-              dark:bg-red-200/10 dark:hover:bg-red-200/30 dark:border-transparent dark:hover:border-red-400 dark:text-red-200"
+              className="
+          bg-red-100 text-red-600 cursor-pointer rounded-lg text-sm hover:bg-red-50 
+          transition-colors flex items-center justify-center
+          dark:bg-red-200/10 dark:hover:bg-red-200/30 dark:border-transparent dark:hover:border-red-400 dark:text-red-200
+          wood:bg-red-800/20 wood:hover:bg-red-800/30 wood:text-[var(--color-accent-50)]
+        "
               style={{ padding: "0.4rem", width: "2rem", height: "2rem" }}
               title={isExposicao ? "Faça login para gerenciar" : "Excluir livro"}
             >
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-              </svg>
             </motion.button>
           </div>
         </div>
       </motion.div>
+
+
 
       {/* Modais - Só aparecem se NÃO for livro de exposição */}
       {!isExposicao && (

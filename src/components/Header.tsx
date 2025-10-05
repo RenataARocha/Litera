@@ -78,7 +78,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 glass-morphism 
       bg-white/70 backdrop-blur-md 
       dark:bg-gray-900/70 dark:backdrop-blur-md
-      wood:bg-[var(--color-background)]/90 wood:backdrop-blur-md wood:border-b wood:border-[var(--color-primary-900)]">
+      wood:bg-[var(--color-background)]/90 wood:backdrop-blur-md wood:border-b wood:border-[var(--color-primary-900)] dark:border-[var(--color-dark-900)]">
       <div
         className="max-w-7xl mx-auto"
         style={{
@@ -98,11 +98,17 @@ export default function Header() {
             style={{ gap: '0.5rem' }}
           >
             <div className="relative">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 
-                bg-gradient-to-r from-primary-500 to-primary-600 
-                rounded-xl flex items-center justify-center shadow-lg animate-glow">
+              <div
+                className="w-8 h-8 lg:w-10 lg:h-10 
+    bg-gradient-to-r from-primary-500 to-primary-800 
+    rounded-xl flex items-center justify-center"
+                style={{
+                  boxShadow: '0 4px 15px var(--logo-shadow-current)',
+                }}
+              >
                 <FaBookOpen className="text-white text-sm lg:text-lg" aria-hidden="true" />
               </div>
+
               <div
                 className="absolute w-3 h-3 bg-green-400 rounded-full animate-pulse"
                 style={{

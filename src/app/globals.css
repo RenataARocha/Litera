@@ -209,3 +209,19 @@ html.wood ::-webkit-scrollbar-thumb {
 html.wood ::-webkit-scrollbar-thumb:hover {
   background-color: #c08a4d;
 }
+
+
+:root {
+  --logo-shadow-default: rgba(0, 112, 255, 0.5);
+  /* azul para normal/dark */
+  --logo-shadow-wood: rgba(251, 121, 36, 0.6);
+  /* amarelo para wood */
+}
+
+html.wood {
+  --logo-shadow-current: var(--logo-shadow-wood);
+}
+
+html:not(.wood) {
+  --logo-shadow-current: var(--logo-shadow-default);
+}

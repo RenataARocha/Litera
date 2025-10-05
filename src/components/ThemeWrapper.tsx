@@ -13,8 +13,8 @@ export default function ThemeWrapper({ children }: ThemeWrapperProps) {
             attribute="class"
             defaultTheme="light"
             enableSystem={false}
-            themes={['light', 'dark', 'wood']}  // ← ADICIONAR
-            value={{                              // ← ADICIONAR
+            themes={['light', 'dark', 'wood']}
+            value={{
                 light: 'light',
                 dark: 'dark',
                 wood: 'wood'
