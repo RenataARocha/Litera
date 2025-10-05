@@ -124,7 +124,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
             style={{ padding: "1rem" }}
         >
             <div
-                className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+                className="bg-white dark:bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
                 style={{ margin: "1rem" }}
             >
                 {/* Botão Voltar */}
@@ -132,7 +132,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                     <button
                         type="button"
                         onClick={onBack}
-                        className="text-blue-600 hover:underline cursor-pointer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
                         style={{ padding: "1rem" }}
                     >
                         ← Voltar para detalhes
@@ -143,14 +143,14 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                     {/* Header */}
                     <div className="flex justify-between items-center" style={{ marginBottom: "1.5rem" }}>
                         <div className="flex flex-col">
-                            <h2 className="text-2xl font-bold text-gray-900">Editar Livro</h2>
-                            <p className="text-sm text-gray-900">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-blue-600">Editar Livro</h2>
+                            <p className="text-sm text-gray-900 dark:text-blue-400">
                                 Preencha as informações para catalogar seu livro
                             </p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors"
+                            className="text-gray-400 dark:text-blue-200 cursor-pointer hover:text-gray-600 transition-colors"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -166,39 +166,48 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
-                        <p className="text-sm text-gray-600 mt-2" style={{ padding: '0.5rem' }}>
+                        <p className="text-sm text-gray-600 dark:text-blue-200 mt-2" style={{ padding: '0.5rem' }}>
                             {progress}% concluído — {message}
                         </p>
                     </div>
 
                     <form style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} onSubmit={handleSave}>
                         {/* === Informações Obrigatórias === */}
-                        <div className="bg-red-50 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-red-800" style={{ marginBottom: "1rem" }}>
+                        <div className="bg-red-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
+                            <h3 className="text-lg font-semibold text-red-800 dark:text-rose-500" style={{ marginBottom: "1rem" }}>
                                 <span className="text-red-500">*</span> Informações Obrigatórias
                             </h3>
                             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
                                         Título do Livro <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400
+"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
                                         Autor <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={author}
                                         onChange={(e) => setAuthor(e.target.value)}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
@@ -206,57 +215,77 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                         </div>
 
                         {/* === Informações Adicionais === */}
-                        <div className="bg-blue-50 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-blue-800" style={{ marginBottom: "1rem" }}>
+                        <div className="bg-blue-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
+                            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-500" style={{ marginBottom: "1rem" }}>
                                 Informações Adicionais
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.25rem' }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>
                                         Ano de Publicação
                                     </label>
                                     <input
                                         type="number"
                                         value={year.toString()}
                                         onChange={(e) => setYear(e.target.value)}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         placeholder="Ex: 2023"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.25rem' }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>
                                         Total de Páginas
                                     </label>
                                     <input
                                         type="number"
                                         defaultValue={pages}
                                         onChange={(e) => setPages(Number(e.target.value))}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
+                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         placeholder="Ex: 300"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     />
                                 </div>
 
                                 <div>
-                                    <label>Páginas Lidas</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>Páginas Lidas</label>
                                     <input
                                         type="number"
                                         value={finishedPages}
                                         onChange={(e) => setFinishedPages(Number(e.target.value))}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
+                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         placeholder="Ex: 120"
+                                        style={{ padding: '0.5rem 0.7rem' }}
                                         />
                                     </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.25rem' }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: '0.25rem' }}>
                                         Gênero
                                     </label>
                                     <select
                                         value={genre}
                                         onChange={(e) => setGenre(e.target.value)}
-                                        className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg 
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     >
                                         <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
@@ -283,7 +312,12 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     <select
                                         value={status}
                                         onChange={(e) => setStatus(e.target.value)}
-                                        className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg 
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         style={{ padding: '0.5rem 0.7rem' }}
                                     >
                                         <option value="não lido">📚 Não Lido</option>
@@ -298,7 +332,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                             {/* Avaliação com Estrelas */}
                             <div style={{ marginTop: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.5rem' }}>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: '0.5rem' }}>
                                     Avaliação
                                 </label>
                                 <div className="flex items-center gap-2">
@@ -318,7 +352,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                             </button>
                                         ))}
                                     </div>
-                                    <span className="text-sm text-gray-600" style={{ marginLeft: "0.5rem" }}>
+                                    <span className="text-sm text-gray-600 dark:text-blue-400" style={{ marginLeft: "0.5rem" }}>
                                         {rating === 5 && "⭐⭐⭐⭐⭐ Excelente"}
                                         {rating === 4 && "⭐⭐⭐⭐ Muito Bom"}
                                         {rating === 3 && "⭐⭐⭐ Bom"}
@@ -330,39 +364,52 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                             {/* ISBN */}
                             <div style={{ marginTop: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.25rem" }}>
                                     ISBN
                                 </label>
                                 <input
                                     type="text"
                                     value={isbn}
                                     onChange={(e) => setIsbn(e.target.value)}
-                                    className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
+                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                    dark:bg-slate-800/80 
+                                    dark:text-blue-100 
+                                    dark:placeholder-blue-300/60 
+                                    dark:border-blue-400"
                                     style={{ padding: "0.5rem 0.7rem" }}
                                     placeholder="Ex: 978-85-359-0277-5"
                                 />
                             </div>
 
                             {/* Capa do Livro */}
-                            <div className="bg-purple-50 rounded-lg" style={{ padding: "1rem", marginTop: "1rem" }}>
-                                <h3 className="text-lg font-semibold text-purple-800" style={{ marginBottom: "1rem" }}>
+                            <div className="bg-purple-50 rounded-lg dark:bg-slate-800/80 
+                                        dark:text-blue-100 dark:border dark:border-blue-400
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400" style={{ padding: "1rem", marginTop: "1rem" }}>
+                                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-500" style={{ marginBottom: "1rem" }}>
                                     Capa do Livro
                                 </h3>
 
                                 {/* URL da capa */}
                                 <div style={{ marginBottom: "1rem" }}>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
                                         URL da Capa
                                     </label>
                                     <input
                                         type="text"
                                         value={coverUrl}
                                         onChange={(e) => setCoverUrl(e.target.value)}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
+                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        dark:bg-slate-800/80 
+                                        dark:text-blue-100 
+                                        dark:placeholder-blue-300/60 
+                                        dark:border-blue-400"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                         placeholder="https://exemplo.com/capa-do-livro.jpg"
                                     />
-                                    <p className="text-xs text-gray-500" style={{ marginTop: "0.25rem" }}>
+                                    <p className="text-xs text-gray-500 dark:text-blue-300" style={{ marginTop: "0.25rem" }}>
                                         Cole aqui o link da imagem da capa do livro
                                     </p>
                                 </div>
@@ -401,24 +448,29 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                         </div>
 
                         {/* === Conteúdo e Notas === */}
-                        <div className="bg-green-50 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-green-800" style={{ marginBottom: "1rem" }}>
+                        <div className="bg-green-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
+                            <h3 className="text-lg font-semibold text-green-800 dark:text-green-500" style={{ marginBottom: "1rem" }}>
                                 Conteúdo e Notas
                             </h3>
                             <div style={{ marginBottom: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
                                     Sinopse
                                 </label>
                                 <textarea
                                     rows={4}
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                    className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg 
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none
+                                    dark:bg-slate-800/80 
+                                    dark:text-blue-100 
+                                    dark:placeholder-blue-300/60 
+                                    dark:border-blue-400"
                                     style={{ padding: "0.7rem" }}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: "0.25rem" }}>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
                                     Notas Pessoais
                                 </label>
                                 <PersonalNotes

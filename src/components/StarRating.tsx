@@ -28,7 +28,7 @@ export default function StarRating({ rating, size = 'small', showNumber = false 
         <div className="flex items-center gap-1">
             {renderStars(rating)}
             {showNumber && (
-                <span className="text-sm text-gray-600" style={{ marginLeft: '0.5rem' }}>
+                <span className="text-sm text-gray-600 dark:text-blue-200" style={{ marginLeft: '0.5rem' }}>
                     ({rating}/5)
                 </span>
             )}

@@ -69,7 +69,7 @@ export default function DeleteConfirmModal({
             onClick={handleClose}
         >
             <div
-                className={`bg-white rounded-xl shadow-2xl transform transition-all ease-out duration-300 ${dialogClasses}`}
+                className={`bg-white dark:bg-slate-800 dark:shadow-blue-400 dark:shadow-sm rounded-xl shadow-2xl transform transition-all ease-out duration-300 ${dialogClasses}`}
                 style={{ padding: "1.5rem", maxWidth: "24rem", width: "100%" }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -98,11 +98,11 @@ export default function DeleteConfirmModal({
                         </svg>
                     </div>
 
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-blue-400 mb-2">
                         Excluir Livro
                     </h3>
 
-                    <p className="text-sm text-gray-600 mb-6">
+                    <p className="text-sm text-gray-600 dark:text-blue-200 mb-6">
                         Tem certeza que deseja excluir &quot;{bookTitle}&quot;? Esta ação não pode ser desfeita.
                     </p>
 
