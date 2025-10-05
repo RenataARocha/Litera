@@ -18,7 +18,7 @@ export default function Cadastro() {
     return senha.length >= 6;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErro('');
 
@@ -39,15 +39,35 @@ export default function Cadastro() {
 
     setCarregando(true);
 
-    setTimeout(() => {
-      console.log('Cadastro:', { nome, email, senha });
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome, email, password: senha }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao fazer cadastro');
+      }
+
+      // Salvar token e dados do usuário
+      localStorage.setItem('authToken', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Redirecionar
+      const redirectPath = localStorage.getItem('redirectAfterLogin') || '/';
+      localStorage.removeItem('redirectAfterLogin');
+      localStorage.removeItem('loginMessage');
       
-      localStorage.setItem('authToken', 'novo-usuario-token-123');
+      window.location.href = redirectPath;
       
-      window.location.href = '/';
-      
+    } catch (error) {
+      setErro(error.message);
+    } finally {
       setCarregando(false);
-    }, 1500);
+    }
   };
 
   const forcaSenha = () => {
@@ -69,12 +89,12 @@ export default function Cadastro() {
 
  return (
   <div 
-    className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center" 
+    className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#334155]" 
     style={{ padding: "1rem" }}
   >
     <div className="w-full max-w-md">
       <div 
-        className="bg-white rounded-2xl shadow-xl border border-blue-100" 
+        className="bg-white dark:bg-transparent rounded-2xl shadow-xl border border-blue-100 dark:border-transparent dark:shadow-[#3b82f6] dark:shadow-sm" 
         style={{ padding: "2rem" }}
       >
         
@@ -87,10 +107,10 @@ export default function Cadastro() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-800" style={{ marginBottom: "0.5rem" }}>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-blue-600" style={{ marginBottom: "0.5rem" }}>
             Crie sua conta
           </h1>
-          <p className="text-gray-600">Comece sua jornada literária hoje</p>
+          <p className="text-gray-600 dark:text-blue-400">Comece sua jornada literária hoje</p>
         </div>
 
         {erro && (
@@ -105,12 +125,12 @@ export default function Cadastro() {
         <div className="space-y-5">
           {/* Nome */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700" style={{ marginBottom: "0.5rem" }}>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.5rem" }}>
               Nome completo
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none" style={{ paddingLeft: "1rem" }}>
-                <User className="h-5 w-5 text-gray-400" />
+                <User className="h-5 w-5 text-gray-400 dark:text-blue-200" />
               </div>
               <input
                 type="text"
@@ -118,7 +138,7 @@ export default function Cadastro() {
                 onChange={(e) => setNome(e.target.value)}
                 placeholder="João Silva"
                 required
-                className="w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full border border-gray-300 dark:border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                 style={{ paddingLeft: "3rem", paddingRight: "1rem", paddingTop: "0.75rem", paddingBottom: "0.75rem" }}
               />
             </div>
@@ -126,12 +146,12 @@ export default function Cadastro() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
               Email
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none" style={{ paddingLeft: "1rem" }}>
-                <Mail className="h-5 w-5 text-gray-400" />
+                <Mail className="h-5 w-5 text-gray-400 dark:text-blue-200" />
               </div>
               <input
                 type="email"
@@ -139,7 +159,7 @@ export default function Cadastro() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
                 required
-                className="w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full border border-gray-300 dark:border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                 style={{ paddingLeft: "3rem", paddingRight: "1rem", paddingTop: "0.75rem", paddingBottom: "0.75rem" }}
               />
             </div>
@@ -147,12 +167,12 @@ export default function Cadastro() {
 
           {/* Senha */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
               Senha
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none" style={{ paddingLeft: "1rem" }}>
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className="h-5 w-5 text-gray-400 dark:text-blue-200" />
               </div>
               <input
                 type={mostrarSenha ? "text" : "password"}
@@ -160,13 +180,13 @@ export default function Cadastro() {
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder="Mínimo 6 caracteres"
                 required
-                className="w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full border border-gray-300 dark:border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                 style={{ paddingLeft: "3rem", paddingRight: "3rem", paddingTop: "0.75rem", paddingBottom: "0.75rem" }}
               />
               <button
                 type="button"
                 onClick={() => setMostrarSenha(!mostrarSenha)}
-                className="absolute inset-y-0 right-0 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute inset-y-0 right-0 flex items-center text-gray-400 dark:text-blue-200 hover:text-gray-600 dark:hover:text-blue-400 transition-colors"
                 style={{ paddingRight: "1rem" }}
               >
                 {mostrarSenha ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -176,7 +196,7 @@ export default function Cadastro() {
             {senha && (
               <div style={{ marginTop: "0.5rem" }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: "0.25rem" }}>
-                  <span className="text-xs text-gray-600">Força da senha:</span>
+                  <span className="text-xs text-gray-600 dark:text-blue-400">Força da senha:</span>
                   <span className={`text-xs font-semibold ${
                     forca.texto === 'Fraca' ? 'text-red-600' : 
                     forca.texto === 'Média' ? 'text-yellow-600' : 
@@ -197,12 +217,12 @@ export default function Cadastro() {
 
           {/* Confirmar Senha */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.5rem", marginTop: '0.9rem' }}>
               Confirmar senha
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none" style={{ paddingLeft: "1rem" }}>
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className="h-5 w-5 text-gray-400 dark:text-blue-200" />
               </div>
               <input
                 type={mostrarConfirmarSenha ? "text" : "password"}
@@ -210,13 +230,13 @@ export default function Cadastro() {
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 placeholder="Digite a senha novamente"
                 required
-                className="w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full border border-gray-300 dark:border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                 style={{ paddingLeft: "3rem", paddingRight: "3rem", paddingTop: "0.75rem", paddingBottom: "0.75rem" }}
               />
               <button
                 type="button"
                 onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
-                className="absolute inset-y-0 right-0 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute inset-y-0 right-0 flex items-center text-gray-400 hover:text-gray-600 dark:text-blue-200 dark:hover:text-blue-400 transition-colors"
                 style={{ paddingRight: "1rem" }}
               >
                 {mostrarConfirmarSenha ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -239,7 +259,7 @@ export default function Cadastro() {
                 onChange={(e) => setAceitarTermos(e.target.checked)}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1 cursor-pointer"
               />
-              <span className="ml-2 text-sm text-gray-700 group-hover:text-blue-600 transition-colors" style={{marginLeft: '0.6rem'}}>
+              <span className="ml-2 text-sm text-gray-700 dark:text-blue-200 group-hover:text-blue-600 transition-colors" style={{marginLeft: '0.6rem'}}>
                 Eu concordo com os{' '}
                 <a href="/termos" className="text-blue-600 hover:underline font-medium">
                   Termos de Uso
@@ -274,7 +294,7 @@ export default function Cadastro() {
         </div>
 
         <div className="text-center" style={{ marginTop: "1.5rem" }}>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-blue-200">
             Já tem uma conta?{' '}
             <a 
               href="/login" 
@@ -286,7 +306,7 @@ export default function Cadastro() {
         </div>
       </div>
 
-      <p className="text-center text-gray-500 text-sm" style={{ marginTop: "1.5rem" }}>
+      <p className="text-center text-gray-500 dark:text-blue-200 text-sm" style={{ marginTop: "1.5rem" }}>
         © 2024 Litera. Todos os direitos reservados.
       </p>
     </div>

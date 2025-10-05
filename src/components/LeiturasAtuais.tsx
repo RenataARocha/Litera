@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react'; // Importado 'useCallback'
+import React, { useState, useEffect, useCallback } from 'react';
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
 
 // =================================================================
-// 1. INTERFACES (Definição dos tipos de dados que virão da API)
+// 1. INTERFACES
 // =================================================================
 
 interface Book {
     id: number;
     title: string;
-    pages: number; // Total de páginas do livro
+    pages: number;
     cover: string | null;
     author: {
         name: string;
@@ -21,26 +21,24 @@ interface ProgressUpdate {
     id: number;
     pagesRead: number;
     readingTimeMin: number;
-    date: string; // Ex: "2024-09-29T10:00:00.000Z"
+    date: string;
 }
 
 interface CurrentReading {
     id: number;
     bookId: number;
     currentPage: number;
-    startedAt: string; // Data de início
+    startedAt: string;
     isPaused: boolean;
     book: Book;
     progressUpdates: ProgressUpdate[];
 }
 
-// Interface para o livro com o progresso já calculado (para uso no frontend)
 interface BookWithProgress extends CurrentReading {
     percentage: number;
     authorName: string;
 }
 
-// Interface para as estatísticas agregadas
 interface ReadingStats {
     pagesToday: number;
     consecutiveDays: number;
@@ -49,15 +47,12 @@ interface ReadingStats {
 }
 
 // =================================================================
-// Componente de transição para páginas (Mantido)
+// 2. COMPONENTE DE TRANSIÇÃO
 // =================================================================
 const PageTransition = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
     return (
         <div
-            className={`transition-all duration-700 ease-in-out ${isVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-8'
-                }`}
+            className={`transition-all duration-700 ease-in-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
         >
             {children}
         </div>
@@ -65,233 +60,136 @@ const PageTransition = ({ children, isVisible }: { children: React.ReactNode; is
 };
 
 // =================================================================
-// 2. COMPONENTE PRINCIPAL
+// 3. COMPONENTE PRINCIPAL
 // =================================================================
 const LeiturasAtuais = () => {
-    // ESTADOS REAIS VINDO DA API
+    // Estados
     const [currentReadings, setCurrentReadings] = useState<BookWithProgress[]>([]);
-    const [stats, setStats] = useState<ReadingStats>({
-        pagesToday: 0,
-        consecutiveDays: 0,
-        weeklyPace: 0,
-        averageTimeMin: 0
-    });
-    // O livro principal a ser exibido no card
+    const [stats, setStats] = useState<ReadingStats>({ pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 });
     const [mainReading, setMainReading] = useState<BookWithProgress | null>(null);
 
-    // ESTADOS DO MODAL E INPUTS (Mantidos)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
     const [pagesRead, setPagesRead] = useState('');
     const [readingTime, setReadingTime] = useState('');
     const [noteText, setNoteText] = useState('');
     const [feedback, setFeedback] = useState('');
-    const [isPaused, setIsPaused] = useState(false); // Refletirá mainReading.isPaused
+    const [isPaused, setIsPaused] = useState(false);
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
     const [isVisible, setIsVisible] = useState(false);
-    const [isLeaving, setIsLeaving] = useState(false);
+    const [isLeaving] = useState(false);
 
-    // --- FUNÇÕES DE LÓGICA DE DADOS ---
-
-    // Função para calcular estatísticas e o progresso (roda após o fetch)
+    // =================================================================
+    // Função para calcular dados e progresso
+    // =================================================================
     const calculateData = (readings: CurrentReading[]): { readings: BookWithProgress[], stats: ReadingStats } => {
-        if (!readings.length) {
-            return { readings: [], stats: { pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 } };
-        }
+        if (!readings.length) return { readings: [], stats: { pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 } };
 
         let totalPagesToday = 0;
         let totalTimeMin = 0;
-
-        // Data de hoje no formato 'YYYY-MM-DD'
         const today = new Date().toISOString().split('T')[0];
 
         readings.forEach(reading => {
             reading.progressUpdates.forEach(update => {
                 const updateDate = new Date(update.date).toISOString().split('T')[0];
                 totalTimeMin += update.readingTimeMin;
-
-                if (updateDate === today) {
-                    totalPagesToday += update.pagesRead;
-                }
+                if (updateDate === today) totalPagesToday += update.pagesRead;
             });
         });
 
-        // Simulação de cálculo de tempo médio (só usa as atualizações para o cálculo)
         const numUpdates = readings.flatMap(r => r.progressUpdates).length;
         const averageTimeMin = numUpdates > 0 ? Math.round(totalTimeMin / numUpdates) : 0;
 
-        const readingsWithProgress = readings.map(reading => {
-            const percentage = Math.round((reading.currentPage / reading.book.pages) * 100);
-            return {
-                ...reading,
-                percentage,
-                authorName: reading.book.author.name,
-            };
-        });
+        const readingsWithProgress = readings.map(reading => ({
+            ...reading,
+            percentage: Math.round((reading.currentPage / reading.book.pages) * 100),
+            authorName: reading.book.author.name,
+        }));
 
         return {
             readings: readingsWithProgress,
-            stats: {
-                pagesToday: totalPagesToday,
-                consecutiveDays: 7, // MOCK: Idealmente do backend
-                weeklyPace: 180, // MOCK: Idealmente do backend
-                averageTimeMin: averageTimeMin
-            }
+            stats: { pagesToday: totalPagesToday, consecutiveDays: 7, weeklyPace: 180, averageTimeMin }
         };
     };
 
-    // --- FUNÇÃO DE FETCH CORRIGIDA COM useCallback ---
+    // =================================================================
+    // Fetch de leituras com useCallback
+    // =================================================================
     const fetchReadings = useCallback(async () => {
         try {
             const response = await fetch('/api/current-readings');
-            if (!response.ok) {
-                throw new Error('Falha ao carregar leituras.');
-            }
-            const data: CurrentReading[] = await response.json();
+            if (!response.ok) throw new Error('Falha ao carregar leituras.');
 
+            const data: CurrentReading[] = await response.json();
             const { readings, stats } = calculateData(data);
+
             setCurrentReadings(readings);
             setStats(stats);
 
-            // Define o livro principal como o primeiro da lista
             if (readings.length > 0) {
                 setMainReading(readings[0]);
                 setIsPaused(readings[0].isPaused);
-            } else {
-                setMainReading(null);
-            }
+            } else setMainReading(null);
 
         } catch (error) {
             console.error(error);
             showFeedback('Erro ao carregar os dados. Tente novamente.');
         }
-    }, [setCurrentReadings, setStats, setMainReading]); // Dependências do useCallback: apenas setters e showFeedback (se fosse estável)
+    }, []);
 
-    // Animação de entrada da página e CARREGAMENTO DE DADOS
+    // =================================================================
+    // Efeito de entrada da página
+    // =================================================================
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(true);
-            fetchReadings(); // Agora fetchReadings está incluído nas dependências via useCallback
+            fetchReadings();
         }, 100);
         return () => clearTimeout(timer);
-    }, [fetchReadings]); // 'fetchReadings' é a dependência obrigatória
+    }, [fetchReadings]);
 
-    // Função para navegação com transição (simulada) - Mantida
-    const navigateWithTransition = (path: string) => {
-        setIsLeaving(true);
-        setIsVisible(false);
+    // =================================================================
+    // Funções de modal e feedback
+    // =================================================================
+    const openUpdateModal = () => { if (mainReading) setIsModalOpen(true); };
+    const closeModal = () => { setIsModalOpen(false); setPagesRead(''); setReadingTime(''); };
+    const closeNoteModal = () => { setIsNoteModalOpen(false); setNoteText(''); };
+    const saveNote = () => { if (noteText.trim()) { showFeedback('Anotação salva com sucesso!'); closeNoteModal(); } };
+    const showFeedback = (message: string) => { setFeedback(message); setTimeout(() => setFeedback(''), 3000); };
+    const togglePause = () => { setIsPaused(!isPaused); showFeedback(!isPaused ? 'Leitura pausada.' : 'Leitura retomada!'); };
 
-        setTimeout(() => {
-
-            console.log(`Navegando para: ${path}`);
-
-            alert(`Navegação simulada para: ${path === '/' ? 'Home' : path}`);
-        }, 400);
-    };
-
-    // Função corrigida: removido o parâmetro bookTitle não utilizado
-    const openUpdateModal = () => {
-        if (mainReading) {
-            setIsModalOpen(true);
-        }
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setPagesRead('');
-        setReadingTime('');
-    };
-
-    const closeNoteModal = () => {
-        setIsNoteModalOpen(false);
-        setNoteText('');
-    };
-
-    const saveNote = () => {
-        if (noteText.trim()) {
-            // Lógica para salvar a anotação via API (POST /api/notes)
-            showFeedback('Anotação salva com sucesso!');
-            closeNoteModal();
-        }
-    };
-
-    // --- FUNÇÃO DE SUBMISSÃO REAL: Atualiza o progresso via API ---
     const handleSubmit = async () => {
         if (!mainReading) return;
 
         const pages = parseInt(pagesRead);
         const time = parseInt(readingTime);
-
-        // Novo total de páginas lidas
         const newCurrentPage = mainReading.currentPage + pages;
 
         if (pages > 0 && time > 0) {
             try {
                 const response = await fetch('/api/current-readings', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        currentReadingId: mainReading.id, // ID da CurrentReading
-                        pagesRead: pages,
-                        readingTimeMin: time,
-                        // Não é necessário enviar a novaCurrentPage, o backend deve calculá-la, mas enviaremos para robustez
-                        newCurrentPage: newCurrentPage,
-                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentReadingId: mainReading.id, pagesRead: pages, readingTimeMin: time, newCurrentPage }),
                 });
-
-                if (!response.ok) {
-                    throw new Error('Falha ao registrar progresso.');
-                }
+                if (!response.ok) throw new Error('Falha ao registrar progresso.');
 
                 closeModal();
-                await fetchReadings(); // Recarrega os dados para atualizar a interface
-
+                await fetchReadings();
                 showFeedback(`Progresso atualizado! +${pages} páginas lidas de ${mainReading.book.title}`);
 
             } catch (error) {
                 console.error('Erro ao salvar progresso:', error);
                 showFeedback('Erro ao salvar progresso. Tente novamente.');
             }
-        } else {
-            showFeedback('Por favor, insira páginas e tempo de leitura válidos.');
-        }
-    };
-
-    const showFeedback = (message: string) => {
-        setFeedback(message);
-        setTimeout(() => setFeedback(''), 3000);
-    };
-
-    // Função de Pausa (mantida com mock para isPaused)
-    const togglePause = () => {
-        // Implementação real exigiria um PATCH para /api/current-readings/
-        setIsPaused(!isPaused);
-        if (!isPaused) {
-            showFeedback('Leitura pausada. Você pode retomar a qualquer momento!');
-        } else {
-            showFeedback('Leitura retomada! Continue sua jornada literária!');
-        }
+        } else showFeedback('Por favor, insira páginas e tempo de leitura válidos.');
     };
 
     // =================================================================
-    // 3. JSX (RENDERIZAÇÃO)
+    // 4. JSX (RENDERIZAÇÃO)
     // =================================================================
     return (
         <div className={`min-h-screen transition-all duration-500 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
-
-            {/* Botão Voltar para Home com transição */}
-            <PageTransition isVisible={isVisible}>
-                <div style={{ margin: '0.5rem' }}>
-                    <button
-                        onClick={() => navigateWithTransition('/')}
-                        className="px-3 py-2 text-blue-600 rounded-lg hover:underline transition-all duration-300 hover:bg-blue-50 cursor-pointer transform hover:scale-105 text-sm md:text-base"
-                    >
-                        ← Voltar para Home
-                    </button>
-                </div>
-            </PageTransition>
 
             <div className="flex items-center justify-center min-h-screen" style={{ margin: '0.5rem' }}>
                 <div className="w-full max-w-4xl mx-auto" style={{ padding: '20px 10px' }}>
@@ -299,10 +197,10 @@ const LeiturasAtuais = () => {
                     {/* Título da Página com animação */}
                     <PageTransition isVisible={isVisible}>
                         <div className="text-center" style={{ marginBottom: '32px' }}>
-                            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 transform transition-all duration-700" style={{ marginBottom: '8px' }}>
+                            <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-blue-400 transform transition-all duration-700" style={{ marginBottom: '8px' }}>
                                 Leituras Atuais
                             </h1>
-                            <p className="text-sm md:text-lg text-gray-600 transition-all duration-700 delay-200" style={{ padding: '0 16px' }}>
+                            <p className="text-sm md:text-lg text-gray-600 dark:text-blue-200 transition-all duration-700 delay-200" style={{ padding: '0 16px' }}>
                                 Acompanhe seu progresso e mantenha o foco nos livros que está lendo
                             </p>
                         </div>
@@ -318,7 +216,7 @@ const LeiturasAtuais = () => {
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                                className={`bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-500 dark:bg-transparent dark:border-transparent dark:shadow-[#3b82f6] hover:-translate-y-2 text-center border border-gray-100 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                                 style={{
                                     padding: '16px 12px',
                                     transitionDelay: `${index * 150}ms`
@@ -330,19 +228,19 @@ const LeiturasAtuais = () => {
                                 >
                                     <stat.icon className={`w-4 h-4 md:w-6 md:h-6 text-white transition-all duration-200 ${stat.animationClass}`} />
                                 </div>
-                                <div className="text-lg md:text-2xl font-bold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
+                                <div className="text-lg md:text-2xl font-bold text-gray-800 dark:text-blue-600 transition-all duration-300" style={{ marginBottom: '4px' }}>
                                     {stat.value}
                                 </div>
-                                <div className="text-xs md:text-sm text-gray-600 font-medium">{stat.label}</div>
+                                <div className="text-xs md:text-sm text-gray-600 dark:text-blue-400 font-medium">{stat.label}</div>
                             </div>
                         ))}
                     </div>
 
                     {/* Card do Livro com animação - USANDO O NOVO ESTADO 'mainReading' */}
                     <PageTransition isVisible={isVisible}>
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 transition-all duration-500 hover:shadow-lg" style={{ padding: '20px md:40px' }}>
+                        <div className="bg-white dark:bg-blue-200/10 dark:border-blue-400 rounded-2xl shadow-sm border border-gray-100 transition-all duration-500 hover:shadow-lg" style={{ padding: '20px md:40px' }}>
                             <div className="text-center" style={{ marginBottom: '1rem', padding: '1rem' }}>
-                                <h2 className="text-xl md:text-2xl font-semibold flex items-center justify-center gap-3 text-gray-800">
+                                <h2 className="text-xl md:text-2xl font-semibold flex dark:text-blue-400 items-center justify-center gap-3 text-gray-800">
                                     <BookOpen className="w-6 h-6 md:w-7 md:h-7 text-blue-600 transition-all duration-300" />
                                     Livros em Andamento
                                 </h2>
@@ -362,10 +260,10 @@ const LeiturasAtuais = () => {
                                                 {mainReading.book.title.toUpperCase().substring(0, 10).split(' ').join('<br/>')}
                                             </div>
 
-                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-800 transition-all duration-300" style={{ marginBottom: '4px' }}>
+                                            <h3 className="text-xl md:text-2xl font-semibold text-gray-800 dark:text-blue-400 transition-all duration-300" style={{ marginBottom: '4px' }}>
                                                 {mainReading.book.title}
                                             </h3>
-                                            <p className="text-base md:text-lg text-gray-600 transition-all duration-300" style={{ marginBottom: '12px' }}>
+                                            <p className="text-base md:text-lg text-gray-600 dark:text-blue-200 transition-all duration-300" style={{ marginBottom: '12px' }}>
                                                 {mainReading.authorName}
                                             </p>
 
@@ -389,7 +287,7 @@ const LeiturasAtuais = () => {
                                         {/* Progresso */}
                                         <div style={{ marginBottom: '28px' }}>
                                             <div className="flex justify-between items-center" style={{ marginBottom: '10px' }}>
-                                                <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base">
+                                                <span className="text-gray-700 dark:text-blue-500 font-medium transition-all duration-300 text-sm md:text-base">
                                                     {mainReading.currentPage} de {mainReading.book.pages} páginas
                                                 </span>
                                                 <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500">
@@ -449,7 +347,7 @@ const LeiturasAtuais = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="text-center p-8 text-gray-500">
+                                <div className="text-center p-8 text-gray-500 dark:text-blue-300">
                                     {currentReadings.length === 0 ? "Carregando dados..." : "Nenhuma leitura em andamento. Adicione um livro para começar!"}
                                 </div>
                             )}

@@ -79,7 +79,7 @@ export default function DeleteConfirmModal({
                         style={{
                             height: "3rem",
                             width: "3rem",
-                            backgroundColor: "#fee2e2",
+                            backgroundColor: "#fee2e2", // blue-200/10 no dark,
                             marginBottom: "1rem"
                         }}
                     >
