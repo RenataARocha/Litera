@@ -38,7 +38,7 @@ export default function BookDetailsModal({
 
     return (
         <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
-            <div className="bg-blue-50 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="bg-blue-50 dark:bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
 
                 <div>
                     {/* Header com botão fechar */}
@@ -54,7 +54,7 @@ export default function BookDetailsModal({
                     </div>
 
                     {/* Seção superior: Capa e Informações lado a lado */}
-                    <div className="flex gap-6 bg-blue-100 rounded-lg" style={{ padding: '2rem', margin: '1rem', marginBottom: '1.5rem' }}>
+                    <div className="flex gap-6 bg-blue-100 dark:bg-blue-200/10 dark:border dark:border-blue-400 rounded-lg" style={{ padding: '2rem', margin: '1rem', marginBottom: '1.5rem' }}>
                         {/* Capa do livro */}
                         <div className="flex-shrink-0">
                             {book.cover ? (
@@ -78,8 +78,8 @@ export default function BookDetailsModal({
                         <div className="flex-1">
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-bold text-xl text-gray-900" style={{ marginBottom: '0.25rem' }}>{book.title}</h3>
-                                    <p className="text-gray-600 text-lg">{book.author}</p>
+                                    <h3 className="font-bold text-xl text-gray-900 dark:text-blue-600" style={{ marginBottom: '0.25rem' }}>{book.title}</h3>
+                                    <p className="text-gray-600 dark:text-blue-400 text-lg">{book.author}</p>
                                 </div>
 
                                 <div className="flex items-center gap-1">
@@ -88,20 +88,21 @@ export default function BookDetailsModal({
 
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div>
-                                        <span className="font-medium text-gray-700">Ano:</span>
-                                        <p className="text-gray-600">{book.year}</p>
+                                        <span className="font-medium text-gray-700 dark:text-blue-300">Ano:</span>
+                                        <p className="text-gray-600 dark:text-blue-200">{book.year}</p>
                                     </div>
                                     <div>
-                                        <span className="font-medium text-gray-700">Páginas:</span>
-                                        <p className="text-gray-600">{book.pages}</p>
+
+                                        <span className="font-medium text-gray-700 dark:text-blue-300">Páginas:</span>
+                                        <p className="text-gray-600 dark:text-blue-200">{book.pages}</p>
                                     </div>
                                     <div>
-                                        <span className="font-medium text-gray-700">Gênero:</span>
-                                        <p className="text-gray-600">{book.genre}</p>
+                                        <span className="font-medium text-gray-700 dark:text-blue-300">Gênero:</span>
+                                        <p className="text-gray-600 dark:text-blue-200">{book.genre}</p>
                                     </div>
                                     <div>
-                                        <span className="font-medium text-gray-700">Status:</span>
-                                        <span className={`inline-block rounded-full text-xs ${statusConfig.bgColor} ${statusConfig.textColor}`} style={{ padding: '0.25rem 0.5rem', marginLeft: '0.25rem' }}>
+                                        <span className="font-medium text-gray-700 dark:text-blue-300">Status:</span>
+                                        <span className={`inline-block rounded-full dark:bg-blue-200 text-xs ${statusConfig.bgColor} ${statusConfig.textColor}`} style={{ padding: '0.25rem 0.5rem', marginLeft: '0.25rem' }}>
                                             {statusConfig.text}
                                         </span>
                                     </div>
@@ -138,40 +139,41 @@ export default function BookDetailsModal({
                     </div>
 
                     {/* Seções de conteúdo */}
-                    <div className="bg-white/50 rounded-lg" style={{ padding: '1rem', margin: '1rem' }}>
+                    <div className="bg-white/50 dark:bg-blue-400/10 dark:border dark:border-blue-400 rounded-lg" style={{ padding: '1rem', margin: '1rem' }}>
                         {/* Sinopse */}
-                        <div className="bg-violet-100 rounded-lg" style={{ padding: '1rem', marginBottom: '1rem' }}>
+                        <div className="bg-violet-100 dark:bg-violet-100/20 rounded-lg" style={{ padding: '1rem', marginBottom: '1rem' }}>
                             <div className="flex items-center gap-2" style={{ marginBottom: '0.7rem' }}>
-                                <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                                 </svg>
-                                <h4 className="font-semibold text-purple-800 text-lg">Sinopse</h4>
+                                <h4 className="font-semibold text-purple-800 dark:text-purple-400 text-lg">Sinopse</h4>
                             </div>
-                            <p className="text-black text-sm leading-relaxed">{book.description}</p>
+                            <p className="text-black text-sm dark:text-blue-200 leading-relaxed">{book.description}</p>
                         </div>
 
                         {/* Notas Pessoais */}
-                        <div className="bg-green-100 rounded-lg" style={{ padding: '1rem', marginBottom: '1rem' }}>
+                        <div className="bg-green-100 dark:bg-green-100/20 rounded-lg" style={{ padding: '1rem', marginBottom: '1rem' }}>
                             <div className="flex items-center gap-2" style={{ marginBottom: '0.7rem' }}>
-                                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                                 </svg>
-                                <h4 className="font-semibold text-green-800 text-lg">Notas Pessoais</h4>
+                                <h4 className="font-semibold text-green-800 dark:text-green-400 text-lg">Notas Pessoais</h4>
                             </div>
-                            <p className="text-black text-sm leading-relaxed">
+                            <p className="text-black text-sm dark:text-blue-200 leading-relaxed">
                                 {book.notes}
+
                             </p>
                         </div>
 
                         {/* Informações Técnicas */}
-                        <div className="bg-fuchsia-100 rounded-lg" style={{ padding: '1rem' }}>
+                        <div className="bg-fuchsia-100 dark:bg-fuchsia-100/20 rounded-lg" style={{ padding: '1rem' }}>
                             <div className="flex items-center gap-2" style={{ marginBottom: '0.7rem' }}>
-                                <svg className="w-5 h-5 text-fuchsia-600" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-fuchsia-600 dark:text-fuchsia-400" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                                 </svg>
-                                <h4 className="font-semibold text-fuchsia-800 text-lg">Informações Técnicas</h4>
+                                <h4 className="font-semibold text-fuchsia-800 dark:text-fuchsia-400 text-lg">Informações Técnicas</h4>
                             </div>
-                            <div className="text-black text-sm space-y-1">
+                            <div className="text-black dark:text-blue-200 text-sm space-y-1">
                                 <p><span className="font-medium">Editora:</span> Companhia das Letras</p>
                                 <p><span className="font-medium">ISBN:</span> {book.isbn}</p>
                                 <p><span className="font-medium">Idioma:</span> Português</p>

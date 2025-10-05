@@ -28,7 +28,7 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
     const dashOffset = circumference * (1 - percentage / 100);
 
     return (
-        <div className="flex flex-col items-center dark:text-gray-100">
+        <div className="flex flex-col items-center dark:text-blue-200">
             <div className="relative w-24 h-24 mb-3">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 80 80">
                     <circle
@@ -53,11 +53,11 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({ percentage, title, subti
                     />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-gray-800">{percentage}%</span>
+                    <span className="text-xl font-bold text-gray-800 dark:text-blue-200">{percentage}%</span>
                 </div>
             </div>
-            <h3 className="font-semibold text-gray-700 text-center">{title}</h3>
-            {subtitle && <p className="text-sm text-gray-500 text-center mt-1">{subtitle}</p>}
+            <h3 className="font-semibold text-gray-700 dark:text-blue-200 text-center">{title}</h3>
+            {subtitle && <p className="text-sm text-gray-500 dark:text-blue-200 text-center mt-1">{subtitle}</p>}
         </div>
     );
 };
@@ -463,7 +463,6 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                 >
                     Metas de Leitura 2025
                 </h2>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {dadosMetas.map((meta, index) => (
                         <DisplayGoalCircle
@@ -474,6 +473,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             color={meta.color}
                         />
                     ))}
+
                 </div>
             </div>
         </motion.div>
