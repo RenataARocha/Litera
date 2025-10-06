@@ -49,14 +49,22 @@ const mapStatusToFrontend = (dbStatus: BookStatus): string => {
     case BookStatus.PAUSED:
       return 'Pausado';
     case BookStatus.ABANDONED:
-      return 'Abandonado'; 
-      return 'Não Lido';
+      return 'Abandonado';
+      default: return BookStatus.TO_READ;
   }
 };
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL (req.url);
+    const status = searchParams.get('status');
+
+    const whereClause = status
+      ? { status: status as BookStatus }
+      : {};
+
     const books = await prisma.book.findMany({
+      where: status ? { status: status as BookStatus } : undefined,
       include: {
         author: true,
       },
