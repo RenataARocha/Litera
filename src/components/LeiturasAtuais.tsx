@@ -51,6 +51,11 @@ const LeiturasAtuais = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
 
+    // Estados adicionais usados no componente
+    const [currentReadings, setCurrentReadings] = useState<any[]>([]);
+    const [stats, setStats] = useState({ pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 });
+    const [mainReading, setMainReading] = useState<any | null>(null);
+
     const showFeedback = (message: string) => {
     setFeedback(message);
     setTimeout(() => setFeedback(''), 3000); // some após 3s
@@ -71,11 +76,39 @@ const LeiturasAtuais = () => {
 
             // Filtra apenas os livros com status 'reading'
             const readingBooks = data.filter(book => book.status === 'Lendo');
+
+            // Mapeia para o formato usado pelo componente (currentPage, percentage, authorName, isPaused)
+            const readings = readingBooks.map(b => ({
+                book: b,
+                currentPage: b.finishedPages || 0,
+                percentage: Math.min(100, Math.round(((b.finishedPages || 0) / (b.pages || 1)) * 100)),
+                authorName: b.author,
+                startedAt: b.startedAt || new Date().toISOString(),
+                isPaused: b.status === 'Pausado'
+            }));
+
             setBooks(readingBooks);
+            setCurrentReadings(readings);
 
             // Atualiza estatísticas gerais
-            const paginasHoje = readingBooks.reduce((acc, book) => acc + book.finishedPages, 0);
+            const paginasHoje = readingBooks.reduce((acc, book) => acc + (book.finishedPages || 0), 0);
             setReadingData(prev => ({ ...prev, paginasHoje }));
+
+            // Atualiza os novos estados de stats/mainReading
+            const statsObj = {
+                pagesToday: paginasHoje,
+                consecutiveDays: 0,
+                weeklyPace: Math.round((paginasHoje / 7) * 7),
+                averageTimeMin: 30
+            };
+            setStats(statsObj);
+            setCurrentReadings(readings);
+            if (readings.length > 0) {
+                setMainReading(readings[0]);
+                setIsPaused(readings[0].isPaused);
+            } else {
+                setMainReading(null);
+            }
         } catch (err) {
             console.error(err);
         } finally {
@@ -105,13 +138,17 @@ const LeiturasAtuais = () => {
         setReadingTime('');
     };
 
-            setCurrentReadings(readings);
-            setStats(stats);
+    // handlers para o modal de notas
+    const closeNoteModal = () => {
+        setIsNoteModalOpen(false);
+        setNoteText('');
+    };
 
-            if (readings.length > 0) {
-                setMainReading(readings[0]);
-                setIsPaused(readings[0].isPaused);
-            } else setMainReading(null);
+    const saveNote = async () => {
+        // Aqui você pode integrar com um endpoint real que persiste notas
+        showFeedback('Anotação salva!');
+        setIsNoteModalOpen(false);
+    };
 
     const handleSubmit = async () => {
         const pages = parseInt(pagesRead);
