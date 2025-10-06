@@ -41,7 +41,9 @@ export default function PersonalNotes({
             dark:bg-slate-800/80 
             dark:text-blue-100 
             dark:placeholder-blue-300/60 
-            dark:border-blue-400"
+            dark:border-blue-400
+            wood:bg-white/80
+            wood:focus:ring-2 wood:focus:ring-primary-200"
             style={{ padding: '0.7rem' }}
             placeholder={placeholder}
         />
