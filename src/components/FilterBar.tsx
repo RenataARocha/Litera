@@ -85,7 +85,7 @@ export default function FilterBar({
             className="
   bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 
   dark:bg-blue-200/20 dark:group-hover:bg-blue-200/20 
-  wood:bg-[var(--color-primary-900)] wood:shadow-[0_4px_10px_rgba(251,121,36,0.6)] 
+  wood:bg-primary-900 wood:shadow-[0_4px_10px_rgba(251,121,36,0.6)] 
   wood:hover:shadow-[0_6px_20px_rgba(251,121,36,0.6)]
 "
             style={{
@@ -116,7 +116,7 @@ export default function FilterBar({
                         transition={{ duration: 0.2 }}
                     >
                         <Search
-                            className="w-5 h-5 wood:text-[var(--color-accent-500)]"
+                            className="w-5 h-5 wood:text-accent-500"
                             aria-hidden="true"
                         />
                     </motion.div>
@@ -134,10 +134,10 @@ export default function FilterBar({
   bg-white dark:bg-slate-800/20 dark:hover:border-[#3b82f6]
   text-gray-700 dark:text-blue-200
   placeholder-gray-400 dark:placeholder-blue-200
-  wood:bg-[var(--color-primary-800)] wood:border-[var(--color-accent-700)]
-  wood:text-[var(--color-foreground)] wood:placeholder-[var(--color-secondary-400)]
+  wood:bg-primary-800 wood:border-accent-700
+  wood:text-foreground wood:placeholder-secondary-400
   focus:outline-none focus:ring-2 focus:ring-blue-500
-  wood:focus:ring-[var(--color-accent-600)]
+  wood:focus:ring-accent-600
   transition-all duration-300
 "
                         style={{
@@ -164,7 +164,7 @@ export default function FilterBar({
   absolute right-3 top-1/2 -translate-y-1/2
   text-gray-400 hover:text-gray-600
   dark:hover:text-blue-400
-  wood:text-[var(--color-foreground)] wood:hover:text-[var(--color-accent-500)]
+  wood:text-foreground wood:hover:text-accent-500
   transition-colors z-10
 "
                                 style={{ padding: "0.25rem" }}
@@ -196,7 +196,7 @@ export default function FilterBar({
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="text-xs flex flex-wrap items-center text-gray-500 wood:text-[var(--color-foreground)]"
+                            className="text-xs flex flex-wrap items-center text-gray-500 wood:text-foreground"
                             style={{ marginTop: "0.5rem" }}
                             role="status"
                             aria-live="polite"
@@ -211,7 +211,7 @@ export default function FilterBar({
                                     exit="exit"
                                     className="font-medium ml-1 mr-2"
                                 >
-                                    “{query}”
+                                    &quot;{query}&quot;
                                 </motion.span>
                             )}
                             {genre && (
@@ -223,7 +223,7 @@ export default function FilterBar({
                                     exit="exit"
                                     className="font-medium ml-1 mr-2"
                                 >
-                                    Gênero: “{genre}”
+                                    Gênero: &quot;{genre}&quot;
                                 </motion.span>
                             )}
                             {status && (
@@ -235,7 +235,7 @@ export default function FilterBar({
                                     exit="exit"
                                     className="font-medium ml-1 mr-2"
                                 >
-                                    Status: “{status}”
+                                    Status: &quot;{status}&quot;
                                 </motion.span>
                             )}
                         </motion.div>
@@ -267,11 +267,12 @@ export default function FilterBar({
 
   dark:bg-blue-200/20 dark:text-blue-200 dark:border-transparent dark:hover:border-[#3b82f6]
 
-  wood:bg-[var(--color-primary-800)] 
-  wood:border-[var(--color-accent-700)] 
-  wood:text-[var(--color-primary-200)] 
-  wood:hover:border-[var(--color-accent-600)] 
-  wood:focus:ring-[var(--color-accent-700)]
+  wood:bg-primary-800 
+ wood:border-transparent
+  wood:text-primary-200 
+  wood:hover:border-accent-600 
+  wood:focus:ring-accent-700
+  
 "
                         value={genre}
                         onChange={(e) => onGenreChange(e.target.value)}
@@ -301,7 +302,7 @@ export default function FilterBar({
                     {/* Ícone da setinha customizado */}
                     <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                         <svg
-                            className="h-5 w-5 text-gray-400 dark:text-blue-200 wood:text-[var(--color-accent-400)]"
+                            className="h-5 w-5 text-gray-400 dark:text-blue-200 wood:text-accent-400"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"
@@ -329,29 +330,29 @@ export default function FilterBar({
   transition-all duration-200 hover:border-gray-300 
   dark:hover:border-[#3b82f6] dark:bg-blue-200/20 dark:text-blue-200 dark:border-transparent 
   
-  wood:bg-[var(--color-primary-800)] 
-  wood:border-[var(--color-accent-700)] 
-  wood:text-[var(--color-primary-200)] 
-  wood:hover:border-[var(--color-accent-600)] 
-  wood:focus:ring-[var(--color-accent-700)]
+  wood:bg-primary-800 
+  wood:border-transparent 
+  wood:text-primary-200 
+  wood:hover:border-accent-600 
+  wood:focus:ring-accent-700
 "
                         value={status}
                         onChange={(e) => onStatusChange(e.target.value)}
                         style={{ paddingLeft: "1rem", paddingRight: "2.5rem" }}
                     >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="">Todos os Status 📊</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="não lido">Não Lido 📚</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="quero ler">Quero Ler 🎯</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lendo">Lendo 📖</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="lido">Lido ✅</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="pausado">Pausado ⏸️</option >
-                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="abandonado">Abandonado ❌</option >
+                        <option value="">Todos os Status 📊</option >
+                        <option value="não lido">Não Lido 📚</option >
+                        <option value="quero ler">Quero Ler 🎯</option >
+                        <option value="lendo">Lendo 📖</option >
+                        <option value="lido">Lido ✅</option >
+                        <option value="pausado">Pausado ⏸️</option >
+                        <option value="abandonado">Abandonado ❌</option >
                     </motion.select>
 
                     {/* Ícone da setinha customizado */}
                     <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                         <svg
-                            className="h-5 w-5 text-gray-400 dark:text-blue-200 wood:text-[var(--color-accent-400)]"
+                            className="h-5 w-5 text-gray-400 dark:text-blue-200 wood:text-accent-400"
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"
@@ -378,8 +379,8 @@ export default function FilterBar({
     text-sm text-gray-600 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-2
     hover:bg-gray-50
     dark:text-blue-200 dark:border-blue-200/20 dark:hover:bg-blue-200/20 dark:hover:text-blue-100
-    wood:text-[var(--color-foreground)] wood:border-[var(--color-accent-800)] 
-    wood:hover:bg-[var(--color-accent-900)] wood:hover:text-[var(--color-primary-50)]
+    wood:text-foreground wood:border-accent-800 
+    wood:hover:bg-accent-900 wood:hover:text-primary-50
   "
                             style={{ padding: "0.5rem 1rem" }}
                         >

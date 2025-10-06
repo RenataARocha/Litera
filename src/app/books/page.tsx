@@ -165,21 +165,21 @@ export default function BooksPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className="flex items-center justify-center min-h-screen wood:bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 wood:border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="wood:bg-background wood:min-h-screen" style={{ padding: '2rem' }}>
 
       {/* Header da página */}
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-blue-400" style={{ marginBottom: '0.5rem' }}>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-blue-400 wood:text-primary-200" style={{ marginBottom: '0.5rem' }}>
           Sua Biblioteca
         </h1>
-        <p className="text-gray-600 dark:text-blue-200" style={{ marginBottom: '1.5rem' }}>
+        <p className="text-gray-600 dark:text-blue-200 wood:text-secondary-200" style={{ marginBottom: '1.5rem' }}>
           Descubra, organize e acompanhe sua jornada literária
         </p>
       </div>
@@ -197,11 +197,11 @@ export default function BooksPage() {
       />
 
       {/* Informações dos resultados */}
-      <div style={{ marginBottom: '0.9rem', marginTop: '1rem' }}>
-        <p className="text-gray-600 dark:text-blue-400">
+      <div style={{ marginBottom: '2rem', marginTop: '1rem' }}>
+        <p className="text-gray-600 dark:text-blue-400 wood:text-secondary-200">
           Mostrando {filtered.length} de {livrosParaMostrar.length} livros
           {hasActiveFilters && (
-            <span className="text-sm text-blue-600" style={{ marginLeft: '0.5rem' }}>
+            <span className="text-sm text-blue-600 wood:text-accent-400" style={{ marginLeft: '0.5rem' }}>
               (filtros ativos)
             </span>
           )}
@@ -231,20 +231,21 @@ export default function BooksPage() {
         </div>
       ) : (
         <div
-
+          className="text-center"
           style={{ padding: "2rem", margin: "2rem auto", maxWidth: "500px" }}
         >
           <div className="text-6xl animate-bounce" style={{ marginBottom: '1rem' }}>📚</div>
-          <h3 className="text-2xl font-semibold text-gray-900 dark:text-blue-400" style={{ marginBottom: '0.5rem' }}>
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-blue-400 wood:text-accent-500" style={{ marginBottom: '0.5rem' }}>
             Nenhum livro encontrado
           </h3>
-          <p className="text-gray-600 dark:text-blue-200" style={{ marginBottom: '1.5rem' }}>
+          <p className="text-gray-600 dark:text-blue-200 wood:text-accent-600" style={{ marginBottom: '1.5rem' }}>
             Tente ajustar os filtros ou adicionar novos livros à sua biblioteca.
           </p>
           <button
             onClick={handleAddBook}
             className="bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-md cursor-pointer
-            dark:bg-blue-200/20 dark:hover:bg-blue-200/30 dark:text-blue-200"
+            dark:bg-blue-200/20 dark:hover:bg-blue-200/30 dark:text-blue-200
+            wood:bg-[var(--color-primary-900)] wood:hover:bg-primary-800 wood:text-primary-200"
             style={{ marginTop: "1rem", padding: "0.75rem 1.5rem" }}
           >
             Adicionar Novo Livro

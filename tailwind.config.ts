@@ -8,9 +8,6 @@ const config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  safelist: [
-    'wood:hover:shadow-[0_6px_20px_rgba(255,175,26,0.7)]'
-  ],
   theme: {
     extend: {
       colors: {

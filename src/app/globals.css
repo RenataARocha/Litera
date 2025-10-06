@@ -225,3 +225,48 @@ html.wood {
 html:not(.wood) {
   --logo-shadow-current: var(--logo-shadow-default);
 }
+
+/* ================================ */
+/* Estilos para <option> no tema Wood */
+/* ================================ */
+
+html.wood select option {
+  background-color: #4e371b;
+  /* --color-primary-800 */
+  color: #f1d0b3;
+  /* --color-primary-200 */
+  padding: 0.5rem;
+}
+
+html.wood select option:hover {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffd580 !important;
+  /* --color-accent-200 */
+}
+
+html.wood select option:focus {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffd580 !important;
+  /* --color-accent-200 */
+}
+
+html.wood select option:checked {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffe6b3 !important;
+  /* --color-accent-100 */
+  font-weight: 600;
+}
+
+/* Para navegadores Webkit (Chrome, Safari, Edge) */
+html.wood select option:hover,
+html.wood select option:focus {
+  background: linear-gradient(#74522c, #74522c) !important;
+}
+
+/* Remove o fundo azul padrão ao selecionar */
+html.wood select:focus option:checked {
+  background: #74522c linear-gradient(0deg, #74522c 0%, #74522c 100%) !important;
+}
