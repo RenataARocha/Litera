@@ -14,7 +14,6 @@ import {
   FaSun,
   FaSignInAlt
 } from 'react-icons/fa';
-import { GiChocolateBar } from 'react-icons/gi';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,11 +36,12 @@ export default function Header() {
   const toggleTheme = () => {
     if (!mounted) return;
 
+    // Lógica do ciclo de temas: light -> dark -> wood -> light
     if (resolvedTheme === "light") {
       setTheme("dark");
     } else if (resolvedTheme === "dark") {
       setTheme("wood");
-    } else {
+    } else { // 'wood' ou fallback
       setTheme("light");
     }
   };
@@ -75,7 +75,10 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 glass-morphism dark:bg-gray-900/70 dark:backdrop-blur-md">
+    <header className="sticky top-0 z-50 glass-morphism 
+      bg-white/70 backdrop-blur-md 
+      dark:bg-gray-900/70 dark:backdrop-blur-md
+      wood:bg-[var(--color-background)]/90 wood:backdrop-blur-md wood:border-b wood:border-[var(--color-primary-900)] dark:border-[var(--color-dark-900)]">
       <div
         className="max-w-7xl mx-auto"
         style={{
@@ -95,9 +98,17 @@ export default function Header() {
             style={{ gap: '0.5rem' }}
           >
             <div className="relative">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg animate-glow">
+              <div
+                className="w-8 h-8 lg:w-10 lg:h-10 
+    bg-gradient-to-r from-primary-500 to-primary-800 
+    rounded-xl flex items-center justify-center"
+                style={{
+                  boxShadow: '0 4px 15px var(--logo-shadow-current)',
+                }}
+              >
                 <FaBookOpen className="text-white text-sm lg:text-lg" aria-hidden="true" />
               </div>
+
               <div
                 className="absolute w-3 h-3 bg-green-400 rounded-full animate-pulse"
                 style={{
@@ -108,18 +119,23 @@ export default function Header() {
               ></div>
             </div>
             <div className="hidden lg:block">
-              <h1 className="text-lg lg:text-xl font-bold text-gradient dark:text-blue-300">
+              <h1 className="text-lg lg:text-xl font-bold 
+                text-gray-900 dark:text-blue-300 wood:text-[var(--color-foreground)]">
                 Litera
               </h1>
               <p
-                className="text-xs text-gray-500 dark:text-blue-200"
+                className="text-xs text-gray-500 
+                  dark:text-blue-200 wood:text-[var(--color-secondary-400)]"
                 style={{ lineHeight: '1.3' }}
               >
                 Biblioteca Digital
               </p>
             </div>
             <div className="lg:hidden">
-              <h1 className="text-lg font-bold text-gradient">Litera</h1>
+              <h1 className="text-lg font-bold 
+                text-gray-900 dark:text-blue-300 wood:text-[var(--color-foreground)]">
+                Litera
+              </h1>
             </div>
           </Link>
 
@@ -133,7 +149,13 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href, link.protected)}
-                className="flex items-center text-sm font-medium text-gray-700 border-transparent dark:hover:border-r dark:hover:border-b dark:hover:border-[#3b82f6] dark:text-blue-200 hover:text-primary-600 dark:hover:text-primary-400 rounded-lg transition-all duration-200 hover:bg-white/50 dark:hover:bg-gray-800 hover:shadow-md group"
+                className="flex items-center text-sm font-medium 
+                  text-gray-700 dark:text-blue-200 wood:text-[var(--color-secondary-200)]
+                  border-transparent 
+                  hover:text-primary-600 dark:hover:text-primary-400 wood:hover:text-[var(--color-primary-400)]
+                  rounded-lg transition-all duration-200 
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)]
+                  hover:shadow-md group"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
@@ -147,7 +169,7 @@ export default function Header() {
             ))}
 
             <div
-              className="w-px h-6 bg-white/30 dark:bg-gray-700"
+              className="w-px h-6 bg-gray-300 dark:bg-gray-700 wood:bg-[var(--color-primary-800)]"
               style={{
                 marginLeft: '0.5rem',
                 marginRight: '0.5rem'
@@ -169,7 +191,8 @@ export default function Header() {
             {!isLoggedIn ? (
               <Link
                 href="/login"
-                className="flex items-center text-primary-600 dark:text-primary-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center text-primary-600 dark:text-primary-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
@@ -184,7 +207,8 @@ export default function Header() {
                   const confirmed = window.confirm('Tem certeza que deseja sair?');
                   if (confirmed) handleLogout();
                 }}
-                className="flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg text-sm hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
+                className="flex items-center text-red-600 dark:text-red-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200 cursor-pointer"
                 style={{
                   gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
@@ -197,7 +221,7 @@ export default function Header() {
 
             <button
               onClick={toggleTheme}
-              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800 cursor-pointer"
+              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] cursor-pointer"
               style={{ padding: '0.5rem' }}
               aria-label="Alterar tema"
             >
@@ -207,7 +231,25 @@ export default function Header() {
                 ) : resolvedTheme === 'dark' ? (
                   <FaSun className="text-yellow-400 text-sm" />
                 ) : (
-                  <GiChocolateBar className="text-yellow-800 text-sm" />
+                  // Ícone Personalizado para o tema 'wood' (Blood Moon)
+                  <svg
+                    className="text-sm"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <radialGradient id="bloodMoonGradient" cx="30%" cy="30%">
+                        {/* Cores baseadas em primary-600/500/accent-500 */}
+                        <stop offset="20%" stopColor="var(--color-primary-600)" />
+                        <stop offset="80%" stopColor="var(--color-primary-500)" />
+                        <stop offset="100%" stopColor="var(--color-accent-500)" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="10" fill="url(#bloodMoonGradient)" />
+                  </svg>
                 )
               ) : null}
             </button>
@@ -220,27 +262,48 @@ export default function Header() {
           >
             <button
               onClick={toggleTheme}
-              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800"
+              className="rounded-lg transition-colors duration-200 hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)]"
               style={{ padding: '0.5rem' }}
               aria-label="Alterar tema"
             >
               {mounted ? (
-                resolvedTheme === 'light' ?
-                  <FaMoon className="text-gray-700 text-sm" /> :
+                resolvedTheme === 'light' ? (
+                  <FaMoon className="text-gray-700 text-sm" />
+                ) : resolvedTheme === 'dark' ? (
                   <FaSun className="text-yellow-400 text-sm" />
+                ) : (
+                  // Ícone Personalizado para o tema 'wood' (Blood Moon)
+                  <svg
+                    className="text-sm"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <radialGradient id="bloodMoonGradient-mobile" cx="30%" cy="30%">
+                        <stop offset="20%" stopColor="var(--color-primary-600)" />
+                        <stop offset="80%" stopColor="var(--color-primary-500)" />
+                        <stop offset="100%" stopColor="var(--color-accent-500)" />
+                      </radialGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="10" fill="url(#bloodMoonGradient-mobile)" />
+                  </svg>
+                )
               ) : null}
             </button>
 
             <button
               onClick={toggleMenu}
-              className="rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-colors"
+              className="rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-colors"
               style={{ padding: '0.5rem' }}
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
             >
               {menuOpen ?
-                <FaTimes className="text-gray-700 dark:text-gray-200 text-lg" /> :
-                <FaBars className="text-gray-700 dark:text-gray-200 text-lg" />
+                <FaTimes className="text-gray-700 dark:text-gray-200 wood:text-[var(--color-foreground)] text-lg" /> :
+                <FaBars className="text-gray-700 dark:text-gray-200 wood:text-[var(--color-foreground)] text-lg" />
               }
             </button>
           </div>
@@ -251,7 +314,10 @@ export default function Header() {
       {menuOpen && (
         <nav
           id="mobile-menu"
-          className="lg:hidden glass-morphism border-t border-white/20 dark:border-gray-700 animate-slide-down"
+          className="lg:hidden glass-morphism 
+            border-t border-gray-300 dark:border-gray-700 wood:border-t wood:border-[var(--color-primary-900)] 
+            bg-white/90 dark:bg-gray-900/90 wood:bg-[var(--color-background)]
+            animate-slide-down"
         >
           <div
             className="space-y-1"
@@ -267,7 +333,10 @@ export default function Header() {
                   handleNavClick(e, link.href, link.protected);
                   setMenuOpen(false);
                 }}
-                className="flex items-center text-gray-700 dark:text-gray-200 rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center 
+                  text-gray-700 dark:text-gray-200 wood:text-[var(--color-secondary-200)] 
+                  rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] 
+                  transition-all duration-200"
                 style={{
                   gap: '0.75rem',
                   padding: '0.5rem 0.75rem'
@@ -294,13 +363,14 @@ export default function Header() {
               <span className="text-sm font-medium">Novo Livro</span>
             </button>
 
-            <div className="border-t border-white/20 dark:border-gray-700 my-2"></div>
+            <div className="border-t border-gray-300 dark:border-gray-700 wood:border-[var(--color-primary-800)] my-2"></div>
 
             {!isLoggedIn ? (
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="flex items-center text-primary-600 dark:text-primary-400 font-medium rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center text-primary-600 dark:text-primary-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
                 style={{
                   gap: '0.75rem',
                   padding: '0.5rem 0.75rem'
@@ -315,7 +385,8 @@ export default function Header() {
                   setMenuOpen(false);
                   handleLogout();
                 }}
-                className="w-full flex items-center text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200"
+                className="w-full flex items-center text-red-600 dark:text-red-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
                 style={{
                   gap: '0.75rem',
                   padding: '0.5rem 0.75rem'

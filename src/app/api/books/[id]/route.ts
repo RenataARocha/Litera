@@ -18,7 +18,7 @@ function mapStatusToDB(status: string): BookStatus {
   switch (status.toLowerCase()) {
     case 'lido': return BookStatus.READ;
     case 'lendo': return BookStatus.READING;
-    case 'quero ler': return BookStatus.TO_READ; 
+    case 'quero ler': return BookStatus.TO_READ;
     case 'pausado': return BookStatus.PAUSED;
     case 'abandonado': return BookStatus.ABANDONED;
     default: return BookStatus.TO_READ;
@@ -49,7 +49,7 @@ function mapRatingToFrontend(rating: BookRating | null): number {
 }
 
 // --- Rotas ---
-export async function GET(req: Request, { params }: { params: { id: string}}) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   const id = parseInt(params.id);
   if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
@@ -70,10 +70,10 @@ export async function GET(req: Request, { params }: { params: { id: string}}) {
   return NextResponse.json(formattedBook);
 }
 
-export async function PUT(req: Request, context: { params: Promise<{id: string}>}) {
+export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const bookId = parseInt(id);
-  
+
   if (isNaN(bookId)) {
     return NextResponse.json({ error: "ID inválido" }, { status: 400 });
   }
