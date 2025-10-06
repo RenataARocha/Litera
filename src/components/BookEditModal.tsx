@@ -1,149 +1,175 @@
-'use client';
+"use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Book } from '@/components/types/types';
-import PersonalNotes from './PersonalNotes';
+import { Book } from "@/components/types/types";
+import PersonalNotes from "./PersonalNotes";
 
 type BookEditModalProps = {
-  book: Book | null; // mais seguro caso o parent passe null/undefined temporariamente
-  isOpen: boolean;
-  onClose: () => void;
-  onSave?: (book: Book) => void;
-  onBack?: () => void;
+    book: Book | null; // mais seguro caso o parent passe null/undefined temporariamente
+    isOpen: boolean;
+    onClose: () => void;
+    onSave?: (book: Book) => void;
+    onBack?: () => void;
 };
 
-export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }: BookEditModalProps) {
-  if (!isOpen) return null;
-  if (!book) return null;
+export default function BookEditModal({
+    book,
+    isOpen,
+    onClose,
+    onSave,
+    onBack,
+}: BookEditModalProps) {
+    if (!isOpen) return null;
+    if (!book) return null;
 
-  const [title, setTitle] = useState<string>(() => book?.title ?? "");
-  const [author, setAuthor] = useState<string>(() => book?.author ?? "");
-  const [year, setYear] = useState<string | number>(() => book?.year ?? "");
-  const [genre, setGenre] = useState<string>(() => book?.genre ?? "");
-  const [status, setStatus] = useState<string>(() => book?.status ?? "não lido");
-  const [description, setDescription] = useState<string>(() => book?.description ?? "");
-  const [notes, setNotes] = useState<string>(() => book?.notes ?? "");
-  const [isbn, setIsbn] = useState<string>(() => book?.isbn ?? "");
-  const [rating, setRating] = useState<number>(() => Number(book?.rating ?? 0));
-  const [coverUrl, setCoverUrl] = useState<string>(() => book?.cover ?? "");
-  const [coverFile, setCoverFile] = useState<string | null>(null);
-  // pages e finishedPages tratados com segurança — convertemos para number evitando erros
-  const [pages, setPages] = useState<number>(() => {
-    const p = (book as any)?.pages;
-    return (p !== undefined && p !== null) ? Number(p) || 0 : 0;
-  });
-  const [finishedPages, setFinishedPages] = useState<number>(() => {
-    const fp = (book as any)?.finishedPages;
-    return (fp !== undefined && fp !== null) ? Number(fp) || 0 : 0;
-  });
-
-  const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState("");
-
-  // Sincroniza os estados quando a prop `book` mudar (fetch async / seleção diferente)
-  useEffect(() => {
-    if (!book) return;
-
-    setTitle(book.title ?? "");
-    setAuthor(book.author ?? "");
-    setYear(book.year ?? "");
-    setGenre(book.genre ?? "");
-    setStatus(book.status ?? "não lido");
-    setDescription(book.description ?? "");
-    setNotes(book.notes ?? "");
-    setIsbn(book.isbn ?? "");
-    setRating(Number(book.rating ?? 0));
-    setCoverUrl(book.cover ?? "");
-    setCoverFile(null);
-    setPages(book.pages);
-    setFinishedPages(book.finishedPages);
-  }, [book]);
-
-  // Salvar alterações (local via onSave, sem PUT automático — mantenho seu comportamento atual)
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const updatedBook: Book = {
-      ...book,
-      title,
-      author,
-      year: year ? Number(year) : undefined,
-      genre,
-      status,
-      description,
-      notes,
-      isbn,
-      rating,
-      cover: coverFile || coverUrl,
-      pages,
-      finishedPages,
-    };
-
-    try {
-    const response = await fetch(`/api/books/${book.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedBook),
+    const [title, setTitle] = useState<string>(() => book?.title ?? "");
+    const [author, setAuthor] = useState<string>(() => book?.author ?? "");
+    const [year, setYear] = useState<string | number>(() => book?.year ?? "");
+    const [genre, setGenre] = useState<string>(() => book?.genre ?? "");
+    const [status, setStatus] = useState<string>(
+        () => book?.status ?? "não lido"
+    );
+    const [description, setDescription] = useState<string>(
+        () => book?.description ?? ""
+    );
+    const [notes, setNotes] = useState<string>(() => book?.notes ?? "");
+    const [isbn, setIsbn] = useState<string>(() => book?.isbn ?? "");
+    const [rating, setRating] = useState<number>(() => Number(book?.rating ?? 0));
+    const [coverUrl, setCoverUrl] = useState<string>(() => book?.cover ?? "");
+    const [coverFile, setCoverFile] = useState<string | null>(null);
+    // pages e finishedPages tratados com segurança — convertemos para number evitando erros
+    const [pages, setPages] = useState<number>(() => {
+        const p = (book as any)?.pages;
+        return p !== undefined && p !== null ? Number(p) || 0 : 0;
+    });
+    const [finishedPages, setFinishedPages] = useState<number>(() => {
+        const fp = (book as any)?.finishedPages;
+        return fp !== undefined && fp !== null ? Number(fp) || 0 : 0;
     });
 
-    if (!response.ok) {
-      throw new Error("Erro ao salvar alterações");
-    }
+    const [progress, setProgress] = useState(0);
+    const [message, setMessage] = useState("");
 
-    const savedBook = await response.json();
-    console.log("Livro atualizado:", savedBook);
+    // Sincroniza os estados quando a prop `book` mudar (fetch async / seleção diferente)
+    useEffect(() => {
+        if (!book) return;
 
-    if (onSave) onSave(savedBook); // ainda avisa o pai se precisar atualizar a lista
-    onClose();
-  } catch (error) {
-    console.error(error);
-    alert("Não foi possível salvar as alterações.");
-  }
+        setTitle(book.title ?? "");
+        setAuthor(book.author ?? "");
+        setYear(book.year ?? "");
+        setGenre(book.genre ?? "");
+        setStatus(book.status ?? "não lido");
+        setDescription(book.description ?? "");
+        setNotes(book.notes ?? "");
+        setIsbn(book.isbn ?? "");
+        setRating(Number(book.rating ?? 0));
+        setCoverUrl(book.cover ?? "");
+        setCoverFile(null);
+        setPages(book.pages);
+        setFinishedPages(book.finishedPages);
+    }, [book]);
 
-  };
+    // Salvar alterações (local via onSave, sem PUT automático — mantenho seu comportamento atual)
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-  // Atualiza progresso dinamicamente (inclui pages/finishedPages nos dependentes)
-  useEffect(() => {
-    let filled = 0;
-    if (title.trim() !== "") filled++;
-    if (author.trim() !== "") filled++;
-    if (String(year).trim() !== "" && Number(year) > 0) filled++;
-    if (genre.trim() !== "") filled++;
-    if (description.trim() !== "") filled++;
-    if (notes.trim() !== "") filled++;
-    if (isbn.trim() !== "") filled++;
-    if (rating && rating > 0) filled++;
-    if ((coverUrl && coverUrl.trim() !== "") || coverFile) filled++;
+        const updatedBook: Book = {
+            ...book,
+            title,
+            author,
+            year: year ? Number(year) : undefined,
+            genre,
+            status,
+            description,
+            notes,
+            isbn,
+            rating,
+            cover: coverFile || coverUrl,
+            pages,
+            finishedPages,
+        };
 
-    const total = 8;
-    const percent = Math.min(Math.round((filled / total) * 100), 100);
-    setProgress(percent);
+        try {
+            const response = await fetch(`/api/books/${book.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedBook),
+            });
 
-    if (percent === 0) setMessage("Comece preenchendo o formulário! 📖");
-    else if (percent < 50) setMessage("Ótimo começo! Continue ✨");
-    else if (percent < 100) setMessage("Quase lá, não desista 💪");
-    else setMessage("Parabéns, tudo pronto! 🎉");
-  }, [title, author, year, genre, description, notes, rating, coverUrl, coverFile, isbn, pages, finishedPages]);
+            if (!response.ok) {
+                throw new Error("Erro ao salvar alterações");
+            }
 
-  // Upload de capa
-  const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setCoverFile(url);
-    }
-  };
+            const savedBook = await response.json();
+            console.log("Livro atualizado:", savedBook);
 
-  const progressColor = progress < 50 ? "bg-red-400" : progress < 100 ? "bg-yellow-400" : "bg-green-500";
+            if (onSave) onSave(savedBook); // ainda avisa o pai se precisar atualizar a lista
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert("Não foi possível salvar as alterações.");
+        }
+    };
 
+    // Atualiza progresso dinamicamente (inclui pages/finishedPages nos dependentes)
+    useEffect(() => {
+        let filled = 0;
+        if (title.trim() !== "") filled++;
+        if (author.trim() !== "") filled++;
+        if (String(year).trim() !== "" && Number(year) > 0) filled++;
+        if (genre.trim() !== "") filled++;
+        if (description.trim() !== "") filled++;
+        if (notes.trim() !== "") filled++;
+        if (isbn.trim() !== "") filled++;
+        if (rating && rating > 0) filled++;
+        if ((coverUrl && coverUrl.trim() !== "") || coverFile) filled++;
+
+        const total = 8;
+        const percent = Math.min(Math.round((filled / total) * 100), 100);
+        setProgress(percent);
+
+        if (percent === 0) setMessage("Comece preenchendo o formulário! 📖");
+        else if (percent < 50) setMessage("Ótimo começo! Continue ✨");
+        else if (percent < 100) setMessage("Quase lá, não desista 💪");
+        else setMessage("Parabéns, tudo pronto! 🎉");
+    }, [
+        title,
+        author,
+        year,
+        genre,
+        description,
+        notes,
+        rating,
+        coverUrl,
+        coverFile,
+        isbn,
+        pages,
+        finishedPages,
+    ]);
+
+    // Upload de capa
+    const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setCoverFile(url);
+        }
+    };
+
+    const progressColor =
+        progress < 50
+            ? "bg-red-400"
+            : progress < 100
+                ? "bg-yellow-400"
+                : "bg-green-500";
 
     return (
         <div
-            className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50"
+            className="fixed inset-0 backdrop-blur-sm bg-white/30 wood:bg-background/50 flex items-center justify-center z-50"
             style={{ padding: "1rem" }}
         >
             <div
-                className="bg-white dark:bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+                className="bg-white dark:bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl wood:bg-accent-700"
                 style={{ margin: "1rem" }}
             >
                 {/* Botão Voltar */}
@@ -151,7 +177,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                     <button
                         type="button"
                         onClick={onBack}
-                        className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer wood:text-accent-300"
                         style={{ padding: "1rem" }}
                     >
                         ← Voltar para detalhes
@@ -160,62 +186,104 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                 <div style={{ padding: "1.5rem" }}>
                     {/* Header */}
-                    <div className="flex justify-between items-center" style={{ marginBottom: "1.5rem" }}>
+                    <div
+                        className="flex justify-between items-center"
+                        style={{ marginBottom: "1.5rem" }}
+                    >
                         <div className="flex flex-col">
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-blue-600">Editar Livro</h2>
-                            <p className="text-sm text-gray-900 dark:text-blue-400">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-blue-600 wood:text-primary-100">
+                                Editar Livro
+                            </h2>
+                            <p className="text-sm text-gray-900 dark:text-blue-400 wood:text-primary-50">
                                 Preencha as informações para catalogar seu livro
                             </p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-gray-400 dark:text-blue-200 cursor-pointer hover:text-gray-600 transition-colors"
+                            className="text-gray-400 dark:text-blue-200 cursor-pointer hover:text-gray-900 transition-colors wood:text-accent-500"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
                             </svg>
                         </button>
                     </div>
 
                     {/* Barra de progresso */}
                     <div style={{ marginBottom: "1.1rem" }}>
-                        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden wood:bg-yellow-200">
                             <div
                                 className={`h-4 ${progressColor} transition-all duration-500`}
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-blue-200 mt-2" style={{ padding: '0.5rem' }}>
+                        <p
+                            className="text-sm text-gray-600 dark:text-blue-200 mt-2 wood:text-primary-50"
+                            style={{ padding: "0.5rem" }}
+                        >
                             {progress}% concluído — {message}
                         </p>
                     </div>
 
-                    <form style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }} onSubmit={handleSave}>
+                    <form
+                        style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+                        onSubmit={handleSave}
+                    >
                         {/* === Informações Obrigatórias === */}
-                        <div className="bg-red-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-red-800 dark:text-rose-500" style={{ marginBottom: "1rem" }}>
+                        <div
+                            className="bg-red-50 dark:bg-blue-200/10 rounded-lg wood:bg-primary-100"
+                            style={{ padding: "1rem" }}
+                        >
+                            <h3
+                                className="text-lg font-semibold text-red-800 dark:text-rose-500 wood:text-red-800"
+                                style={{ marginBottom: "1rem" }}
+                            >
                                 <span className="text-red-500">*</span> Informações Obrigatórias
                             </h3>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "1rem",
+                                }}
+                            >
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Título do Livro <span className="text-red-500">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400
-"
+                                        className="
+    w-full text-sm border rounded-lg 
+    bg-white/90 border-gray-200
+    focus:outline-none 
+    focus:ring-2 focus:ring-blue-500
+    wood:focus:border-primary-200 wood:focus:ring-2 wood:focus:ring-primary-200
+    dark:bg-slate-800/80 dark:text-blue-100 dark:placeholder-blue-300/60 dark:border-blue-400
+    wood:bg-white/60 wood:text-primary-900
+  "
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Autor <span className="text-red-500">*</span>
                                     </label>
                                     <input
@@ -223,10 +291,11 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                         value={author}
                                         onChange={(e) => setAuthor(e.target.value)}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
+                                dark:bg-slate-800/80 
+                                dark:text-blue-100 
+                                dark:placeholder-blue-300/60 
+                                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                                wood:focus:ring-2 wood:focus:ring-primary-200"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
@@ -234,13 +303,22 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                         </div>
 
                         {/* === Informações Adicionais === */}
-                        <div className="bg-blue-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-500" style={{ marginBottom: "1rem" }}>
+                        <div
+                            className="bg-blue-50 dark:bg-blue-200/10 rounded-lg wood:bg-primary-100"
+                            style={{ padding: "1rem" }}
+                        >
+                            <h3
+                                className="text-lg font-semibold text-blue-800 dark:text-blue-500 wood:text-primary-900"
+                                style={{ marginBottom: "1rem" }}
+                            >
                                 Informações Adicionais
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Ano de Publicação
                                     </label>
                                     <input
@@ -248,16 +326,20 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                         value={year.toString()}
                                         onChange={(e) => setYear(e.target.value)}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
+                dark:bg-slate-800/80 
+                dark:text-blue-100 
+                dark:placeholder-blue-300/60 
+                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                wood:focus:ring-2 wood:focus:ring-primary-200"
                                         placeholder="Ex: 2023"
-                                        style={{ padding: '0.5rem 0.7rem' }}
+                                        style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Total de Páginas
                                     </label>
                                     <input
@@ -265,50 +347,65 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                         defaultValue={pages}
                                         onChange={(e) => setPages(Number(e.target.value))}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
-                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                dark:bg-slate-800/80 
+                dark:text-blue-100 
+                dark:placeholder-blue-300/60 
+                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                wood:focus:ring-2 wood:focus:ring-primary-200"
                                         placeholder="Ex: 300"
-                                        style={{ padding: '0.5rem 0.7rem' }}
+                                        style={{ padding: "0.5rem 0.7rem" }}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: '0.25rem' }}>Páginas Lidas</label>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
+                                        Páginas Lidas
+                                    </label>
                                     <input
                                         type="number"
                                         value={finishedPages}
                                         onChange={(e) => setFinishedPages(Number(e.target.value))}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
-                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                dark:bg-slate-800/80 
+                dark:text-blue-100 
+                dark:placeholder-blue-300/60 
+                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                wood:focus:ring-2 wood:focus:ring-primary-200"
                                         placeholder="Ex: 120"
-                                        style={{ padding: '0.5rem 0.7rem' }}
-                                        />
-                                    </div>
+                                        style={{ padding: "0.5rem 0.7rem" }}
+                                    />
+                                </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: '0.25rem' }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-500 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Gênero
                                     </label>
                                     <select
                                         value={genre}
                                         onChange={(e) => setGenre(e.target.value)}
                                         className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg 
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
-                                        style={{ padding: '0.5rem 0.7rem' }}
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                dark:bg-slate-800/80 
+                dark:text-blue-100 
+                dark:placeholder-blue-300/60 
+                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                wood:focus:ring-2 wood:focus:ring-primary-200"
+                                        style={{ padding: "0.5rem 0.7rem" }}
                                     >
-                                        <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
-                                        <option value="Ficção Científica">🚀 Ficção Científica</option>
+                                        <option value="Literatura Brasileira">
+                                            📚 Literatura Brasileira
+                                        </option>
+                                        <option value="Ficção Científica">
+                                            🚀 Ficção Científica
+                                        </option>
                                         <option value="Realismo Mágico">✨ Realismo Mágico</option>
                                         <option value="Ficção">📖 Ficção</option>
                                         <option value="Fantasia">🐉 Fantasia</option>
@@ -325,19 +422,23 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700" style={{ marginBottom: '0.25rem' }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         Status de Leitura
                                     </label>
                                     <select
                                         value={status}
                                         onChange={(e) => setStatus(e.target.value)}
                                         className="w-full cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg 
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
-                                        style={{ padding: '0.5rem 0.7rem' }}
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                dark:bg-slate-800/80 
+                dark:text-blue-100 
+                dark:placeholder-blue-300/60 
+                dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+                wood:focus:ring-2 wood:focus:ring-primary-200"
+                                        style={{ padding: "0.5rem 0.7rem" }}
                                     >
                                         <option value="não lido">📚 Não Lido</option>
                                         <option value="quero ler">🎯 Quero Ler</option>
@@ -351,7 +452,10 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                             {/* Avaliação com Estrelas */}
                             <div style={{ marginTop: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: '0.5rem' }}>
+                                <label
+                                    className="block text-sm font-medium text-gray-700 dark:text-blue-500 wood:text-primary-900"
+                                    style={{ marginBottom: "0.5rem" }}
+                                >
                                     Avaliação
                                 </label>
                                 <div className="flex items-center gap-2">
@@ -361,17 +465,24 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                                 key={star}
                                                 type="button"
                                                 onClick={() => setRating(star)}
-                                                className="text-2xl hover:scale-110 transition-transform"
+                                                className="text-2xl hover:scale-110 transition-transform wood:text-primary-900"
                                             >
                                                 {star <= rating ? (
-                                                    <span className="text-yellow-400">★</span>
+                                                    <span className="text-yellow-400">
+                                                        ★
+                                                    </span>
                                                 ) : (
-                                                    <span className="text-gray-300">★</span>
+                                                    <span className="text-gray-300 wood:text-primary-300">
+                                                        ★
+                                                    </span>
                                                 )}
                                             </button>
                                         ))}
                                     </div>
-                                    <span className="text-sm text-gray-600 dark:text-blue-400" style={{ marginLeft: "0.5rem" }}>
+                                    <span
+                                        className="text-sm text-gray-600 dark:text-blue-400 wood:text-primary-800"
+                                        style={{ marginLeft: "0.5rem" }}
+                                    >
                                         {rating === 5 && "⭐⭐⭐⭐⭐ Excelente"}
                                         {rating === 4 && "⭐⭐⭐⭐ Muito Bom"}
                                         {rating === 3 && "⭐⭐⭐ Bom"}
@@ -383,7 +494,10 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                             {/* ISBN */}
                             <div style={{ marginTop: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.25rem" }}>
+                                <label
+                                    className="block text-sm font-medium text-gray-700 dark:text-blue-500 wood:text-primary-900"
+                                    style={{ marginBottom: "0.25rem" }}
+                                >
                                     ISBN
                                 </label>
                                 <input
@@ -391,28 +505,35 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     value={isbn}
                                     onChange={(e) => setIsbn(e.target.value)}
                                     className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
-                                    focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                    dark:bg-slate-800/80 
-                                    dark:text-blue-100 
-                                    dark:placeholder-blue-300/60 
-                                    dark:border-blue-400"
+        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+        dark:bg-slate-800/80 
+        dark:text-blue-100 
+        dark:placeholder-blue-300/60 
+        dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+        wood:focus:ring-2 wood:focus:ring-primary-200"
                                     style={{ padding: "0.5rem 0.7rem" }}
                                     placeholder="Ex: 978-85-359-0277-5"
                                 />
                             </div>
 
                             {/* Capa do Livro */}
-                            <div className="bg-purple-50 rounded-lg dark:bg-slate-800/80 
-                                        dark:text-blue-100 dark:border dark:border-blue-400
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400" style={{ padding: "1rem", marginTop: "1rem" }}>
-                                <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-500" style={{ marginBottom: "1rem" }}>
+                            <div
+                                className="bg-purple-50 rounded-lg dark:bg-slate-800/80 wood:bg-primary-200"
+                                style={{ padding: "1rem", marginTop: "1rem" }}
+                            >
+                                <h3
+                                    className="text-lg font-semibold text-purple-800 dark:text-purple-500 wood:text-primary-900"
+                                    style={{ marginBottom: "1rem" }}
+                                >
                                     Capa do Livro
                                 </h3>
 
                                 {/* URL da capa */}
                                 <div style={{ marginBottom: "1rem" }}>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
+                                    <label
+                                        className="block text-sm font-medium text-gray-700 dark:text-blue-400 wood:text-primary-900"
+                                        style={{ marginBottom: "0.25rem" }}
+                                    >
                                         URL da Capa
                                     </label>
                                     <input
@@ -420,15 +541,19 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                         value={coverUrl}
                                         onChange={(e) => setCoverUrl(e.target.value)}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
-                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                                        dark:bg-slate-800/80 
-                                        dark:text-blue-100 
-                                        dark:placeholder-blue-300/60 
-                                        dark:border-blue-400"
+            focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            dark:bg-slate-800/80 
+            dark:text-blue-100 
+            dark:placeholder-blue-300/60 
+            dark:border-blue-400 wood:bg-white/60 wood:text-primary-900
+            wood:focus:ring-2 wood:focus:ring-primary-200"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                         placeholder="https://exemplo.com/capa-do-livro.jpg"
                                     />
-                                    <p className="text-xs text-gray-500 dark:text-blue-300" style={{ marginTop: "0.25rem" }}>
+                                    <p
+                                        className="text-xs text-gray-500 dark:text-blue-300 wood:text-primary-800"
+                                        style={{ marginTop: "0.25rem" }}
+                                    >
                                         Cole aqui o link da imagem da capa do livro
                                     </p>
                                 </div>
@@ -444,7 +569,7 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     />
                                     <label
                                         htmlFor="cover-upload"
-                                        className="cursor-pointer px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 transition-colors"
+                                        className="cursor-pointer px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 transition-colors wood:bg-secondary-700 wood:text-accent-100 wood:hover:bg-primary-800"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     >
                                         Escolher Arquivo
@@ -453,13 +578,16 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
 
                                 {/* Preview da capa */}
                                 {(coverFile || coverUrl) && (
-                                    <div className="flex justify-center" style={{ marginTop: "1rem" }}>
+                                    <div
+                                        className="flex justify-center"
+                                        style={{ marginTop: "1rem" }}
+                                    >
                                         <Image
                                             src={coverFile || coverUrl}
                                             alt="Capa do livro"
                                             width={128}
                                             height={192}
-                                            className="object-cover rounded-lg border"
+                                            className="object-cover rounded-lg border wood:border-primary-700"
                                         />
                                     </div>
                                 )}
@@ -467,12 +595,21 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                         </div>
 
                         {/* === Conteúdo e Notas === */}
-                        <div className="bg-green-50 dark:bg-blue-200/10 rounded-lg" style={{ padding: "1rem" }}>
-                            <h3 className="text-lg font-semibold text-green-800 dark:text-green-500" style={{ marginBottom: "1rem" }}>
+                        <div
+                            className="bg-green-50 dark:bg-blue-200/10 rounded-lg wood:bg-secondary-400"
+                            style={{ padding: "1rem" }}
+                        >
+                            <h3
+                                className="text-lg font-semibold text-green-900 dark:text-green-500 wood:text-primary-900"
+                                style={{ marginBottom: "1rem" }}
+                            >
                                 Conteúdo e Notas
                             </h3>
                             <div style={{ marginBottom: "1rem" }}>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
+                                <label
+                                    className="block text-sm font-medium text-gray-800 dark:text-blue-400 wood:text-primary-900"
+                                    style={{ marginBottom: "0.25rem" }}
+                                >
                                     Sinopse
                                 </label>
                                 <textarea
@@ -480,16 +617,20 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg 
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none
-                                    dark:bg-slate-800/80 
-                                    dark:text-blue-100 
-                                    dark:placeholder-blue-300/60 
-                                    dark:border-blue-400"
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none
+                    dark:bg-slate-800/80 
+                    dark:text-blue-100 
+                    dark:placeholder-blue-300/60 
+                    dark:border-blue-400 wood:bg-white/80 wood:text-primary-900
+                    wood:focus:ring-2 wood:focus:ring-primary-200"
                                     style={{ padding: "0.7rem" }}
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400" style={{ marginBottom: "0.25rem" }}>
+                                <label
+                                    className="block text-sm font-medium text-gray-800 dark:text-blue-400 wood:text-primary-900 "
+                                    style={{ marginBottom: "0.25rem" }}
+                                >
                                     Notas Pessoais
                                 </label>
                                 <PersonalNotes
@@ -502,18 +643,27 @@ export default function BookEditModal({ book, isOpen, onClose, onSave, onBack }:
                         </div>
 
                         {/* Botões */}
-                        <div className="flex gap-3 border-t border-gray-200" style={{ paddingTop: "1rem" }}>
+                        <div
+                            className="flex gap-3 border-t border-gray-200 wood:border-primary-700"
+                            style={{ paddingTop: "1rem" }}
+                        >
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="flex-1 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                                className="flex-1 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium wood:bg-primary-900 wood:text-primary-200 wood:hover:bg-primary-800"
                                 style={{ padding: "0.75rem 1rem" }}
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
-                                className="flex-1 bg-blue-600 text-white rounded-lg bg-gradient-to-r from-blue-600 hover:from-blue-500 hover:to-blue-700 transition-colors font-medium cursor-pointer"
+                                className="flex-1 
+  bg-blue-600 text-white rounded-lg 
+  bg-gradient-to-r from-blue-600 hover:from-blue-500 hover:to-blue-700 
+  transition-colors font-medium cursor-pointer
+  wood:bg-gradient-to-r wood:from-primary-800 wood:to-secondary-900 wood:hover:from-primary-900 wood:hover:to-secondary-800
+  wood:text-accent-100"
+
                                 style={{ padding: "0.75rem 1rem" }}
                             >
                                 Salvar Alterações

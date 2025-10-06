@@ -69,7 +69,7 @@ export default function DeleteConfirmModal({
             onClick={handleClose}
         >
             <div
-                className={`bg-white dark:bg-slate-800 dark:shadow-blue-400 dark:shadow-sm rounded-xl shadow-2xl transform transition-all ease-out duration-300 ${dialogClasses}`}
+                className={`bg-white dark:bg-slate-800 dark:shadow-blue-400 dark:shadow-sm rounded-xl shadow-2xl transform transition-all ease-out duration-300 wood:bg-primary-500 ${dialogClasses}`}
                 style={{ padding: "1.5rem", maxWidth: "24rem", width: "100%" }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -98,29 +98,30 @@ export default function DeleteConfirmModal({
                         </svg>
                     </div>
 
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-blue-400 mb-2">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-blue-400 mb-2 wood:text-primary-900">
                         Excluir Livro
                     </h3>
 
-                    <p className="text-sm text-gray-600 dark:text-blue-200 mb-6">
+                    <p className="text-sm text-gray-600 dark:text-blue-200 mb-6 wood:text-primary-900" style={{ marginBottom: '1rem' }}>
                         Tem certeza que deseja excluir &quot;{bookTitle}&quot;? Esta ação não pode ser desfeita.
                     </p>
 
                     <div className="flex gap-3">
                         <button
                             onClick={handleClose}
-                            className="flex-1 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="flex-1 cursor-pointer bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors wood:bg-secondary-100 wood:text-primary-900"
                             style={{ padding: "0.5rem 1rem" }}
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleConfirm}
-                            className="flex-1 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                            className="flex-1 cursor-pointer bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors wood:bg-red-600 wood:text-accent-100"
                             style={{ padding: "0.5rem 1rem" }}
                         >
                             Excluir
                         </button>
+
                     </div>
                 </div>
             </div>
