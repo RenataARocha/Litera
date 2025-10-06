@@ -278,7 +278,7 @@ const LeiturasAtuais = () => {
 
                                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600">
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
-                                                📅 <strong>Iniciado:</strong> {book.startedAt}
+                                                📅 <strong>Iniciado:</strong> {book.startedAt ? new Date(book.startedAt).toLocaleDateString('pt-BR') : 'Não definido'}
                                             </span>
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600">
                                                 ⏱️ <strong>Previsão:</strong> {book.predictedEnd}

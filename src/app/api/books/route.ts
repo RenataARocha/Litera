@@ -78,7 +78,9 @@ export async function GET(req: Request) {
       ...book,
       author: book.author ? book.author.name : 'Autor Desconhecido', 
       status: mapStatusToFrontend(book.status),
-      rating: book.rating ? book.rating.length : 0, 
+      rating: book.rating ? book.rating.length : 0,
+      startedAt: book.createdAt,
+      book
     }));
 
     return NextResponse.json(formattedBooks, { status: 200 });
