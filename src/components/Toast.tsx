@@ -24,12 +24,12 @@ export function ToastDemo() {
                 <div className="flex justify-between items-center gap-4">
                     <div className="flex-1">
                         <ToastPrimitive.Title className="font-bold text-lg text-gray-800">Sucesso!</ToastPrimitive.Title>
-                        <ToastPrimitive.Description className="text-sm text-gray-600">
+                        <ToastPrimitive.Description className="text-sm text-gray-600 dark:text-blue-400">
                             O livro foi adicionado à biblioteca.
                         </ToastPrimitive.Description>
                     </div>
                     <ToastPrimitive.Close>
-                        <X className="w-5 h-5 text-gray-500" />
+                        <X className="w-5 h-5 text-gray-500 dark:text-blue-300" />
                     </ToastPrimitive.Close>
                 </div>
             </ToastPrimitive.Root>

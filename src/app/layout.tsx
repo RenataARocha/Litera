@@ -1,3 +1,4 @@
+// app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
@@ -6,13 +7,16 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 import ToasterClient from "@/components/ToasterClient";
 import { ThemeProvider } from 'next-themes';
 
+const SITE_URL = 'https://litera-six.vercel.app';
+
 // SEO otimizado para o Litera
 export const metadata: Metadata = {
   title: {
     default: 'Litera | Plataforma de Gestão Editorial e Literária',
     template: '%s | Litera'
   },
-  description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+  description:
+    'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
   keywords: [
     'gestão editorial',
     'plataforma literária',
@@ -23,38 +27,43 @@ export const metadata: Metadata = {
     'literatura',
     'livros',
     'projetos literários',
-    'gerenciamento de livros'
+    'gerenciamento de livros',
   ],
   authors: [{ name: 'Litera Team' }],
   creator: 'Litera Team',
   publisher: 'Litera',
 
+  // Metadata base
+  metadataBase: new URL(SITE_URL),
+
   // Open Graph
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://litera.com.br',
+    url: SITE_URL,
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial. Gerencie manuscritos, organize projetos literários e conecte-se com a comunidade literária.',
     siteName: 'Litera',
     images: [
       {
-        url: '/assets/litera-og-image.png',
+        url: '/images/litera-og.png',
         width: 1200,
         height: 630,
-        alt: 'Litera - Plataforma de Gestão Editorial'
-      }
-    ]
+        alt: 'Litera - Plataforma de Gestão Editorial',
+      },
+    ],
   },
 
   // Twitter
   twitter: {
     card: 'summary_large_image',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
-    description: 'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
-    images: ['/assets/litera-twitter-card.png'],
+    description:
+      'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
+    images: ['/images/litera-og.png'],
     creator: '@litera_oficial',
-    site: '@litera_oficial'
+    site: '@litera_oficial',
   },
 
   // Robots
@@ -83,16 +92,14 @@ export const metadata: Metadata = {
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
-    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     other: [
       {
         rel: 'mask-icon',
         url: '/safari-pinned-tab.svg',
-        color: '#6366f1'
-      }
-    ]
+        color: '#6366f1',
+      },
+    ],
   },
 
   // Manifest
@@ -100,9 +107,6 @@ export const metadata: Metadata = {
 
   // Theme color
   themeColor: '#6366f1',
-
-  // Canonical e Metadata base
-  metadataBase: new URL('https://litera.com.br'),
 
   // Alternates
   alternates: {
@@ -129,7 +133,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "@type": "WebApplication",
               "name": "Litera",
               "description": "Plataforma completa para gestão editorial e literária",
-              "url": "https://litera.com.br",
+              "url": SITE_URL,
               "applicationCategory": "ProductivityApplication",
               "operatingSystem": "Web Browser",
               "offers": {
@@ -140,10 +144,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "publisher": {
                 "@type": "Organization",
                 "name": "Litera",
-                "url": "https://litera.com.br",
+                "url": SITE_URL,
                 "logo": {
                   "@type": "ImageObject",
-                  "url": "https://litera.com.br/assets/logo.png",
+                  "url": `${SITE_URL}/images/litera-og.png`,
                   "caption": "Logo oficial do Litera"
                 }
               },
@@ -170,14 +174,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
       <body className="min-h-screen transition-colors duration-300">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div className="flex flex-col min-h-screen">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          themes={["light", "dark", "wood"]}
+        >
+          <div className="flex flex-col min-h-screen dark:bg-slate-800/90 wood:bg-[var(--color-background)]">
             <Header />
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />
             <ScrollToTopButton />
           </div>
         </ThemeProvider>
+
+        {/* PONTO CRÍTICO: Raiz para Modais (React Portals) */}
+        <div id="modal-root" />
+
       </body>
     </html>
   );
