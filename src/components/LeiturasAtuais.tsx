@@ -3,52 +3,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
 
-// =================================================================
-// 1. INTERFACES
-// =================================================================
-
-interface Book {
+type Book = {
     id: number;
     title: string;
+    author: string;
     pages: number;
-    cover: string | null;
-    author: {
-        name: string;
-    };
-}
-
-interface ProgressUpdate {
-    id: number;
-    pagesRead: number;
-    readingTimeMin: number;
-    date: string;
-}
-
-interface CurrentReading {
-    id: number;
-    bookId: number;
-    currentPage: number;
+    finishedPages: number;
     startedAt: string;
-    isPaused: boolean;
-    book: Book;
-    progressUpdates: ProgressUpdate[];
-}
+    predictedEnd?: string;
+    status: string;
+};
 
-interface BookWithProgress extends CurrentReading {
-    percentage: number;
-    authorName: string;
-}
-
-interface ReadingStats {
-    pagesToday: number;
-    consecutiveDays: number;
-    weeklyPace: number;
-    averageTimeMin: number;
-}
-
-// =================================================================
-// 2. COMPONENTE DE TRANSIÇÃO
-// =================================================================
 const PageTransition = ({ children, isVisible }: { children: React.ReactNode; isVisible: boolean }) => {
     return (
         <div
@@ -63,13 +28,20 @@ const PageTransition = ({ children, isVisible }: { children: React.ReactNode; is
 // 3. COMPONENTE PRINCIPAL
 // =================================================================
 const LeiturasAtuais = () => {
-    // Estados
-    const [currentReadings, setCurrentReadings] = useState<BookWithProgress[]>([]);
-    const [stats, setStats] = useState<ReadingStats>({ pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 });
-    const [mainReading, setMainReading] = useState<BookWithProgress | null>(null);
+    const [books, setBooks ] = useState<Book[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const [readingData, setReadingData] = useState({
+        paginasHoje: 0,
+        diasConsecutivos: 0,
+        ritmoSemanal: 0,
+        tempoMedio: 0
+    });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+    const [selectedBook, setSelectedBook] = useState<number | null>(null);
+
     const [pagesRead, setPagesRead] = useState('');
     const [readingTime, setReadingTime] = useState('');
     const [noteText, setNoteText] = useState('');
@@ -77,51 +49,61 @@ const LeiturasAtuais = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
     const [isVisible, setIsVisible] = useState(false);
-    const [isLeaving] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
 
-    // =================================================================
-    // Função para calcular dados e progresso
-    // =================================================================
-    const calculateData = (readings: CurrentReading[]): { readings: BookWithProgress[], stats: ReadingStats } => {
-        if (!readings.length) return { readings: [], stats: { pagesToday: 0, consecutiveDays: 0, weeklyPace: 0, averageTimeMin: 0 } };
+    const showFeedback = (message: string) => {
+    setFeedback(message);
+    setTimeout(() => setFeedback(''), 3000); // some após 3s
+};
 
-        let totalPagesToday = 0;
-        let totalTimeMin = 0;
-        const today = new Date().toISOString().split('T')[0];
+    // Animação de entrada da página
+    useEffect(() => {
+        const timer = setTimeout(() => setIsVisible(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
-        readings.forEach(reading => {
-            reading.progressUpdates.forEach(update => {
-                const updateDate = new Date(update.date).toISOString().split('T')[0];
-                totalTimeMin += update.readingTimeMin;
-                if (updateDate === today) totalPagesToday += update.pagesRead;
-            });
-        });
+    useEffect(() => {
+    const fetchReadingBooks = async () => {
+        try {
+            const res = await fetch('/api/books?status=READING');
+            if (!res.ok) throw new Error('Erro ao buscar livros');
+            const data: Book[] = await res.json();
 
-        const numUpdates = readings.flatMap(r => r.progressUpdates).length;
-        const averageTimeMin = numUpdates > 0 ? Math.round(totalTimeMin / numUpdates) : 0;
+            // Filtra apenas os livros com status 'reading'
+            const readingBooks = data.filter(book => book.status === 'Lendo');
+            setBooks(readingBooks);
 
-        const readingsWithProgress = readings.map(reading => ({
-            ...reading,
-            percentage: Math.round((reading.currentPage / reading.book.pages) * 100),
-            authorName: reading.book.author.name,
-        }));
+            // Atualiza estatísticas gerais
+            const paginasHoje = readingBooks.reduce((acc, book) => acc + book.finishedPages, 0);
+            setReadingData(prev => ({ ...prev, paginasHoje }));
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchReadingBooks();
+}, []);
 
-        return {
-            readings: readingsWithProgress,
-            stats: { pagesToday: totalPagesToday, consecutiveDays: 7, weeklyPace: 180, averageTimeMin }
-        };
+
+    const navigateWithTransition = (path: string) => {
+        setIsLeaving(true);
+        setIsVisible(false);
+        setTimeout(() => {
+            alert(`Navegação simulada para: ${path === '/' ? 'Home' : path}`);
+        }, 400);
     };
 
-    // =================================================================
-    // Fetch de leituras com useCallback
-    // =================================================================
-    const fetchReadings = useCallback(async () => {
-        try {
-            const response = await fetch('/api/current-readings');
-            if (!response.ok) throw new Error('Falha ao carregar leituras.');
+    const openUpdateModal = (bookId: number) => {
+        setSelectedBook(bookId);
+        setIsModalOpen(true);
+    };
 
-            const data: CurrentReading[] = await response.json();
-            const { readings, stats } = calculateData(data);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setPagesRead('');
+        setReadingTime('');
+    };
 
             setCurrentReadings(readings);
             setStats(stats);
@@ -131,63 +113,44 @@ const LeiturasAtuais = () => {
                 setIsPaused(readings[0].isPaused);
             } else setMainReading(null);
 
-        } catch (error) {
-            console.error(error);
-            showFeedback('Erro ao carregar os dados. Tente novamente.');
-        }
-    }, []);
-
-    // =================================================================
-    // Efeito de entrada da página
-    // =================================================================
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-            fetchReadings();
-        }, 100);
-        return () => clearTimeout(timer);
-    }, [fetchReadings]);
-
-    // =================================================================
-    // Funções de modal e feedback
-    // =================================================================
-    const openUpdateModal = () => { if (mainReading) setIsModalOpen(true); };
-    const closeModal = () => { setIsModalOpen(false); setPagesRead(''); setReadingTime(''); };
-    const closeNoteModal = () => { setIsNoteModalOpen(false); setNoteText(''); };
-    const saveNote = () => { if (noteText.trim()) { showFeedback('Anotação salva com sucesso!'); closeNoteModal(); } };
-    const showFeedback = (message: string) => { setFeedback(message); setTimeout(() => setFeedback(''), 3000); };
-    const togglePause = () => { setIsPaused(!isPaused); showFeedback(!isPaused ? 'Leitura pausada.' : 'Leitura retomada!'); };
-
     const handleSubmit = async () => {
-        if (!mainReading) return;
-
         const pages = parseInt(pagesRead);
-        const time = parseInt(readingTime);
-        const newCurrentPage = mainReading.currentPage + pages;
+        if (!selectedBook || !pages) return;
 
-        if (pages > 0 && time > 0) {
-            try {
-                const response = await fetch('/api/current-readings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ currentReadingId: mainReading.id, pagesRead: pages, readingTimeMin: time, newCurrentPage }),
-                });
-                if (!response.ok) throw new Error('Falha ao registrar progresso.');
+         try {
+            const res = await fetch(`/api/books/${selectedBook}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ finishedPages: pages })
+            });
+            if (!res.ok) throw new Error('Erro ao atualizar livro');
 
-                closeModal();
-                await fetchReadings();
-                showFeedback(`Progresso atualizado! +${pages} páginas lidas de ${mainReading.book.title}`);
+            // Atualiza localmente
+            setBooks(prev =>
+                prev.map(book =>
+                    book.id === selectedBook
+                        ? { ...book, finishedPages: book.finishedPages + pages }
+                        : book
+                )
+            );
 
-            } catch (error) {
-                console.error('Erro ao salvar progresso:', error);
-                showFeedback('Erro ao salvar progresso. Tente novamente.');
+            setReadingData(prev => ({ ...prev, paginasHoje: prev.paginasHoje + pages }));
+
+            showFeedback(`Progresso atualizado! +${pages} páginas`);
+            closeModal();
+        } catch (err) {
+            console.error(err);
+            showFeedback('Erro ao atualizar livro.');
             }
-        } else showFeedback('Por favor, insira páginas e tempo de leitura válidos.');
+        };
+
+        const togglePause = () => {
+        setIsPaused(!isPaused);
+        showFeedback(!isPaused ? 'Leitura pausada.' : 'Leitura retomada!');
     };
 
-    // =================================================================
-    // 4. JSX (RENDERIZAÇÃO)
-    // =================================================================
+    if (loading) return <p className="text-center mt-20 text-gray-600">Carregando livros...</p>;
+
     return (
         <div className={`min-h-screen transition-all duration-500 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}>
 
@@ -356,7 +319,7 @@ const LeiturasAtuais = () => {
                 </div>
 
                 {/* Modal de Progresso com animação - Responsivo */}
-                {isModalOpen && (
+                {isModalOpen && selectedBook && (
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
@@ -378,7 +341,7 @@ const LeiturasAtuais = () => {
                                         className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105"
                                         style={{ padding: '10px 14px' }}
                                         placeholder="Ex: 15"
-                                        min="1"
+                                        min={1}
                                         required
                                     />
                                 </div>
@@ -394,7 +357,7 @@ const LeiturasAtuais = () => {
                                         className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105"
                                         style={{ padding: '10px 14px' }}
                                         placeholder="Ex: 30"
-                                        min="1"
+                                        min={1}
                                         required
                                     />
                                 </div>
@@ -420,8 +383,9 @@ const LeiturasAtuais = () => {
                     </div>
                 )}
 
-                {/* Modal de Anotação com animação - Responsivo  (Mantido) */}
-                {isNoteModalOpen && (
+                {/* Modal de Anotação com animação - Responsivo  */}
+                {isNoteModalOpen && selectedBook && (
+
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl transform animate-slideInUp" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
