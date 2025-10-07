@@ -5,10 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "prisma generate && prisma migrate deploy && next build",
+    "start": "next start -p ${PORT:-3000}",
     "lint": "eslint",
-    "seed": "ts-node-esm prisma/seed.ts"
+    "seed": "ts-node-esm prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
