@@ -1,4 +1,3 @@
-import Home from '../components/Home';
 import type { Book, Stats } from '@/components/types/types';
 import { prisma } from '@/_lib/db';
 
@@ -76,8 +75,8 @@ export async function getDashboardData(): Promise<{ recentActivity: Book[], stat
         case "PAUSED":
           statusPt = "Pausado";
           break;
-          case "ABANDONED":
-            statusPt = "Abandonado";
+        case "ABANDONED":
+          statusPt = "Abandonado";
           break;
         default:
           statusPt = "Desconhecido";

@@ -38,6 +38,7 @@ export default function BooksPage() {
     lastRead: livro.lastRead,
     notes: "",
     isbn: "",
+    createdAt: new Date(Date.now() - index * 86400000).toISOString(), // Cada livro 1 dia antes
   }));
 
   // Buscar livros da API (apenas se logado)
