@@ -9,7 +9,17 @@ interface ThemeWrapperProps {
 
 export default function ThemeWrapper({ children }: ThemeWrapperProps) {
     return (
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            themes={['light', 'dark', 'wood']}
+            value={{
+                light: 'light',
+                dark: 'dark',
+                wood: 'wood'
+            }}
+        >
             {children}
         </ThemeProvider>
     );

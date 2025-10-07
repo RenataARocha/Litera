@@ -36,7 +36,14 @@ export default function PersonalNotes({
             rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
+            focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none
+            dark:bg-slate-800/80 
+            dark:text-blue-100 
+            dark:placeholder-blue-300/60 
+            dark:border-blue-400
+            wood:bg-white/80
+            wood:focus:ring-2 wood:focus:ring-primary-200"
             style={{ padding: '0.7rem' }}
             placeholder={placeholder}
         />

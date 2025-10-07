@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 /* Configuração de tema personalizada */
 @theme {
   --color-primary-50: #f0f9ff;
@@ -13,7 +12,7 @@
   --color-primary-700: #0369a1;
   --color-primary-800: #075985;
   --color-primary-900: #0c4a6e;
-  
+
   --color-dark-50: #f8fafc;
   --color-dark-100: #f1f5f9;
   --color-dark-200: #e2e8f0;
@@ -25,25 +24,114 @@
   --color-dark-800: #1e293b;
   --color-dark-900: #0f172a;
 
+  --color-secondary-50: #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
+
+  --color-accent-50: #fef3c7;
+  --color-accent-100: #fde68a;
+  --color-accent-200: #fcd34d;
+  --color-accent-300: #fbbf24;
+  --color-accent-400: #f59e0b;
+  --color-accent-500: #d97706;
+  --color-accent-600: #b45309;
+  --color-accent-700: #92400e;
+  --color-accent-800: #78350f;
+  --color-accent-900: #451a03;
+
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+
   --animate-glow: glow 2s ease-in-out infinite alternate;
   --animate-bounce-subtle: bounceSubtle 0.6s ease-out;
   --animate-slide-down: slideDown 0.3s ease-out;
 }
 
+/* Tema Wood - ESCURO COM ALTO CONTRASTE */
+html.wood {
+  --color-primary-50: #fdf6f0;
+  --color-primary-100: #f7e3d1;
+  --color-primary-200: #f1d0b3;
+  --color-primary-300: #eabd94;
+  --color-primary-400: #e4aa75;
+  --color-primary-500: #c08a4d;
+  --color-primary-600: #9a6e3c;
+  --color-primary-700: #74522c;
+  --color-primary-800: #4e371b;
+  --color-primary-900: #281c0b;
+
+  /* Tons secundários COM CONTRASTE - mais claros para serem visíveis */
+  --color-secondary-50: #f4f1ec;
+  --color-secondary-100: #e8dfd5;
+  --color-secondary-200: #d4c4b3;
+  --color-secondary-300: #c0aa91;
+  --color-secondary-400: #ac906f;
+  --color-secondary-500: #8a6f43;
+  --color-secondary-600: #6e5835;
+  --color-secondary-700: #524227;
+  --color-secondary-800: #362c19;
+  --color-secondary-900: #1a160b;
+
+  --color-accent-50: #fff7e6;
+  --color-accent-100: #ffe6b3;
+  --color-accent-200: #ffd580;
+  --color-accent-300: #ffc24d;
+  --color-accent-400: #ffaf1a;
+  --color-accent-500: #e69500;
+  --color-accent-600: #b37300;
+  --color-accent-700: #805200;
+  --color-accent-800: #4d3100;
+  --color-accent-900: #1a0f00;
+
+  /* FUNDO MARROM ESCURO RICO */
+  --color-background: #2d2419;
+  --color-foreground: #f7e3d1;
+}
+
+/* Variante customizada */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant wood (&:where(.wood, .wood *));
+
 /* Keyframes */
 @keyframes glow {
-  0% { box-shadow: 0 0 20px rgba(14, 165, 233, 0.3); }
-  100% { box-shadow: 0 0 30px rgba(14, 165, 233, 0.6); }
+  0% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.6);
+  }
 }
 
 @keyframes bounceSubtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 @keyframes slideDown {
-  0% { transform: translateY(-20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Reset básico */
@@ -62,7 +150,7 @@ body {
   line-height: 1.6;
 }
 
-/* Utilitários personalizados */
+/* Utilitários */
 @utility glass-morphism {
   background-color: rgb(255 255 255 / 0.1);
   backdrop-filter: blur(12px);
@@ -77,6 +165,7 @@ body {
 
 @utility mobile-only {
   display: block;
+
   @media (min-width: 768px) {
     display: none;
   }
@@ -84,19 +173,19 @@ body {
 
 @utility desktop-only {
   display: none;
+
   @media (min-width: 768px) {
     display: block;
   }
 }
 
-/* Scrollbar personalizada */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background-color: #f1f5f9;
-  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -108,4 +197,76 @@ body {
   background-color: var(--color-primary-500);
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
+/* Scrollbar para tema Wood - ESCURO */
+html.wood ::-webkit-scrollbar-track {
+  background-color: #1a160b;
+}
+
+html.wood ::-webkit-scrollbar-thumb {
+  background-color: #9a6e3c;
+}
+
+html.wood ::-webkit-scrollbar-thumb:hover {
+  background-color: #c08a4d;
+}
+
+
+:root {
+  --logo-shadow-default: rgba(0, 112, 255, 0.5);
+  /* azul para normal/dark */
+  --logo-shadow-wood: rgba(251, 121, 36, 0.6);
+  /* amarelo para wood */
+}
+
+html.wood {
+  --logo-shadow-current: var(--logo-shadow-wood);
+}
+
+html:not(.wood) {
+  --logo-shadow-current: var(--logo-shadow-default);
+}
+
+/* ================================ */
+/* Estilos para <option> no tema Wood */
+/* ================================ */
+
+html.wood select option {
+  background-color: #4e371b;
+  /* --color-primary-800 */
+  color: #f1d0b3;
+  /* --color-primary-200 */
+  padding: 0.5rem;
+}
+
+html.wood select option:hover {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffd580 !important;
+  /* --color-accent-200 */
+}
+
+html.wood select option:focus {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffd580 !important;
+  /* --color-accent-200 */
+}
+
+html.wood select option:checked {
+  background-color: #74522c !important;
+  /* --color-primary-700 */
+  color: #ffe6b3 !important;
+  /* --color-accent-100 */
+  font-weight: 600;
+}
+
+/* Para navegadores Webkit (Chrome, Safari, Edge) */
+html.wood select option:hover,
+html.wood select option:focus {
+  background: linear-gradient(#74522c, #74522c) !important;
+}
+
+/* Remove o fundo azul padrão ao selecionar */
+html.wood select:focus option:checked {
+  background: #74522c linear-gradient(0deg, #74522c 0%, #74522c 100%) !important;
+}
