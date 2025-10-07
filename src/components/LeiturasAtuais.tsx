@@ -79,8 +79,7 @@ const LeiturasAtuais = () => {
                 setBooks(readingBooks);
 
                 // Atualiza estatísticas gerais
-                const paginasHoje = readingBooks.reduce((acc, book) => acc + book.finishedPages, 0);
-                setReadingData(prev => ({ ...prev, paginasHoje }));
+                setReadingData(prev => ({ ...prev, paginasHoje: 0 }));
 
                 // Remove loading com delay menor
                 setTimeout(() => setLoading(false), 300);
@@ -119,7 +118,30 @@ const LeiturasAtuais = () => {
 
     const handleSubmit = async () => {
         const pages = parseInt(pagesRead);
-        if (!selectedBook || !pages) return;
+
+        // Validação completa
+        if (!selectedBook) {
+            showFeedback('Nenhum livro selecionado.');
+            return;
+        }
+
+        if (isNaN(pages) || pages < 0) {
+            showFeedback('Por favor, insira um número válido de páginas.');
+            return;
+        }
+
+        // Encontra o livro para validar limites
+        const book = books.find(b => b.id === selectedBook);
+        if (!book) {
+            showFeedback('Livro não encontrado.');
+            return;
+        }
+
+        // Valida se não excede o total
+        if (pages > book.pages) {
+            showFeedback(`O livro tem apenas ${book.pages} páginas.`);
+            return;
+        }
 
         try {
             const res = await fetch(`/api/books/${selectedBook}`, {
@@ -127,24 +149,46 @@ const LeiturasAtuais = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ finishedPages: pages })
             });
-            if (!res.ok) throw new Error('Erro ao atualizar livro');
 
-            // Atualiza localmente
+            if (!res.ok) {
+                let errorMessage = 'Erro ao atualizar livro';
+                try {
+                    const errorData = await res.json();
+                    if (errorData && typeof errorData.message === 'string') {
+                        errorMessage = errorData.message;
+                    }
+                } catch {
+                    // Se não conseguir fazer parse do JSON, usa mensagem padrão
+                }
+                throw new Error(errorMessage);
+            }
+
+            // Calcula quantas páginas foram lidas hoje
+            const paginasLidasHoje = pages - book.finishedPages;
+
+            // Atualiza localmente - SUBSTITUI o valor, não soma
             setBooks(prev =>
-                prev.map(book =>
-                    book.id === selectedBook
-                        ? { ...book, finishedPages: book.finishedPages + pages }
-                        : book
+                prev.map(b =>
+                    b.id === selectedBook
+                        ? { ...b, finishedPages: pages }  // ✅ SUBSTITUI
+                        : b
                 )
             );
 
-            setReadingData(prev => ({ ...prev, paginasHoje: prev.paginasHoje + pages }));
+            // Atualiza apenas as páginas lidas HOJE
+            if (paginasLidasHoje > 0) {
+                setReadingData(prev => ({
+                    ...prev,
+                    paginasHoje: prev.paginasHoje + paginasLidasHoje
+                }));
+            }
 
-            showFeedback(`Progresso atualizado! +${pages} páginas`);
+            showFeedback(`Progresso atualizado! ${pages} páginas lidas`);
             closeModal();
         } catch (err) {
             console.error(err);
-            showFeedback('Erro ao atualizar livro.');
+            const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar livro.';
+            showFeedback(errorMessage);
         }
     };
 
@@ -239,7 +283,7 @@ const LeiturasAtuais = () => {
                         </div>
                     </PageTransition>
 
-                    <div className="max-w-7xl mx-auto flex items-center justify-center">
+                    <div className="max-w-7xl mx-auto max-h-[70vh] overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-gray-200 dark:scrollbar-thumb-blue-600 dark:scrollbar-track-slate-700 wood:scrollbar-thumb-primary-600 wood:scrollbar-track-primary-900/30">
                         {books.length > 0 ? (
                             books.map((book) => (
                                 <div
@@ -265,8 +309,7 @@ const LeiturasAtuais = () => {
 
                                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600 dark:text-blue-300 wood:text-primary-300">
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600 dark:hover:text-blue-400 wood:hover:text-accent-400">
-                                                📅 <strong>Iniciado:</strong> {book.startedAt ? new Date(book.startedAt).toLocaleDateString('pt-BR') : 'Não definido'}
-                                            </span>
+                                                📅 <strong>Iniciado:</strong> {book.startedAt ? new Date(book.startedAt).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não definido'}                                            </span>
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600 dark:hover:text-blue-400 wood:hover:text-accent-400">
                                                 ⏱️ <strong>Previsão:</strong> {book.predictedEnd}
                                             </span>
@@ -284,16 +327,23 @@ const LeiturasAtuais = () => {
                                     <div style={{ marginBottom: '28px' }}>
                                         <div className="flex justify-between items-center" style={{ marginBottom: '0.5rem' }}>
                                             <span className="text-gray-700 font-medium transition-all duration-300 text-sm md:text-base dark:text-blue-200 wood:text-primary-200">
-                                                {book.finishedPages} de {book.pages} páginas
+                                                {book.finishedPages || 0} de {book.pages || 0} páginas
                                             </span>
                                             <span className="font-bold text-blue-600 text-lg md:text-xl transition-all duration-500 dark:text-blue-400 wood:text-accent-400">
-                                                {Math.round((book.finishedPages / book.pages) * 100)}%
+                                                {book.pages && book.pages > 0
+                                                    ? Math.round(((book.finishedPages || 0) / book.pages) * 100)
+                                                    : 0
+                                                }%
                                             </span>
                                         </div>
                                         <div className="w-full h-2 md:h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner dark:bg-slate-700 wood:bg-primary-900/50" style={{ marginBottom: '1rem' }}>
                                             <div
                                                 className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-1000 ease-out dark:from-blue-400 dark:to-indigo-400 wood:from-accent-500 wood:to-accent-600"
-                                                style={{ width: `${(book.finishedPages / book.pages) * 100}%` }}
+                                                style={{
+                                                    width: book.pages && book.pages > 0
+                                                        ? `${((book.finishedPages || 0) / book.pages) * 100}%`
+                                                        : '0%'
+                                                }}
                                             />
                                         </div>
 
@@ -353,7 +403,7 @@ const LeiturasAtuais = () => {
                     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp dark:bg-slate-800 wood:bg-primary-900" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
-                                <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-blue-200 wood:text-[var(--color-foreground)]">Atualizar: {selectedBook}</h3>
+                                <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-blue-200 wood:text-[var(--color-foreground)]">Atualizar Progresso</h3>
                                 <button onClick={closeModal} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800">
                                     <X className="w-5 h-5 text-gray-500 dark:text-blue-300 wood:text-primary-300" />
                                 </button>
@@ -362,7 +412,7 @@ const LeiturasAtuais = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-blue-200 wood:text-primary-200" style={{ marginBottom: '6px' }}>
-                                        Páginas lidas hoje:
+                                        Total de páginas lidas até agora:
                                     </label>
                                     <input
                                         type="number"
@@ -370,8 +420,9 @@ const LeiturasAtuais = () => {
                                         onChange={(e) => setPagesRead(e.target.value)}
                                         className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105 dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300 wood:bg-primary-100 wood:border-primary-100 wood:focus:ring-accent-600"
                                         style={{ padding: '10px 14px' }}
-                                        placeholder="Ex: 15"
-                                        min={1}
+                                        placeholder={`Ex: ${books.find(b => b.id === selectedBook)?.finishedPages || 0}`}
+                                        min={0}
+                                        max={books.find(b => b.id === selectedBook)?.pages || 999}
                                         required
                                     />
                                 </div>
@@ -534,9 +585,12 @@ const LeiturasAtuais = () => {
             }
             
             .animate-slideInUp {
-                animation: slideInUp 0.4s cubic-bezier(0.34,.animate-slideInRight {
-            animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+    animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-slideInRight {
+    animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
         @media (max-width: 640px) {
             .grid-cols-2 > div {

@@ -83,6 +83,42 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
   try {
     const body = await req.json();
 
+    // 1. BUSCA O LIVRO ATUAL PARA VALIDAÇÃO DE PROGRESSO
+    const existingBook = await prisma.book.findUnique({
+      where: { id: bookId },
+      // Precisamos do progresso atual e do total de páginas
+      select: { finishedPages: true, pages: true }
+    });
+
+    if (!existingBook) {
+      return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    }
+
+    // 2. VALIDAÇÃO ESPECÍFICA PARA 'finishedPages'
+    if (body.finishedPages !== undefined) {
+      const newFinishedPages = parseInt(body.finishedPages);
+      const currentFinishedPages = existingBook.finishedPages || 0;
+
+      if (isNaN(newFinishedPages) || newFinishedPages < 0) {
+        return NextResponse.json({ error: "O número de páginas lidas é inválido." }, { status: 400 });
+      }
+
+      // Bloqueia a regressão do progresso
+      if (newFinishedPages < currentFinishedPages) {
+        return NextResponse.json({
+          error: `O progresso atual (${currentFinishedPages}) não pode ser regredido para ${newFinishedPages}.`
+        }, { status: 400 });
+      }
+
+      // Bloqueia progresso maior que o total do livro
+      if (newFinishedPages > existingBook.pages) {
+        return NextResponse.json({
+          error: `O total de páginas é ${existingBook.pages}. O progresso não pode exceder este valor.`
+        }, { status: 400 });
+      }
+    }
+
+    // 3. Sua lógica original para mapear e preparar a atualização
     const dbStatus = body.status ? mapStatusToDB(body.status) : undefined;
     const dbRating = body.rating !== undefined ? mapRatingToDB(body.rating) : undefined;
 
@@ -104,6 +140,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       status: dbStatus,
       rating: dbRating,
       pages: body.pages,
+      // O campo finishedPages agora será validado antes de ser usado
       finishedPages: body.finishedPages,
       genre: body.genre,
       year: body.year,
@@ -113,6 +150,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       cover: body.cover,
     };
 
+    // Sua lógica original de Author
     if (body.author) {
       const existingAuthor = await prisma.author.findUnique({ where: { name: body.author } });
       if (existingAuthor) {
@@ -130,6 +168,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
     console.log("Data to update:", dataToUpdate);
 
+    // 4. ATUALIZAÇÃO SEGURA NO BANCO DE DADOS
     const updatedBook = await prisma.book.update({
       where: { id: bookId },
       data: dataToUpdate,
@@ -145,9 +184,16 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
     return NextResponse.json(formattedBook, { status: 200 });
   } catch (error) {
-    console.error("Erro ao atualizar livro:", error);
-    return NextResponse.json({ error: "Erro ao atualizar livro" }, { status: 500 });
+    console.error("💥 Erro completo ao atualizar livro:", error);
+    console.error("💥 Stack trace:", error instanceof Error ? error.stack : 'N/A');
+    console.error("💥 Message:", error instanceof Error ? error.message : error);
+
+    return NextResponse.json({
+      error: "Erro ao atualizar livro",
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
+
 }
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {

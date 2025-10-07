@@ -6,6 +6,7 @@ import BookCard from "@/components/BookCard";
 import FilterBar from "@/components/FilterBar";
 import { Book } from '@/components/types/types';
 import { livrosExposicao } from '@/app/utils/dadosExposicao';
+export const dynamic = 'force-dynamic';
 
 export default function BooksPage() {
   const router = useRouter();
