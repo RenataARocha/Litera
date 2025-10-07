@@ -49,12 +49,14 @@ function mapRatingToFrontend(rating: BookRating | null): number {
 }
 
 // --- Rotas ---
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
+  const bookId = parseInt(id);
+
+  if (isNaN(bookId)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
   const book = await prisma.book.findUnique({
-    where: { id },
+    where: { id: bookId },
     include: { author: true }
   });
 
@@ -84,7 +86,20 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     const dbStatus = body.status ? mapStatusToDB(body.status) : undefined;
     const dbRating = body.rating !== undefined ? mapRatingToDB(body.rating) : undefined;
 
-    const dataToUpdate: any = {
+    const dataToUpdate: Partial<{
+      title: string;
+      status: BookStatus;
+      rating: BookRating | null;
+      pages: number;
+      finishedPages: number;
+      genre: string;
+      year: number;
+      description: string;
+      notes: string;
+      isbn: string;
+      cover: string;
+      authorId: number;
+    }> = {
       title: body.title,
       status: dbStatus,
       rating: dbRating,
@@ -109,7 +124,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
     }
 
     // Remove campos undefined
-    Object.keys(dataToUpdate).forEach(
+    (Object.keys(dataToUpdate) as Array<keyof typeof dataToUpdate>).forEach(
       (key) => dataToUpdate[key] === undefined && delete dataToUpdate[key]
     );
 
@@ -135,12 +150,14 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const id = parseInt(params.id);
-  if (isNaN(id)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
+  const bookId = parseInt(id);
+
+  if (isNaN(bookId)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
 
   try {
-    await prisma.book.delete({ where: { id } });
+    await prisma.book.delete({ where: { id: bookId } });
     return NextResponse.json({ message: "Livro removido com sucesso" });
   } catch {
     return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
