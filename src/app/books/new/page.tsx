@@ -180,7 +180,8 @@ export default function NewBookPage() {
       >
         <motion.div
           className="max-w-3xl w-full p-4 bg-white rounded-xl shadow-lg
-          dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none"
+          dark:bg-slate-800/90 dark:border-slate-700 dark:shadow-[#3b82f6] dark:border-none
+          wood:bg-primary-800 wood:shadow-accent-500"
           style={{ margin: "auto", padding: "1rem", boxSizing: "border-box" }}
           variants={containerVariants}
           initial="hidden"
@@ -189,7 +190,7 @@ export default function NewBookPage() {
           {/* Header */}
           <motion.div variants={headerVariants} style={{ marginBottom: "1rem" }}>
             <motion.h1
-              className="text-2xl font-bold text-gray-900 dark:text-blue-400"
+              className="text-2xl font-bold text-gray-900 dark:text-blue-400 wood:text-primary-100"
               style={{ marginBottom: "0.25rem" }}
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -198,7 +199,7 @@ export default function NewBookPage() {
               Adicionar Novo Livro
             </motion.h1>
             <motion.p
-              className="text-sm text-gray-900 dark:text-blue-200"
+              className="text-sm text-gray-900 dark:text-blue-200 wood:text-accent-400"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
@@ -210,7 +211,7 @@ export default function NewBookPage() {
           {/* Barra de progresso */}
           <motion.div variants={itemVariants} className="mb-4">
             <motion.div
-              className="w-full bg-gray-200 rounded-full h-4 mb-1"
+              className="w-full bg-gray-200 rounded-full h-4 mb-1 "
               role="progressbar"
               aria-valuenow={progress()}
               aria-valuemin={0}
@@ -227,7 +228,7 @@ export default function NewBookPage() {
               />
             </motion.div>
             <motion.p
-              className="text-sm text-gray-700 dark:text-blue-200"
+              className="text-sm text-gray-700 dark:text-blue-200 wood:text-primary-100"
               style={{ marginBottom: "1rem", padding: "0.5rem" }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -248,13 +249,13 @@ export default function NewBookPage() {
             <motion.div
               variants={itemVariants}
               className="bg-red-50 rounded-lg
-              dark:bg-blue-200/10"
+              dark:bg-blue-200/10 wood:bg-accent-300/60"
               style={{ padding: "1rem" }}
               whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.2 }}
             >
               <h3
-                className="text-lg font-semibold text-red-800 dark:text-rose-600"
+                className="text-lg font-semibold text-red-800 dark:text-rose-600  wood:text-red-900"
                 style={{ marginBottom: "1rem" }}
               >
                 <span className="text-red-500">*</span> Informações Obrigatórias
@@ -263,7 +264,7 @@ export default function NewBookPage() {
                 <div>
                   <label
                     htmlFor="title"
-                    className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1  wood:text-primary-900"
                   >
                     Título <span className="text-red-500 dark:text-rose-500">*</span>
                   </label>
@@ -275,7 +276,8 @@ export default function NewBookPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                     focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    wood:bg-primary-100 wood:border-primary-100 wood:focus:ring-accent-600"
                     style={{ padding: "0.3rem", paddingLeft: "0.7rem" }}
                     placeholder="Digite o título do livro"
                     required
@@ -287,7 +289,7 @@ export default function NewBookPage() {
                 <div>
                   <label
                     htmlFor="author"
-                    className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1"
+                    className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-900"
                   >
                     Autor <span className="text-red-500 dark:text-rose-500">*</span>
                   </label>
@@ -298,7 +300,7 @@ export default function NewBookPage() {
                     value={formData.author}
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300 wood:bg-primary-100 wood:border-primary-100 wood:focus:ring-accent-600
 "
                     style={{ padding: "0.3rem", paddingLeft: "0.7rem" }}
                     placeholder="Digite o autor"
@@ -315,17 +317,17 @@ export default function NewBookPage() {
             <motion.div
               variants={itemVariants}
               className="bg-blue-50 rounded-lg
-              // dark:bg-blue-200/10"
+              // dark:bg-blue-200/10 wood:bg-primary-200"
               style={{ padding: '1rem' }}
               whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-400" style={{ marginBottom: '1rem' }}>
+              <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-400 wood:text-secondary-900" style={{ marginBottom: '1rem' }}>
                 Informações Adicionais
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">
                     Ano de Publicação
                   </label>
                   <motion.input
@@ -335,7 +337,8 @@ export default function NewBookPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                     focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     placeholder="Ex: 2023"
                     aria-label="Ano de Publicação"
@@ -344,7 +347,7 @@ export default function NewBookPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">
                     Total de Páginas
                   </label>
                   <motion.input
@@ -354,7 +357,8 @@ export default function NewBookPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                     focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     placeholder="Ex: 250"
                     aria-label="Total de Páginas"
@@ -363,14 +367,15 @@ export default function NewBookPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">Gênero</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">Gênero</label>
                   <motion.select
                     name="genre"
                     value={formData.genre}
                     onChange={handleChange}
                     className="w-full cursor-pointer px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 
                     focus:ring-blue-500 focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     aria-label="Selecione o gênero do livro"
                     whileFocus={{ scale: 1.02 }}
@@ -397,7 +402,7 @@ export default function NewBookPage() {
 
                 {/* Status de Leitura */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">
                     Status de Leitura
                   </label>
                   <motion.select
@@ -406,7 +411,8 @@ export default function NewBookPage() {
                     onChange={handleChange}
                     className="w-full px-3 py-2 cursor-pointer text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 
                     focus:ring-blue-500 focus:border-transparent
-                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                    dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                    wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                     style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                     aria-label="Selecione o status de leitura do livro"
                     whileFocus={{ scale: 1.02 }}
@@ -424,7 +430,7 @@ export default function NewBookPage() {
 
               {/* Avaliação */}
               <div style={{ marginTop: '1rem' }}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-2">Avaliação</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-2 wood:text-primary-800">Avaliação</label>
                 <div className="flex items-center gap-2">
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -440,13 +446,13 @@ export default function NewBookPage() {
                         {star <= formData.rating ? (
                           <span className="text-yellow-400">★</span>
                         ) : (
-                          <span className="text-gray-300">★</span>
+                          <span className="text-gray-300 wood:text-accent-50">★</span>
                         )}
                       </motion.button>
                     ))}
                   </div>
                   <motion.span
-                    className="text-sm text-gray-600 dark:text-blue-200"
+                    className="text-sm text-gray-600 dark:text-blue-200 wood:text-primary-800"
                     style={{ marginLeft: '0.5rem' }}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -464,7 +470,7 @@ export default function NewBookPage() {
 
               {/* ISBN e Informações Técnicas */}
               <div style={{ marginTop: '1rem' }}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">ISBN</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">ISBN</label>
                 <motion.input
                   name="isbn"
                   type="text"
@@ -472,7 +478,8 @@ export default function NewBookPage() {
                   onChange={handleChange}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   focus:border-transparent
-                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                  wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                   style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
                   placeholder="Ex: 978-85-359-0277-5"
                   whileFocus={{ scale: 1.02 }}
@@ -481,7 +488,7 @@ export default function NewBookPage() {
               </div>
 
               <div style={{ marginTop: '0.5rem' }}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">Informações Técnicas</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-800">Informações Técnicas</label>
                 <textarea
                   name="techInfo"
                   value={formData.techInfo}
@@ -489,7 +496,8 @@ export default function NewBookPage() {
                   rows={2}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   focus:border-transparent resize-none
-                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                  wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                   style={{ padding: '0.7rem' }}
                   placeholder="Preenchimento automático via ISBN no futuro..."
                   readOnly
@@ -501,18 +509,19 @@ export default function NewBookPage() {
             <motion.div
               variants={itemVariants}
               className="bg-purple-50 rounded-lg
-              dark:bg-blue-200/10"
+              dark:bg-blue-200/10 wood:bg-secondary-500"
               style={{ padding: '1rem' }}
               whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-400" style={{ marginBottom: '1rem' }}>
+              <h3 className="text-lg font-semibold text-purple-800 dark:text-purple-400 wood:text-accent-400" style={{ marginBottom: '1rem' }}>
                 Capa do Livro
               </h3>
 
               {/* Input de URL */}
               <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="cover-url" className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">
+                <label htmlFor="cover-url" className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-primary-900 
+          ">
                   URL da Capa
                 </label>
                 <motion.input
@@ -523,14 +532,15 @@ export default function NewBookPage() {
                   onChange={handleChange}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   focus:border-transparent
-                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                  wood:bg-accent-50 wood:border-none wood:focus:ring-primary-300"
                   placeholder="https://exemplo.com/capa-do-livro.jpg"
                   aria-describedby="cover-help"
-                  style={{ padding: '0.3rem', paddingLeft: '0.7rem' }}
+                  style={{ padding: '0.3rem', paddingLeft: '0.7rem', marginBottom: '0.5rem' }}
                   whileFocus={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 />
-                <p id="cover-help" className="text-xs text-gray-500 dark:text-blue-300 mt-1">
+                <p id="cover-help" className="text-xs text-gray-500 dark:text-blue-300 mt-1 wood:text-accent-900">
                   Você pode colar a URL da imagem ou fazer upload abaixo.
                 </p>
               </div>
@@ -540,7 +550,7 @@ export default function NewBookPage() {
                 <motion.label
                   htmlFor="cover-upload"
                   className="cursor-pointer inline-block px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors
-                  dark:bg-purple-500 dark:text-blue-50"
+                  dark:bg-purple-500 dark:text-blue-50 wood:bg-accent-500 wood:hover:bg-accent-600"
                   style={{ padding: '0.3rem' }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -594,16 +604,16 @@ export default function NewBookPage() {
             <motion.div
               variants={itemVariants}
               className="bg-green-50 rounded-lg
-              dark:bg-blue-200/10"
+              dark:bg-blue-200/10 wood:bg-primary-900"
               style={{ padding: '1rem' }}
               whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="text-lg font-semibold text-green-800 dark:text-green-500" style={{ marginBottom: '1rem' }}>
+              <h3 className="text-lg font-semibold text-green-800 dark:text-green-500 wood:text-accent-400" style={{ marginBottom: '1rem' }}>
                 Conteúdo e Notas
               </h3>
               <div style={{ marginBottom: '1rem' }}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">Sinopse</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-accent-200/80">Sinopse</label>
                 <motion.textarea
                   name="description"
                   value={formData.description}
@@ -611,7 +621,8 @@ export default function NewBookPage() {
                   rows={4}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   focus:border-transparent resize-none
-                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                  wood:bg-primary-100 wood:border-none wood:focus:ring-primary-300"
                   style={{ padding: '0.7rem' }}
                   placeholder="Descreva brevemente o enredo do livro..."
                   whileFocus={{ scale: 1.02 }}
@@ -619,7 +630,7 @@ export default function NewBookPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1">Notas Pessoais</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-blue-400 mb-1 wood:text-accent-200/80">Notas Pessoais</label>
                 <motion.textarea
                   name="notes"
                   value={formData.notes}
@@ -627,7 +638,8 @@ export default function NewBookPage() {
                   rows={3}
                   className="w-full px-3 py-2 text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
                   focus:border-transparent resize-none
-                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300"
+                  dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300
+                  wood:bg-primary-100 wood:border-none wood:focus:ring-primary-300"
                   style={{ padding: '0.7rem' }}
                   placeholder="Suas observações sobre o livro..."
                   whileFocus={{ scale: 1.02 }}
@@ -637,12 +649,13 @@ export default function NewBookPage() {
             </motion.div>
 
             {/* Botões */}
-            <motion.div variants={itemVariants} className="flex justify-end gap-4 mt-4">
+            <motion.div variants={itemVariants} className="flex justify-end gap-4 mt-4 wood:text-secondary-900">
               <motion.button
                 type="button"
                 onClick={() => router.back()}
                 className="border border-gray-300 rounded-lg w-25 h-10 hover:bg-gray-100 font-medium cursor-pointer transition-colors
-                dark:border-blue-400 dark:text-blue-200 dark:hover:bg-transparent"
+                dark:border-blue-400 dark:text-blue-200 dark:hover:bg-transparent
+                wood:bg-accent-500 wood:border-none wood:hover:bg-accent-400"
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
@@ -651,7 +664,12 @@ export default function NewBookPage() {
               </motion.button>
               <motion.button
                 type="submit"
-                className=" bg-blue-600 text-white rounded-lg w-40 h-10 bg-gradient-to-r from-blue-600 hover:from-blue-500 hover:to-blue-700 font-medium cursor-pointer transition-colors"
+                className="
+  text-white rounded-lg w-40 h-10 font-medium cursor-pointer transition-colors
+  bg-gradient-to-r from-primary-700 to-primary-500 hover:from-primary-800 hover:to-primary-600
+  wood:from-primary-800 wood:to-primary-900 wood:hover:from-primary-900 wood:hover:to-primary-700
+"
+
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
