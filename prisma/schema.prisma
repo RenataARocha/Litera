@@ -14,12 +14,12 @@ model author {
   book      book[]
 }
 
-// Modelo book CORRIGIDO (com a nova linha 'currentReading')
 model book {
   id             Int              @id @default(autoincrement())
   title          String
   year           Int?
   pages          Int
+  finishedPages  Int              @default(0)
   genre          String?
   status         book_status      @default(TO_READ)
   rating         book_rating?
@@ -28,15 +28,15 @@ model book {
   description    String           @db.Text
   notes          String?          @db.Text
   authorId       Int
-  userId         String? // ← Adicione este campo
+  userId         String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now())
   author         author           @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
-  user           User?            @relation(fields: [userId], references: [id]) // ← Adicione esta relação
+  user           User?            @relation(fields: [userId], references: [id])
   currentReading CurrentReading[]
 
   @@index([authorId], map: "Book_authorId_fkey")
-  @@index([userId]) // ← Adicione este índice
+  @@index([userId])
 }
 
 enum book_status {
@@ -54,8 +54,6 @@ enum book_rating {
   FOUR_STARS
   FIVE_STARS
 }
-
-// --- NOVOS MODELOS PARA LEITURAS ATUAIS ---
 
 model CurrentReading {
   id Int @id @default(autoincrement())

@@ -5,7 +5,7 @@ import { Book } from "@/components/types/types";
 import PersonalNotes from "./PersonalNotes";
 
 type BookEditModalProps = {
-    book: Book | null; // mais seguro caso o parent passe null/undefined temporariamente
+    book: Book | null;
     isOpen: boolean;
     onClose: () => void;
     onSave?: (book: Book) => void;
@@ -19,38 +19,24 @@ export default function BookEditModal({
     onSave,
     onBack,
 }: BookEditModalProps) {
-    if (!isOpen) return null;
-    if (!book) return null;
-
-    const [title, setTitle] = useState<string>(() => book?.title ?? "");
-    const [author, setAuthor] = useState<string>(() => book?.author ?? "");
-    const [year, setYear] = useState<string | number>(() => book?.year ?? "");
-    const [genre, setGenre] = useState<string>(() => book?.genre ?? "");
-    const [status, setStatus] = useState<string>(
-        () => book?.status ?? "não lido"
-    );
-    const [description, setDescription] = useState<string>(
-        () => book?.description ?? ""
-    );
-    const [notes, setNotes] = useState<string>(() => book?.notes ?? "");
-    const [isbn, setIsbn] = useState<string>(() => book?.isbn ?? "");
-    const [rating, setRating] = useState<number>(() => Number(book?.rating ?? 0));
-    const [coverUrl, setCoverUrl] = useState<string>(() => book?.cover ?? "");
+    // ✅ TODOS os hooks ANTES de qualquer return (na ordem correta)
+    const [title, setTitle] = useState<string>("");
+    const [author, setAuthor] = useState<string>("");
+    const [year, setYear] = useState<string | number>("");
+    const [genre, setGenre] = useState<string>("");
+    const [status, setStatus] = useState<string>("Quero Ler");
+    const [description, setDescription] = useState<string>("");
+    const [notes, setNotes] = useState<string>("");
+    const [isbn, setIsbn] = useState<string>("");
+    const [rating, setRating] = useState<number>(0);
+    const [coverUrl, setCoverUrl] = useState<string>("");
     const [coverFile, setCoverFile] = useState<string | null>(null);
-    // pages e finishedPages tratados com segurança — convertemos para number evitando erros
-    const [pages, setPages] = useState<number>(() => {
-        const p = (book as any)?.pages;
-        return p !== undefined && p !== null ? Number(p) || 0 : 0;
-    });
-    const [finishedPages, setFinishedPages] = useState<number>(() => {
-        const fp = (book as any)?.finishedPages;
-        return fp !== undefined && fp !== null ? Number(fp) || 0 : 0;
-    });
-
+    const [pages, setPages] = useState<number>(0);
+    const [finishedPages, setFinishedPages] = useState<number>(0);
     const [progress, setProgress] = useState(0);
     const [message, setMessage] = useState("");
 
-    // Sincroniza os estados quando a prop `book` mudar (fetch async / seleção diferente)
+    // Sincroniza os estados quando a prop `book` mudar
     useEffect(() => {
         if (!book) return;
 
@@ -58,60 +44,20 @@ export default function BookEditModal({
         setAuthor(book.author ?? "");
         setYear(book.year ?? "");
         setGenre(book.genre ?? "");
-        setStatus(book.status ?? "não lido");
+        setStatus(book.status ?? "Quero Ler");
         setDescription(book.description ?? "");
         setNotes(book.notes ?? "");
         setIsbn(book.isbn ?? "");
         setRating(Number(book.rating ?? 0));
         setCoverUrl(book.cover ?? "");
         setCoverFile(null);
-        setPages(book.pages);
-        setFinishedPages(book.finishedPages);
+
+        const bookWithPages = book as Book & { pages?: number; finishedPages?: number };
+        setPages(bookWithPages.pages ?? 0);
+        setFinishedPages(bookWithPages.finishedPages ?? 0);
     }, [book]);
 
-    // Salvar alterações (local via onSave, sem PUT automático — mantenho seu comportamento atual)
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const updatedBook: Book = {
-            ...book,
-            title,
-            author,
-            year: year ? Number(year) : undefined,
-            genre,
-            status,
-            description,
-            notes,
-            isbn,
-            rating,
-            cover: coverFile || coverUrl,
-            pages,
-            finishedPages,
-        };
-
-        try {
-            const response = await fetch(`/api/books/${book.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedBook),
-            });
-
-            if (!response.ok) {
-                throw new Error("Erro ao salvar alterações");
-            }
-
-            const savedBook = await response.json();
-            console.log("Livro atualizado:", savedBook);
-
-            if (onSave) onSave(savedBook); // ainda avisa o pai se precisar atualizar a lista
-            onClose();
-        } catch (error) {
-            console.error(error);
-            alert("Não foi possível salvar as alterações.");
-        }
-    };
-
-    // Atualiza progresso dinamicamente (inclui pages/finishedPages nos dependentes)
+    // Atualiza progresso dinamicamente
     useEffect(() => {
         let filled = 0;
         if (title.trim() !== "") filled++;
@@ -146,6 +92,58 @@ export default function BookEditModal({
         pages,
         finishedPages,
     ]);
+
+    // ✅ Returns condicionais DEPOIS dos hooks
+    if (!isOpen) return null;
+    if (!book) return null;
+
+    // Salvar alterações com debug melhorado
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const updatedBook: Book = {
+            ...book,
+            title,
+            author,
+            year: year ? Number(year) : undefined,
+            genre,
+            status,
+            description,
+            notes,
+            isbn,
+            rating,
+            cover: coverFile || coverUrl,
+            pages,
+            finishedPages,
+        };
+
+        try {
+            console.log("📤 Enviando dados:", updatedBook);
+
+            const response = await fetch(`/api/books/${book.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedBook),
+            });
+
+            console.log("📊 Status da resposta:", response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("❌ Erro da API:", errorData);
+                throw new Error(errorData.error || "Erro ao salvar alterações");
+            }
+
+            const savedBook = await response.json();
+            console.log("✅ Livro atualizado:", savedBook);
+
+            if (onSave) onSave(savedBook);
+            onClose();
+        } catch (error) {
+            console.error("💥 Erro completo:", error);
+            alert(`Não foi possível salvar as alterações.\n${error instanceof Error ? error.message : ''}`);
+        }
+    };
 
     // Upload de capa
     const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -344,7 +342,7 @@ export default function BookEditModal({
                                     </label>
                                     <input
                                         type="number"
-                                        defaultValue={pages}
+                                        value={pages}
                                         onChange={(e) => setPages(Number(e.target.value))}
                                         className="w-full text-sm border bg-white/90 border-gray-200 rounded-lg focus:outline-none 
                 focus:ring-2 focus:ring-blue-500 focus:border-transparent
@@ -440,12 +438,12 @@ export default function BookEditModal({
                 wood:focus:ring-2 wood:focus:ring-primary-200"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     >
-                                        <option value="não lido">📚 Não Lido</option>
-                                        <option value="quero ler">🎯 Quero Ler</option>
-                                        <option value="lendo">📖 Lendo</option>
-                                        <option value="lido">✅ Lido</option>
-                                        <option value="pausado">⏸️ Pausado</option>
-                                        <option value="abandonado">❌ Abandonado</option>
+                                        <option value="Não Lido">📚 Não Lido</option>
+                                        <option value="Quero Ler">🎯 Quero Ler</option>
+                                        <option value="Lendo">📖 Lendo</option>
+                                        <option value="Lido">✅ Lido</option>
+                                        <option value="Pausado">⏸️ Pausado</option>
+                                        <option value="Abandonado">❌ Abandonado</option>
                                     </select>
                                 </div>
                             </div>
@@ -663,7 +661,6 @@ export default function BookEditModal({
   transition-colors font-medium cursor-pointer
   wood:bg-gradient-to-r wood:from-primary-800 wood:to-secondary-900 wood:hover:from-primary-900 wood:hover:to-secondary-800
   wood:text-accent-100"
-
                                 style={{ padding: "0.75rem 1rem" }}
                             >
                                 Salvar Alterações
