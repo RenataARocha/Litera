@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,7 +31,7 @@ model book {
   userId         String?
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now())
-  author         author           @relation(fields: [authorId], references: [id], map: "Book_authorId_fkey")
+  author         author           @relation(fields: [authorId], references: [id])
   user           User?            @relation(fields: [userId], references: [id])
   currentReading CurrentReading[]
 
