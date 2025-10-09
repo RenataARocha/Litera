@@ -470,7 +470,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                                         style={{ padding: "0.75rem 0.5rem" }}
                                     >
                                         <Image
-                                            src={book.cover || "/path/to/placeholder-cover.jpg"}
+                                            src={book.cover || "images/placeholder-cover.jpg"}
                                             alt={book.title}
                                             width={48}
                                             height={64}
