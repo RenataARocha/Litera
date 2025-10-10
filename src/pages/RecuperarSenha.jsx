@@ -233,7 +233,7 @@ export default function RecuperarSenha() {
                 <button
                   onClick={handleReenviar}
                   className="w-full bg-white text-gray-700 font-semibold rounded-lg border-2 border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
-                  style={{ padding: "0.75rem" }}
+                  style={{ padding: "0.75rem", marginTop: '1rem' }}
                 >
                   Não recebeu? Reenviar email
                 </button>
