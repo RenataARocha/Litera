@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // URL de redefinição
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/recuperar-senha?token=${resetToken}`;
+    // URL de redefinição - CORRIGIDO AQUI ✅
+    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/redefinir-senha?token=${resetToken}`;
 
     // Enviar email
     await transporter.sendMail({
@@ -72,7 +72,8 @@ export async function POST(request: NextRequest) {
             .header { background: linear-gradient(135deg, #167eea 0%, #000eea 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .header h1 { color: white; margin: 0; }
             .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-.button { display: inline-block; padding: 12px 30px; background: #000eea; color: #ffffff !important; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+            .button { display: inline-block; padding: 12px 30px; background: #000eea; color: #ffffff !important; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+            .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
           </style>
         </head>
         <body>
