@@ -173,7 +173,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* DNS prefetch */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
-      <body className="min-h-screen transition-colors duration-300" suppressHydrationWarning>
+      <body
+        className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] transition-colors duration-300"
+        suppressHydrationWarning
+      >
+
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

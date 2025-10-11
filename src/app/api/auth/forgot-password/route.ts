@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     // Enviar email
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'Litera <noreply@litera.com>',
+      from: process.env.EMAIL_FROM || 'Litera <seu-email-real@gmail.com>',
       to: email,
       subject: 'Recuperação de Senha - Litera',
       html: `

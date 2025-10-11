@@ -89,7 +89,7 @@ export default function Cadastro() {
 
  return (
   <div 
-    className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#334155]" 
+    className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#334155] wood:bg-primary-900" 
     style={{ padding: "1rem" }}
   >
     <div className="w-full max-w-md">
