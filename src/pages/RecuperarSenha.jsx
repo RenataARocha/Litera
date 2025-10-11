@@ -54,19 +54,19 @@ export default function RecuperarSenha() {
 
   return (
   <div 
-    className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center dark:from-[#0f172a] dark:via-[#1e293b] dark:to-[#334155]" 
+    className="min-h-screen  from-blue-50 via-white to-blue-100 flex items-center justify-center dark:bg-slate-900 wood:bg-background" 
     style={{ padding: "1rem" }}
   >
     <div className="w-full max-w-md">
       <div 
-        className="bg-white dark:bg-transparent rounded-2xl shadow-xl border border-blue-100 dark:border-transparent dark:shadow-[#3b82f6] dark:shadow-sm" 
+        className="bg-white dark:bg-transparent rounded-2xl shadow-xl border border-blue-100 dark:border-transparent dark:shadow-[#3b82f6] dark:shadow-sm wood:bg-primary-900 wood:shadow-lg wood:shadow-accent-700 wood:border-transparent" 
         style={{ padding: "2rem" }}
       >
         
         {/* Botão Voltar */}
         <button
           onClick={handleVoltar}
-          className="flex items-center text-gray-600 dark:text-blue-200 hover:text-blue-600 transition-colors group"
+          className="flex items-center text-gray-600 dark:text-blue-200 wood:text-secondary-100 hover:text-blue-600 wood:hover:text-accent-400 transition-colors group"
           style={{ marginBottom: "1.5rem" }}
         >
           <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -78,15 +78,15 @@ export default function RecuperarSenha() {
             {/* Header */}
             <div className="text-center" style={{ marginBottom: "2rem" }}>
               <div 
-                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg" 
+                className="inline-flex items-center justify-center w-16 h-16 bg-blue-500 wood:bg-accent-500 rounded-full shadow-lg" 
                 style={{ marginBottom: "1rem" }}
               >
-                <Mail className="w-8 h-8 text-white" />
+                <Mail className="w-8 h-8 text-white wood:text-accent-50" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-blue-600" style={{ marginBottom: "0.5rem" }}>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-blue-600 wood:text-foreground" style={{ marginBottom: "0.5rem" }}>
                 Recuperar senha
               </h1>
-              <p className="text-gray-600 dark:text-blue-400">
+              <p className="text-gray-600 dark:text-blue-400 wood:text-secondary-100">
                 Digite seu email e enviaremos um link para redefinir sua senha
               </p>
             </div>
@@ -94,7 +94,7 @@ export default function RecuperarSenha() {
             {/* Mensagem de Erro */}
             {erro && (
               <div 
-                className="bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" 
+                className="bg-red-50 border border-red-200 rounded-lg dark-bg-blue-50 text-red-700 wood:bg-accent-100 wood:border-accent-400 wood:text-accent-800 text-sm" 
                 style={{ marginBottom: "1.5rem", padding: "1rem" }}
               >
                 {erro}
@@ -105,7 +105,7 @@ export default function RecuperarSenha() {
             <div className="space-y-5">
               <div>
                 <label 
-                  className="block text-sm font-semibold text-gray-700 dark:text-blue-500" 
+                  className="block text-sm font-semibold text-gray-700 dark:text-blue-500 wood:text-foreground" 
                   style={{ marginBottom: "0.5rem" }}
                 >
                   Email
@@ -115,7 +115,7 @@ export default function RecuperarSenha() {
                     className="absolute inset-y-0 left-0 flex items-center pointer-events-none" 
                     style={{ paddingLeft: "1rem" }}
                   >
-                    <Mail className="h-5 w-5 text-gray-400 dark:text-blue-200" />
+                    <Mail className="h-5 w-5 text-gray-400 dark:text-blue-200 wood:text-secondary-400" />
                   </div>
                   <input
                     type="email"
@@ -123,7 +123,7 @@ export default function RecuperarSenha() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="seu@email.com"
                     required
-                    className="w-full border border-gray-300 dark:border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                    className="w-full bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none dark:bg-slate-800 dark:text-white dark:border-blue-400 dark:focus:ring-blue-500 wood:!bg-primary-800 wood:!text-foreground wood:!border-secondary-500 wood:focus:!ring-accent-500 wood:placeholder:text-secondary-300"
                     style={{ paddingLeft: "3rem", paddingRight: "1rem", paddingTop: "0.75rem", paddingBottom: "0.75rem" }}
                   />
                 </div>
@@ -132,7 +132,7 @@ export default function RecuperarSenha() {
               <button
                 onClick={handleSubmit}
                 disabled={carregando || !email}
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl wood:from-accent-500 wood:to-accent-600 wood:focus:ring-accent-300 wood:hover:to-accent-400 wood:hover:from-accent-600"
                 style={{ padding: "0.75rem", marginTop: '0.6rem' }}
               >
                 {carregando ? (
@@ -151,13 +151,13 @@ export default function RecuperarSenha() {
 
             {/* Dicas de Segurança */}
             <div 
-              className="bg-blue-50 rounded-lg border border-blue-100 dark:border-blue-400 dark:bg-blue-50/10" 
+              className="bg-blue-50 rounded-lg border border-blue-100 dark:border-blue-400 dark:bg-blue-50/10 wood:bg-secondary-600 wood:border-accent-700" 
               style={{ marginTop: "1.5rem", padding: "1rem" }}
             >
-              <p className="text-sm text-blue-800 dark:text-blue-500 font-medium" style={{ marginBottom: "0.5rem" }}>
+              <p className="text-sm text-blue-800 dark:text-blue-500 wood:text-foreground font-medium" style={{ marginBottom: "0.5rem" }}>
                 💡 Dica de segurança:
               </p>
-              <ul className="text-xs text-blue-700 dark:text-blue-200 space-y-1">
+              <ul className="text-xs text-blue-700 dark:text-blue-200 wood:text-foreground space-y-1">
                 <li>• Verifique sua caixa de spam caso não receba o email</li>
                 <li>• O link expira em 1 hora por segurança</li>
                 <li>• Nunca compartilhe este link com outras pessoas</li>
@@ -169,53 +169,53 @@ export default function RecuperarSenha() {
             {/* Tela de Sucesso */}
             <div className="text-center">
               <div 
-                className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full animate-bounce" 
+                className="inline-flex items-center justify-center w-20 h-20 bg-green-100 wood:bg-green-900/30 rounded-full animate-bounce" 
                 style={{ marginBottom: "1.5rem" }}
               >
-                <CheckCircle className="w-10 h-10 text-green-600" />
+                <CheckCircle className="w-10 h-10 text-green-600 wood:text-green-400" />
               </div>
               
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-blue-600" style={{ marginBottom: "0.75rem" }}>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-blue-600 wood:text-foreground" style={{ marginBottom: "0.75rem" }}>
                 Email enviado!
               </h1>
               
               <div 
-                className="bg-green-50 border border-green-200 rounded-lg" 
+                className="bg-green-50 border border-green-200 wood:bg-secondary-200 wood:border-secondary-400 rounded-lg" 
                 style={{ padding: "1.5rem", marginBottom: "1.5rem" }}
               >
-                <p className="text-gray-700 dark:text-blue-500" style={{ marginBottom: "0.5rem" }}>
+                <p className="text-gray-700 dark:text-blue-500 wood:text-foreground" style={{ marginBottom: "0.5rem" }}>
                   Enviamos um link de recuperação para:
                 </p>
-                <p className="font-semibold text-blue-600 text-lg">
+                <p className="font-semibold text-blue-600 wood:text-accent-500 text-lg">
                   {email}
                 </p>
               </div>
 
               <div 
-                className="space-y-4 text-left bg-gray-50 rounded-lg" 
+                className="space-y-4 text-left bg-gray-50 wood:bg-primary-800 rounded-lg" 
                 style={{ padding: "1.25rem", marginBottom: "1.5rem" }}
               >
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 wood:bg-accent-500 text-blue-600 wood:text-white flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
                     1
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-blue-500">
+                  <p className="text-sm text-gray-700 dark:text-blue-500 wood:text-foreground">
                     Verifique sua caixa de entrada
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 wood:bg-accent-500 text-blue-600 wood:text-white flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
                     2
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-blue-500">
+                  <p className="text-sm text-gray-700 dark:text-blue-500 wood:text-foreground">
                     Clique no link que enviamos
                   </p>
                 </div>
                 <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 wood:bg-accent-500 text-blue-600 wood:text-white flex items-center justify-center text-sm font-bold" style={{ marginRight: "0.75rem" }}>
                     3
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-blue-500">
+                  <p className="text-sm text-gray-700 dark:text-blue-500 wood:text-foreground">
                     Crie uma nova senha segura
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export default function RecuperarSenha() {
               <div className="space-y-3">
                 <button
                   onClick={handleVoltar}
-                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl wood:from-accent-500 wood:to-accent-600 wood:focus:ring-accent-300 wood:hover:to-accent-400 wood:hover:from-accent-600"
                   style={{ padding: "0.75rem" }}
                 >
                   Voltar ao login
@@ -232,7 +232,7 @@ export default function RecuperarSenha() {
 
                 <button
                   onClick={handleReenviar}
-                  className="w-full bg-white text-gray-700 font-semibold rounded-lg border-2 border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
+                  className="w-full bg-white wood:bg-primary-800 text-gray-700 wood:text-foreground font-semibold rounded-lg border-2 border-gray-300 wood:border-secondary-500 hover:border-blue-500 wood:hover:border-accent-500 hover:text-blue-600 wood:hover:text-accent-400 transition-all duration-300"
                   style={{ padding: "0.75rem", marginTop: '1rem' }}
                 >
                   Não recebeu? Reenviar email
@@ -243,7 +243,7 @@ export default function RecuperarSenha() {
         )}
       </div>
 
-      <p className="text-center text-gray-500 dark:text-blue-200 text-sm" style={{ marginTop: "1.5rem" }}>
+      <p className="text-center text-gray-500 dark:text-blue-200 wood:text-secondary-200 text-sm" style={{ marginTop: "1.5rem" }}>
         © 2024 Litera. Todos os direitos reservados.
       </p>
     </div>

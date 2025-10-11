@@ -171,7 +171,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
         : 0;
 
     return (
-        <div className="min-h-screen wood:bg-[var(--color-background)]">
+        <div className="min-h-screen bg-blue-100/60 dark:bg-slate-900 wood:bg-background">
             <motion.div
                 className="flex flex-col gap-6"
                 style={{ padding: "2rem" }}

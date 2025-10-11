@@ -184,7 +184,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           enableSystem={false}
           themes={["light", "dark", "wood"]}
         >
-          <div className="flex flex-col min-h-screen dark:bg-slate-800/90 wood:bg-[var(--color-background)]">
+          <div className="flex flex-col min-h-screen bg-blue-100/60 dark:bg-slate-900 wood:bg-background">
             <Header />
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />

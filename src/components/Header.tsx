@@ -125,7 +125,7 @@ export default function Header() {
               </h1>
               <p
                 className="text-xs text-gray-500 
-                  dark:text-blue-200 wood:text-[var(--color-secondary-400)]"
+                  dark:text-blue-200 wood:text-[var(--color-accent-100)]"
                 style={{ lineHeight: '1.3' }}
               >
                 Biblioteca Digital
