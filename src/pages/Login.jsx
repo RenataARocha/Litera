@@ -102,7 +102,7 @@ export default function Login() {
 
           {mensagem && (
             <div
-              className="bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm animate-pulse wood:bg-secondary-200 wood:border-secondary-400 wood:text-foreground"
+              className="bg-blue-50 border border-blue-200 rounded-lg text-blue-700 text-sm animate-pulse wood:bg-secondary-700 wood:border-secondary-400 wood:text-foreground"
               style={{ marginBottom: "1.5rem", padding: "1rem" }}
             >
               {mensagem}
@@ -286,12 +286,6 @@ export default function Login() {
           </div>
         </div>
 
-        <p
-          className="text-center text-gray-500 dark:text-blue-200 wood:text-secondary-200 text-sm"
-          style={{ marginTop: "1.5rem" }}
-        >
-          © 2024 Litera. Todos os direitos reservados.
-        </p>
       </div>
     </div>
   );

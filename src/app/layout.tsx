@@ -189,6 +189,31 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <main className="flex-1 py-8 mt-4">{children}</main>
             <ToasterClient />
             <ScrollToTopButton />
+            <footer
+              className="
+    text-center text-sm
+    text-gray-600 dark:text-blue-200 wood:text-secondary-200
+    border-t border-gray-300 dark:border-blue-700 wood:border-secondary-600
+    bg-transparent
+  "
+              style={{ marginTop: "2rem", padding: "1rem 0" }}
+            >
+              <p>
+                Desenvolvido pelo grupo{" "}
+                <span className="font-semibold text-blue-600 dark:text-blue-400 wood:text-secondary-100">
+                  &lt;Dev 10/&gt;
+                </span>
+              </p>
+              <p
+                className="
+      text-xs text-gray-500 dark:text-blue-300 wood:text-secondary-300
+    "
+                style={{ marginTop: "0.3rem" }}
+              >
+                © 2024 Litera. Todos os direitos reservados.
+              </p>
+            </footer>
+
           </div>
         </ThemeProvider>
 

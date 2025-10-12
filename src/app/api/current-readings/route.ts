@@ -1,20 +1,18 @@
 // src/app/api/current-readings/route.ts
 
 import { NextResponse } from 'next/server';
-import { prisma } from '@/_lib/prisma'; // Assumindo que você tem um utilitário prisma.ts
+import { prisma } from '@/_lib/prisma';
 
 // --- FUNÇÃO GET: BUSCAR TODAS AS LEITURAS ATUAIS ---
 export async function GET() {
     try {
         const currentReadings = await prisma.currentReading.findMany({
-            // Inclui os dados do Livro (para título e total de páginas)
-            // e os Progressos (para calcular estatísticas)
             include: {
                 book: {
                     select: {
                         id: true,
                         title: true,
-                        pages: true, // Total de páginas do livro
+                        pages: true,
                         cover: true,
                         author: {
                             select: {
@@ -25,12 +23,12 @@ export async function GET() {
                 },
                 progressUpdates: {
                     orderBy: {
-                        date: 'desc', // Para buscar o progresso mais recente
+                        date: 'desc',
                     },
                 },
             },
             where: {
-                isPaused: false, // Busca apenas o que não está pausado
+                isPaused: false,
             },
             orderBy: {
                 startedAt: 'asc',
@@ -48,9 +46,6 @@ export async function GET() {
 }
 
 // --- FUNÇÃO POST: REGISTRAR ATUALIZAÇÃO DE PROGRESSO ---
-// Esta rota pode ser usada para:
-// 1. INICIAR uma nova leitura (se o bookId não tiver CurrentReading)
-// 2. ATUALIZAR o progresso de uma leitura existente (ProgressUpdate)
 export async function POST(request: Request) {
     try {
         const { bookId, pagesRead, currentPage, readingTimeMin } = await request.json();
@@ -62,8 +57,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // ... dentro da função POST:
-
         // 1. Tenta encontrar uma leitura atual para este livro
         let currentReading = await prisma.currentReading.findUnique({
             where: { bookId: bookId },
@@ -71,7 +64,7 @@ export async function POST(request: Request) {
 
         // 2. Se não existir, INICIA UMA NOVA LEITURA
         if (!currentReading) {
-            // 2a. Cria o registro CurrentReading
+            // Cria o registro CurrentReading
             currentReading = await prisma.currentReading.create({
                 data: {
                     bookId: bookId,
@@ -79,27 +72,34 @@ export async function POST(request: Request) {
                 },
             });
 
-            // 2b. ATUALIZA O STATUS do livro (OPERAÇÃO SEPARADA)
+            // Atualiza o status e finishedPages do livro
             await prisma.book.update({
                 where: { id: bookId },
                 data: {
-                    // Usa o valor READING do enum, em vez de uma string
                     status: 'READING',
+                    finishedPages: currentPage,
                 },
             });
 
         } else {
-            // Se existir, apenas atualiza a página atual
+            // Se já existir, atualiza a página atual
             await prisma.currentReading.update({
                 where: { id: currentReading.id },
                 data: {
                     currentPage: currentPage,
                 }
             });
-        }
-        // ... o restante da função POST (criação do ProgressUpdate) continua igual
 
-        // 3. REGISTRA A SESSÃO DE LEITURA (ProgressUpdate)
+            // Atualiza o finishedPages do livro
+            await prisma.book.update({
+                where: { id: bookId },
+                data: {
+                    finishedPages: currentPage,
+                },
+            });
+        }
+
+        // 3. Registra a sessão de leitura (ProgressUpdate)
         const newProgress = await prisma.progressUpdate.create({
             data: {
                 readingId: currentReading.id,

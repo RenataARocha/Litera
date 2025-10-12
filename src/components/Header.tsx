@@ -19,13 +19,23 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  // Agora o estado só guarda se está logado e o nome
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     setMounted(true);
-    const token = localStorage.getItem('authToken');
-    setIsLoggedIn(!!token);
+
+    // Verifica se há usuário salvo no localStorage
+    const user = localStorage.getItem('user');
+    if (user) {
+      const parsedUser = JSON.parse(user);
+      setUserName(parsedUser.name || "");
+      setIsLoggedIn(true); // Considera logado se tiver dados do usuário
+    }
   }, []);
+
 
   const navLinks = [
     { href: '/', label: 'Dashboard', icon: <FaChartLine />, protected: false },
@@ -187,6 +197,13 @@ export default function Header() {
               <FaPlus className="text-xs" />
               <span className="hidden xl:inline">Novo Livro</span>
             </button>
+
+            {isLoggedIn && userName && (
+              <span className="text-sm font-medium text-gray-700 dark:text-blue-200 wood:text-[var(--color-foreground)]" style={{ marginLeft: '0.5rem' }}>
+                Olá, {userName.split(' ')[0]}!
+              </span>
+            )}
+
 
             {!isLoggedIn ? (
               <Link
@@ -352,7 +369,7 @@ export default function Header() {
                 setMenuOpen(false);
                 handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro');
               }}
-              className="w-full flex items-center bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
+              className="w-full flex items-center  from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
               style={{
                 gap: '0.75rem',
                 padding: '0.5rem 0.75rem',
@@ -363,6 +380,7 @@ export default function Header() {
               <span className="text-sm font-medium">Novo Livro</span>
             </button>
 
+
             <div className="border-t border-gray-300 dark:border-gray-700 wood:border-[var(--color-primary-800)] my-2"></div>
 
             {!isLoggedIn ? (
@@ -370,7 +388,7 @@ export default function Header() {
                 href="/login"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center text-primary-600 dark:text-primary-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
-                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
+      hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
                 style={{
                   gap: '0.75rem',
                   padding: '0.5rem 0.75rem'
@@ -380,21 +398,27 @@ export default function Header() {
                 <span className="text-sm font-medium">Faça login</span>
               </Link>
             ) : (
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  handleLogout();
-                }}
-                className="w-full flex items-center text-red-600 dark:text-red-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
-                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
-                style={{
-                  gap: '0.75rem',
-                  padding: '0.5rem 0.75rem'
-                }}
-              >
-                <FaSignInAlt className="text-sm rotate-180" />
-                <span className="text-sm font-medium">Sair</span>
-              </button>
+              <div className="w-full flex flex-col gap-2">
+                <span className="text-sm font-medium text-gray-700 dark:text-blue-200 wood:text-[var(--color-foreground)]">
+                  Olá, {userName}!
+                </span>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    const confirmed = window.confirm('Tem certeza que deseja sair?');
+                    if (confirmed) handleLogout();
+                  }}
+                  className="w-full flex items-center text-red-600 dark:text-red-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
+        hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
+                  style={{
+                    gap: '0.75rem',
+                    padding: '0.5rem 0.75rem'
+                  }}
+                >
+                  <FaSignInAlt className="text-sm rotate-180" />
+                  <span className="text-sm font-medium">Sair</span>
+                </button>
+              </div>
             )}
           </div>
         </nav>

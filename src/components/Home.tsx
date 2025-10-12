@@ -70,16 +70,16 @@ const DisplayGoalCircle: React.FC<GoalCircleProps> = ({
                     />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xl font-bold text-gray-800 wood:text-[var(--color-foreground)]">
+                    <span className="text-xl font-bold text-gray-800 dark:text-blue-100 wood:text-[var(--color-foreground)]">
                         {percentage}%
                     </span>
                 </div>
             </div>
-            <h3 className="font-semibold text-gray-700 wood:text-[var(--color-accent-400)] text-center">
+            <h3 className="font-semibold text-gray-700 wood:text-[var(--color-accent-400)] dark:text-blue-400 text-center">
                 {title}
             </h3>
             {subtitle && (
-                <p className="text-sm text-gray-500 wood:text-[var(--color-primary-300)] text-center mt-1">
+                <p className="text-sm text-gray-500 wood:text-[var(--color-primary-300)] dark:text-blue-100 text-center mt-1">
                     {subtitle}
                 </p>
             )}
@@ -611,9 +611,11 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             />
                         ))}
                     </div>
+
                 </div>
             </motion.div>
         </div>
+
     );
 };
 
