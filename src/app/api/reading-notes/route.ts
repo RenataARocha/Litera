@@ -23,10 +23,10 @@ export async function POST(request: Request) {
     }
 }
 
-// Opcional: você pode criar GET para buscar as notas
 export async function GET(request: Request) {
     try {
-        const readingId = request.url.split('readingId=')[1];
+        const url = new URL(request.url);
+        const readingId = url.searchParams.get('readingId');
 
         if (!readingId) {
             return NextResponse.json({ message: 'ID da leitura é obrigatório.' }, { status: 400 });

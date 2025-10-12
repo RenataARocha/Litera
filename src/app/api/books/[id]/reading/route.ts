@@ -1,62 +1,42 @@
-// src/app/api/reading-notes/[id]/route.ts
-
 import { NextResponse } from 'next/server';
 import { prisma } from '@/_lib/prisma';
 
-// PUT - Editar anotação
-export async function PUT(
+export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { content } = await request.json();
-        const noteId = parseInt(params.id);
+        const { id } = await context.params;
+        const bookId = parseInt(id);
 
-        if (!content?.trim()) {
+        if (isNaN(bookId)) {
             return NextResponse.json(
-                { message: 'Conteúdo não pode estar vazio.' },
+                { error: 'ID inválido' },
                 { status: 400 }
             );
         }
 
-        const updatedNote = await prisma.readingNote.update({
-            where: { id: noteId },
-            data: { content },
+        const reading = await prisma.currentReading.findFirst({
+            where: {
+                bookId: bookId,
+            },
+            orderBy: {
+                startedAt: 'desc',
+            },
         });
 
-        return NextResponse.json(
-            { message: 'Anotação atualizada!', updatedNote },
-            { status: 200 }
-        );
+        if (!reading) {
+            return NextResponse.json(
+                { error: 'Nenhuma leitura em andamento encontrada' },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json({ readingId: reading.id });
     } catch (error) {
-        console.error('Erro ao atualizar anotação:', error);
+        console.error('Erro ao buscar reading:', error);
         return NextResponse.json(
-            { message: 'Erro ao atualizar anotação.' },
-            { status: 500 }
-        );
-    }
-}
-
-// DELETE - Deletar anotação
-export async function DELETE(
-    request: Request,
-    { params }: { params: { id: string } }
-) {
-    try {
-        const noteId = parseInt(params.id);
-
-        await prisma.readingNote.delete({
-            where: { id: noteId },
-        });
-
-        return NextResponse.json(
-            { message: 'Anotação deletada com sucesso!' },
-            { status: 200 }
-        );
-    } catch (error) {
-        console.error('Erro ao deletar anotação:', error);
-        return NextResponse.json(
-            { message: 'Erro ao deletar anotação.' },
+            { error: 'Erro ao buscar leitura' },
             { status: 500 }
         );
     }
