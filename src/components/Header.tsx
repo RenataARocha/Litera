@@ -369,11 +369,19 @@ export default function Header() {
                 setMenuOpen(false);
                 handleProtectedAction('/books/new', 'Faça login para adicionar um novo livro');
               }}
-              className="w-full flex items-center  from-primary-500 to-primary-600 text-white rounded-lg shadow-lg transition-all duration-200"
+              className="
+  w-auto sm:w-full flex items-center justify-center gap-2 px-4 py-2
+  rounded-lg shadow-md font-medium transition-all duration-200 cursor-pointer
+  bg-gradient-to-r from-blue-600 to-blue-700 text-white
+  hover:from-blue-700 hover:to-blue-800
+
+wood:from-amber-600 wood:to-amber-700 wood:text-foreground
+  wood:hover:from-amber-700 wood:hover:to-amber-800
+"
               style={{
                 gap: '0.75rem',
                 padding: '0.5rem 0.75rem',
-                marginTop: '0.5rem'
+                margin: '0.5rem 0 0.5rem 0'
               }}
             >
               <FaPlus className="text-sm" />
@@ -386,11 +394,10 @@ export default function Header() {
             {!isLoggedIn ? (
               <Link
                 href="/login"
-                onClick={() => setMenuOpen(false)}
                 className="flex items-center text-primary-600 dark:text-primary-400 wood:text-[var(--color-accent-400)] font-medium rounded-lg 
-      hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
+                  hover:bg-white/50 dark:hover:bg-gray-800 wood:hover:bg-[var(--color-primary-800)] transition-all duration-200"
                 style={{
-                  gap: '0.75rem',
+                  gap: '0.5rem',
                   padding: '0.5rem 0.75rem'
                 }}
               >

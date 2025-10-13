@@ -228,7 +228,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                         </div>
                     </div>
 
-                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 z-10">
+                    <div className="relative w-15 h-15 sm:w-16 sm:h-16 md:w-20 md:h-20 z-10">
                         <svg
                             className="w-full h-full transform -rotate-90"
                             viewBox="0 0 80 80"
@@ -254,11 +254,12 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
                             />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-lg sm:text-xl font-bold">
+                            <span className="text-xs sm:text-sm md:text-lg font-bold">
                                 {progressoGeral}%
                             </span>
                         </div>
                     </div>
+
 
                     <div className="absolute right-0 top-0 w-32 h-32 bg-white opacity-5 rounded-full transform translate-x-16 -translate-y-16"></div>
                     <div className="absolute right-8 bottom-0 w-24 h-24 bg-white opacity-5 rounded-full transform translate-y-8"></div>

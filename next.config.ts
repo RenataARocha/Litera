@@ -6,13 +6,29 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: [
-      'm.media-amazon.com',
-      'upload.wikimedia.org',
-      'encrypted-tbn1.gstatic.com'
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn1.gstatic.com",
+      },
+      {
+        protocol: "http",
+        hostname: "books.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "books.google.com",
+      },
     ],
   },
-
 };
 
 export default nextConfig;

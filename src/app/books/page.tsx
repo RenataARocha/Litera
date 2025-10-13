@@ -42,6 +42,7 @@ export default function BooksPage() {
     createdAt: new Date(Date.now() - index * 86400000).toISOString(), // Cada livro 1 dia antes
   }));
 
+
   // Buscar livros da API (apenas se logado)
   useEffect(() => {
     const fetchBooks = async () => {
@@ -83,9 +84,12 @@ export default function BooksPage() {
 
   // Filtrar
   const filtered = livrosParaMostrar.filter((book) => {
+    const queryLower = query.toLowerCase();
+
     const matchesQuery =
-      book.title.toLowerCase().includes(query.toLowerCase()) ||
-      book.author.toLowerCase().includes(query.toLowerCase());
+      book.title.toLowerCase().includes(queryLower) ||
+      book.author.toLowerCase().includes(queryLower) ||
+      (book.genre && book.genre.toLowerCase().includes(queryLower));
 
     const matchesGenre = genre ? book.genre === genre : true;
 

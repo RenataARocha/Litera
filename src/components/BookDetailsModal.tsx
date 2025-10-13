@@ -230,13 +230,10 @@ export default function BookDetailsModal({
                     >
                         {/* Sinopse */}
                         <div
-                            className="bg-violet-100 dark:bg-violet-100/20 wood:bg-primary-200 rounded-lg"
-                            style={{ padding: "1rem", marginBottom: "1rem" }}
+                            className="bg-violet-100 dark:bg-violet-100/20 wood:bg-primary-200 rounded-lg border border-violet-300 dark:border-violet-400 wood:border-primary-300 shadow-sm"
+                            style={{ padding: "1rem", marginBottom: "1rem", maxHeight: "150px", overflowY: "auto" }}
                         >
-                            <div
-                                className="flex items-center gap-2"
-                                style={{ marginBottom: "0.7rem" }}
-                            >
+                            <div className="flex items-center gap-2" style={{ marginBottom: "0.7rem" }}>
                                 <svg
                                     className="w-5 h-5 text-purple-600 dark:text-purple-400 wood:text-primary-800"
                                     fill="currentColor"
@@ -248,20 +245,17 @@ export default function BookDetailsModal({
                                     Sinopse
                                 </h4>
                             </div>
-                            <p className="text-black text-sm dark:text-blue-200 wood:text-primary-800 leading-relaxed">
+                            <p className="text-black dark:text-blue-200 wood:text-primary-800 text-sm leading-relaxed">
                                 {book.description}
                             </p>
                         </div>
 
                         {/* Notas Pessoais */}
                         <div
-                            className="bg-green-100 dark:bg-green-100/20 wood:bg-accent-200 rounded-lg"
-                            style={{ padding: "1rem", marginBottom: "1rem" }}
+                            className="bg-green-100 dark:bg-green-100/20 wood:bg-accent-200 rounded-lg border border-green-300 dark:border-green-400 wood:border-accent-300 shadow-sm"
+                            style={{ padding: "1rem", marginBottom: "1rem", minHeight: "80px" }}
                         >
-                            <div
-                                className="flex items-center gap-2"
-                                style={{ marginBottom: "0.7rem" }}
-                            >
+                            <div className="flex items-center gap-2" style={{ marginBottom: "0.7rem" }}>
                                 <svg
                                     className="w-5 h-5 text-green-600 dark:text-green-400 wood:text-accent-800"
                                     fill="currentColor"
@@ -273,7 +267,7 @@ export default function BookDetailsModal({
                                     Notas Pessoais
                                 </h4>
                             </div>
-                            <p className="text-black text-sm dark:text-blue-200 wood:text-primary-800 leading-relaxed">
+                            <p className="text-black dark:text-blue-200 wood:text-primary-800 text-sm leading-relaxed">
                                 {book.notes}
                             </p>
                         </div>

@@ -10,6 +10,7 @@ type BookEditModalProps = {
     onClose: () => void;
     onSave?: (book: Book) => void;
     onBack?: () => void;
+    updateBookNotes?: (bookId: number, newNotes: string) => void;
 };
 
 export default function BookEditModal({
@@ -115,6 +116,7 @@ export default function BookEditModal({
             cover: coverFile || coverUrl,
             pages,
             finishedPages,
+
         };
 
         try {
@@ -126,13 +128,18 @@ export default function BookEditModal({
                 body: JSON.stringify(updatedBook),
             });
 
-            console.log("📊 Status da resposta:", response.status);
-
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error("❌ Erro da API:", errorData);
-                throw new Error(errorData.error || "Erro ao salvar alterações");
+                let errorMessage = "Erro ao salvar alterações";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                    console.error("❌ Erro da API:", errorData);
+                } catch {
+                    console.error("❌ Erro ao parsear resposta de erro");
+                }
+                throw new Error(errorMessage);
             }
+
 
             const savedBook = await response.json();
             console.log("✅ Livro atualizado:", savedBook);
@@ -632,11 +639,11 @@ export default function BookEditModal({
                                     Notas Pessoais
                                 </label>
                                 <PersonalNotes
-                                    bookId={book.id}
                                     initialNotes={notes}
                                     placeholder="Escreva suas notas pessoais..."
                                     onChange={(value) => setNotes(value)}
                                 />
+
                             </div>
                         </div>
 
