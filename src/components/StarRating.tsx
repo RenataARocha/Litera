@@ -4,24 +4,29 @@ type StarRatingProps = {
     rating: number;
     size?: 'small' | 'large';
     showNumber?: boolean;
+    onChange?: (newRating: number) => void;
 };
 
-export default function StarRating({ rating, size = 'small', showNumber = false }: StarRatingProps) {
+export default function StarRating({ rating, size = 'small', showNumber = false, onChange }: StarRatingProps) {
     const starSize = size === 'small' ? 14 : 16;
 
     const renderStars = (rating: number) => {
-        return Array.from({ length: 5 }, (_, index) => (
-            <svg
-                key={index}
-                width={starSize}
-                height={starSize}
-                viewBox="0 0 24 24"
-                fill={index < rating ? "#fbbf00" : "#e5e7eb"}
-                className="drop-shadow-sm"
-            >
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-        ));
+        return Array.from({ length: 5 }, (_, index) => {
+            const starValue = index + 1; //  Cada estrela tem seu valor
+            return (
+                <svg
+                    key={index}
+                    width={starSize}
+                    height={starSize}
+                    viewBox="0 0 24 24"
+                    fill={index < rating ? "#fbbf00" : "#e5e7eb"}
+                    className="drop-shadow-sm cursor-pointer" //  deixa o cursor indicar que é clicável
+                    onClick={() => onChange && onChange(starValue)} // envia o valor correto
+                >
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+            );
+        });
     };
 
     return (

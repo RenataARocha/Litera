@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { Book } from "@/components/types/types";
 import StarRating from "./StarRating";
-import Timer from "./TimerBook";
 
 type BookDetailsModalProps = {
     book: Book;
@@ -10,6 +9,8 @@ type BookDetailsModalProps = {
     onClose: () => void;
     onEdit: () => void;
     onDelete: () => void;
+    children?: React.ReactNode;
+    onUpdate?: (updatedBook: Book) => void;
 };
 
 export default function BookDetailsModal({
@@ -21,306 +22,256 @@ export default function BookDetailsModal({
 }: BookDetailsModalProps) {
     if (!isOpen) return null;
 
-    const getStatusConfig = (status: string) => {
-        const configs = {
-            lido: {
-                text: "Lido",
-                bgColor: "bg-green-100",
-                textColor: "text-green-700",
-                woodBg: "wood:bg-accent-200",
-                woodText: "wood:text-primary-900",
-            },
-            lendo: {
-                text: "Lendo",
-                bgColor: "bg-blue-100",
-                textColor: "text-blue-700",
-                woodBg: "wood:bg-primary-300",
-                woodText: "wood:text-primary-900",
-            },
-            pausado: {
-                text: "Pausado",
-                bgColor: "bg-yellow-100",
-                textColor: "text-yellow-700",
-                woodBg: "wood:bg-accent-300",
-                woodText: "wood:text-primary-900",
-            },
-            "quero ler": {
-                text: "Quero Ler",
-                bgColor: "bg-purple-100",
-                textColor: "text-purple-700",
-                woodBg: "wood:bg-secondary-300",
-                woodText: "wood:text-primary-900",
-            },
-            abandonado: {
-                text: "Abandonado",
-                bgColor: "bg-red-100",
-                textColor: "text-red-700",
-                woodBg: "wood:bg-secondary-400",
-                woodText: "wood:text-primary-900",
-            },
-        };
-        const normalizedStatus = status.toLowerCase();
-        return (
-            configs[normalizedStatus as keyof typeof configs] || configs["abandonado"]
-        );
+    const bookWithPages = book as Book & {
+        pages?: number;
+        finishedPages?: number;
+        publisher?: string;
+        language?: string;
+        readingDate?: string;
     };
 
-    const statusConfig = getStatusConfig(book.status);
-
     return (
-        <div className="fixed inset-0 backdrop-blur-sm bg-white/30 wood:bg-background/50 flex items-center justify-center z-50">
-            <div className="bg-blue-50 dark:bg-slate-800 wood:bg-accent-700 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl wood:shadow-[0_8px_30px_rgba(154,110,60,0.4)]">
-                <div>
-                    {/* Header com botão fechar */}
-                    <div style={{ margin: "1rem" }}>
-                        <button
-                            onClick={onClose}
-                            className="text-gray-400 hover:text-gray-600 wood:text-secondary-200 wood:hover:text-primary-900 transition-colors cursor-pointer"
-                        >
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
-                    </div>
+        <div
+            className="fixed inset-0 backdrop-blur-sm bg-white/30 wood:bg-background/50 dark:bg-black/50 flex items-center justify-center z-50"
+            style={{ padding: "1rem" }}
+        >
+            <div
+                className="bg-blue-50 dark:bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl wood:bg-[var(--color-secondary-800)]"
+                style={{ margin: "1rem" }}
+            >
 
-                    {/* Seção superior: Capa e Informações lado a lado */}
-                    <div
-                        className="flex gap-6 bg-blue-100 dark:bg-blue-200/10 dark:border dark:border-blue-400 wood:bg-accent-200 wood:border-primary-300 rounded-lg"
-                        style={{ padding: "2rem", margin: "1rem", marginBottom: "1.5rem" }}
+                {/* Header com botão fechar */}
+                <div className="flex justify-end" style={{ padding: "1.5rem 1.5rem 0 1.5rem" }}>
+                    <button
+                        onClick={onClose}
+                        className="text-[#8b6f47]/ dark:text-blue-200 cursor-pointer hover:text-[#6d5636] transition-colors wood:text-[var(--color-accent-500)]"
                     >
-                        {/* Capa do livro */}
-                        <div className="flex-shrink-0">
-                            {book.cover ? (
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div style={{ padding: "0 2rem 2rem 2rem" }}>
+                    {/* Capa e Informações Principais */}
+                    <div className="flex gap-6 flex-col sm:flex-row items-start" style={{ marginBottom: "1.5rem" }}>
+                        {book.cover && (
+                            <div className="flex-shrink-0">
                                 <Image
                                     src={book.cover}
                                     alt={book.title}
-                                    width={150}
-                                    height={200}
-                                    className="rounded-lg shadow-lg wood:shadow-[0_4px_10px_rgba(154,110,60,0.3)]"
+                                    width={160}
+                                    height={240}
+                                    className="object-cover rounded-lg shadow-xl border-4 border-white/40 dark:border-slate-700"
                                 />
-                            ) : (
-                                <div className="w-[150px] h-[200px] bg-gray-100 wood:bg-secondary-200 rounded-lg flex items-center justify-center">
-                                    <svg
-                                        className="w-12 h-12 text-gray-400 wood:text-secondary-600"
-                                        fill="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6zm8 7V3.5L18.5 9H14z" />
-                                    </svg>
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
-                        {/* Informações do livro */}
-                        <div className="flex-1">
-                            <div className="space-y-4">
+                        <div className="flex-1 w-full">
+                            <h3
+                                className="text-2xl font-bold text-[#3d2f1f] dark:text-blue-300 wood:text-[var(--color-primary-100)]"
+                                style={{ marginBottom: "0.5rem" }}
+                            >
+                                {book.title}
+                            </h3>
+                            <p
+                                className="text-base text-[#5d4d3d] dark:text-blue-200 wood:text-[var(--color-primary-200)]"
+                                style={{ marginBottom: "1rem" }}
+                            >
+                                {book.author}
+                            </p>
+
+                            <div style={{ marginBottom: "1rem" }}>
+                                <StarRating rating={book.rating} />
+                                <span className="text-xs text-[#5d4d3d] dark:text-blue-300 wood:text-primary-500" style={{ marginLeft: "0.5rem" }}>
+                                    ({book.rating}/5)
+                                </span>
+                            </div>
+
+                            {/* Grid de Informações - Layout igual à imagem */}
+                            <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm" style={{ marginBottom: "1.5rem" }}>
                                 <div>
-                                    <h3
-                                        className="font-bold text-xl text-gray-900 dark:text-blue-600 wood:text-primary-900"
-                                        style={{ marginBottom: "0.25rem" }}
-                                    >
-                                        {book.title}
-                                    </h3>
-                                    <p className="text-gray-600 dark:text-blue-400 wood:text-primary-700 text-lg font-medium">
-                                        {book.author}
+                                    <p className="text-xs text-[#5d4d3d] dark:text-blue-300 wood:text-primary-500">Ano:</p>
+                                    <p className="font-semibold text-[#3d2f1f] dark:text-blue-200 wood:text-[var(--color-primary-100)]">
+                                        {book.year || 'N/A'}
                                     </p>
                                 </div>
-
-                                <div className="flex items-center gap-1">
-                                    <StarRating rating={book.rating} showNumber />
+                                <div>
+                                    <p className="text-xs text-[#5d4d3d] dark:text-blue-300 wood:text-primary-500">Páginas:</p>
+                                    <p className="font-semibold text-[#3d2f1f] dark:text-blue-200 wood:text-[var(--color-primary-100)]">
+                                        {bookWithPages.pages || 'N/A'}
+                                    </p>
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <span className="font-medium text-gray-700 dark:text-blue-300 wood:text-primary-800">
-                                            Ano:
-                                        </span>
-                                        <p className="text-gray-600 dark:text-blue-200 wood:text-primary-700">
-                                            {book.year}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <span className="font-medium text-gray-700 dark:text-blue-300 wood:text-primary-800">
-                                            Páginas:
-                                        </span>
-                                        <p className="text-gray-600 dark:text-blue-200 wood:text-primary-700">
-                                            {book.pages}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <span className="font-medium text-gray-700 dark:text-blue-300 wood:text-primary-800">
-                                            Gênero:
-                                        </span>
-                                        <p className="text-gray-600 dark:text-blue-200 wood:text-primary-700">
-                                            {book.genre}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <span className="font-medium text-gray-700 dark:text-blue-300 wood:text-primary-800">
-                                            Status:
-                                        </span>
-                                        <span
-                                            className={`inline-block rounded-full dark:bg-blue-200 text-xs ${statusConfig.bgColor} ${statusConfig.textColor} ${statusConfig.woodBg} ${statusConfig.woodText}`}
-                                            style={{
-                                                padding: "0.25rem 0.5rem",
-                                                marginLeft: "0.25rem",
-                                            }}
-                                        >
-                                            {statusConfig.text}
-                                        </span>
-                                    </div>
+                                <div>
+                                    <p className="text-xs text-[#5d4d3d] dark:text-blue-300 wood:text-primary-500">Gênero:</p>
+                                    <p className="font-semibold text-[#3d2f1f] dark:text-blue-200 wood:text-[var(--color-primary-100)]">
+                                        {book.genre || 'N/A'}
+                                    </p>
                                 </div>
+                                <div>
+                                    <p className="text-xs text-[#5d4d3d] dark:text-blue-300 wood:text-primary-500">Status:</p>
+                                    {book.status && (
+                                        <span className="inline-block bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs font-medium wood:bg-[var(--color-accent-200)] wood:text-[var(--color-accent-800)]" style={{ padding: "0.25rem 0.75rem", marginTop: "0.25rem" }}>
+                                            {book.status}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
 
-                                {/* Botões de ação */}
-                                <div
-                                    className="rounded-lg"
-                                    style={{ padding: "1rem", marginTop: "1rem" }}
+                            {/* Botões Editar (Azul) e Excluir (Vermelho) */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={onEdit}
+                                    className="flex-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium cursor-pointer dark:bg-blue-600 dark:hover:bg-blue-700 wood:bg-[var(--color-primary-800)] wood:hover:bg-[var(--color-primary-900)]"
+                                    style={{ padding: "0.75rem 1rem" }}
                                 >
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={onEdit}
-                                            className="flex-1 cursor-pointer 
-    bg-blue-600 text-white rounded-md hover:bg-blue-700 
-    transition-colors flex items-center justify-center gap-2
-    wood:bg-primary-700 wood:text-accent-100 wood:hover:bg-primary-800"
-                                            style={{
-                                                padding: "0.5rem 1rem",
-                                                height: "2rem",
-                                                marginTop: "1rem",
-                                            }}
-                                        >
-                                            Editar Livro
-                                        </button>
-
-                                        <button
-                                            onClick={onDelete}
-                                            className="flex-1 cursor-pointer 
-    bg-red-600 text-white rounded-lg hover:bg-red-700 
-    transition-colors flex items-center justify-center gap-2
-    wood:bg-secondary-700 wood:text-accent-100 wood:hover:bg-secondary-800"
-                                            style={{
-                                                padding: "0.5rem 1rem",
-                                                height: "2rem",
-                                                marginTop: "1rem",
-                                            }}
-                                        >
-                                            Excluir
-                                        </button>
-                                    </div>
-                                    <Timer bookId={book.id} />
-                                </div>
+                                    Editar Livro
+                                </button>
+                                <button
+                                    onClick={onDelete}
+                                    className="flex-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer dark:bg-red-600 dark:hover:bg-red-700 wood:bg-[var(--color-accent-700)] wood:hover:bg-[var(--color-accent-800)]"
+                                    style={{ padding: "0.75rem 1rem" }}
+                                >
+                                    Excluir
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Seções de conteúdo */}
+                    {/* Cronômetro de Leitura */}
                     <div
-                        className="bg-white/50 dark:bg-blue-400/10 dark:border dark:border-blue-400 wood:bg-primary-600 wood:border-secondary-300 rounded-lg"
-                        style={{ padding: "1rem", margin: "1rem" }}
+                        className="bg-orange-50 dark:bg-slate-700 rounded-xl wood:bg-[var(--color-secondary-600)]"
+                        style={{ padding: "1.25rem", marginBottom: "1rem" }}
                     >
-                        {/* Sinopse */}
-                        <div
-                            className="bg-violet-100 dark:bg-violet-100/20 wood:bg-primary-200 rounded-lg border border-violet-300 dark:border-violet-400 wood:border-primary-300 shadow-sm"
-                            style={{ padding: "1rem", marginBottom: "1rem", maxHeight: "150px", overflowY: "auto" }}
+                        <h4
+                            className="text-base font-semibold text-orange-700 dark:text-orange-300 wood:text-[var(--color-accent-900)] flex items-center gap-2"
+                            style={{ marginBottom: "1rem" }}
                         >
-                            <div className="flex items-center gap-2" style={{ marginBottom: "0.7rem" }}>
-                                <svg
-                                    className="w-5 h-5 text-purple-600 dark:text-purple-400 wood:text-primary-800"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
-                                </svg>
-                                <h4 className="font-semibold text-purple-800 dark:text-purple-400 wood:text-primary-900 text-lg">
-                                    Sinopse
-                                </h4>
-                            </div>
-                            <p className="text-black dark:text-blue-200 wood:text-primary-800 text-sm leading-relaxed">
-                                {book.description}
-                            </p>
-                        </div>
+                            ⏱️ Cronômetro de Leitura
+                        </h4>
 
-                        {/* Notas Pessoais */}
-                        <div
-                            className="bg-green-100 dark:bg-green-100/20 wood:bg-accent-200 rounded-lg border border-green-300 dark:border-green-400 wood:border-accent-300 shadow-sm"
-                            style={{ padding: "1rem", marginBottom: "1rem", minHeight: "80px" }}
-                        >
-                            <div className="flex items-center gap-2" style={{ marginBottom: "0.7rem" }}>
-                                <svg
-                                    className="w-5 h-5 text-green-600 dark:text-green-400 wood:text-accent-800"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
+                        <div className="flex items-center justify-between">
+                            <div className="text-center">
+                                <div className="text-3xl font-mono font-bold text-orange-700 dark:text-orange-300 wood:text-[var(--color-accent-500)]">
+                                    00:00:00
+                                </div>
+                                <p
+                                    className="text-xs text-orange-600 dark:text-orange-400 wood:text-[var(--color-accent-900)]"
+                                    style={{ marginTop: "0.25rem" }}
                                 >
-                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                </svg>
-                                <h4 className="font-semibold text-green-800 dark:text-green-400 wood:text-primary-900 text-lg">
-                                    Notas Pessoais
-                                </h4>
+                                    Pausado
+                                </p>
                             </div>
-                            <p className="text-black dark:text-blue-200 wood:text-primary-800 text-sm leading-relaxed">
+
+                            <div className="flex flex-col gap-3 text-center">
+                                <div>
+                                    <p className="text-xs text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]">Sessão</p>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-blue-100 wood:text-[var(--color-accent-500)]">0min</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]">Total</p>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-blue-100 wood:text-[var(--color-accent-500)]">0h 0m</p>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-medium rounded cursor-pointer transition-colors wood:bg-green-700 wood:hover:bg-green-800 flex items-center justify-center gap-1"
+                                    style={{ padding: "0.5rem 1rem" }}
+                                >
+                                    ▶ Iniciar
+                                </button>
+                                <button
+                                    className="bg-gray-500 hover:bg-gray-600 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded cursor-pointer transition-colors wood:bg-blue-600 wood:hover:bg-blue-700 flex items-center justify-center gap-1"
+                                    style={{ padding: "0.5rem 1rem" }}
+                                >
+                                    🔄 Reset
+                                </button>
+                            </div>
+                        </div>
+                        <p className="text-xs italic text-center text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]" style={{ marginTop: "1rem" }}>
+                            &quot;A leitura é uma conversa com as mentes mais nobres dos séculos passados.&quot;
+                        </p>
+                    </div>
+
+
+
+                    {/* Sinopse com Scroll */}
+                    {book.description && (
+                        <div
+                            className="bg-violet-200/100 dark:bg-slate-700 rounded-xl wood:bg-accent-200/80"
+                            style={{ padding: "1.25rem", marginBottom: "1rem" }}
+                        >
+                            <h4
+                                className="text-base font-semibold text-violet-800 dark:text-blue-300 wood:text-[var(--color-primary-900)] flex items-center gap-2"
+                                style={{ marginBottom: "0.75rem" }}
+                            >
+                                📚 Sinopse
+                            </h4>
+                            <div
+                                className="text-sm text-[#4d3d2d] dark:text-blue-200 wood:text-[var(--color-primary-900)] leading-relaxed overflow-y-auto"
+                                style={{ maxHeight: "150px", padding: '1rem' }}
+                            >
+                                {book.description}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Notas Pessoais */}
+                    {book.notes && (
+                        <div
+                            className="bg-emerald-100 dark:bg-amber-900/20 rounded-xl wood:bg-[var(--color-secondary-600)]"
+                            style={{ padding: "1.25rem", marginBottom: "1rem" }}
+                        >
+                            <h4
+                                className="text-base font-semibold text-emerald-800 dark:text-amber-300 wood:text-[var(--color-primary-900)] flex items-center gap-2"
+                                style={{ marginBottom: "0.75rem" }}
+                            >
+                                ✍️ Notas Pessoais
+                            </h4>
+                            <p className="text-sm text-[#4d3d2d] dark:text-amber-200 wood:text-[var(--color-primary-200)] leading-relaxed whitespace-pre-wrap">
                                 {book.notes}
                             </p>
                         </div>
+                    )}
 
-                        {/* Informações Técnicas */}
-                        <div
-                            className="bg-fuchsia-100 dark:bg-fuchsia-100/20 wood:bg-secondary-200 rounded-lg"
-                            style={{ padding: "1rem" }}
+                    {/* Informações Técnicas */}
+                    <div
+                        className="bg-fuchsia-100 dark:bg-slate-700 rounded-xl wood:bg-[var(--color-primary-600)]"
+                        style={{ padding: "1.25rem", marginBottom: "1.5rem" }}
+                    >
+                        <h4
+                            className="text-base font-semibold text-fuchsia-800 dark:text-blue-300 wood:text-[var(--color-primary-900)] flex items-center gap-2"
+                            style={{ marginBottom: "0.75rem" }}
                         >
-                            <div
-                                className="flex items-center gap-2"
-                                style={{ marginBottom: "0.7rem" }}
-                            >
-                                <svg
-                                    className="w-5 h-5 text-fuchsia-600 dark:text-fuchsia-400 wood:text-primary-900"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                                </svg>
-                                <h4 className="font-semibold text-fuchsia-800 dark:text-fuchsia-400 wood:text-primary-900 text-lg">
-                                    Informações Técnicas
-                                </h4>
-                            </div>
-                            <div className="text-black dark:text-blue-200 wood:text-primary-800 text-sm space-y-1">
-                                <p>
-                                    <span className="font-medium">Editora:</span> Companhia das
-                                    Letras
-                                </p>
-                                <p>
-                                    <span className="font-medium">ISBN:</span> {book.isbn}
-                                </p>
-                                <p>
-                                    <span className="font-medium">Idioma:</span> Português
-                                </p>
-                                <p>
-                                    <span className="font-medium">Data de leitura:</span>{" "}
-                                    {new Date(book.createdAt).toLocaleDateString("pt-BR")}
-                                </p>
-                            </div>
+                            ⚙️ Informações Técnicas
+                        </h4>
+                        <div className="text-sm text-[#4d3d2d] dark:text-blue-200 wood:text-[var(--color-primary-900)]">
+                            {book.isbn && (
+                                <p><strong>ISBN:</strong> {book.isbn}</p>
+                            )}
+                            {bookWithPages.publisher && (
+                                <p style={{ marginTop: "0.25rem" }}><strong>Editora:</strong> {bookWithPages.publisher}</p>
+                            )}
+                            {bookWithPages.language && (
+                                <p style={{ marginTop: "0.25rem" }}><strong>Idioma:</strong> {bookWithPages.language}</p>
+                            )}
+                            {bookWithPages.readingDate && (
+                                <p style={{ marginTop: "0.25rem" }}><strong>Data de leitura:</strong> {bookWithPages.readingDate}</p>
+                            )}
                         </div>
                     </div>
 
                     {/* Botão Fechar */}
-                    <div className="flex justify-center" style={{ marginBottom: "1rem" }}>
+                    <div className="flex justify-center">
                         <button
                             onClick={onClose}
-                            className="bg-white cursor-pointer text-gray-700 font-bold rounded-lg hover:bg-gray-200 transition-colors
-                            wood:bg-secondary-200 wood:text-primary-900 wood:hover:bg-secondary-300"
-                            style={{ padding: "0.5rem 1.5rem" }}
+                            className="bg-[#e8dcc8] hover:bg-[#d8ccb8] dark:bg-slate-600 dark:hover:bg-slate-500 text-[#3d2f1f] dark:text-white font-medium rounded-lg cursor-pointer transition-colors wood:bg-[var(--color-primary-300)] wood:hover:bg-[var(--color-primary-400)] wood:text-[var(--color-primary-900)]"
+                            style={{ padding: "0.75rem 3rem" }}
                         >
                             Fechar
                         </button>
+
                     </div>
                 </div>
             </div>

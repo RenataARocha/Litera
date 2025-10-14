@@ -15,8 +15,9 @@ type BookCardProps = {
   book: Book;
   onEdit?: (book: Book) => void;
   onDelete?: (bookId: number) => void;
+  onUpdate?: (updatedBook: Book) => void;
   onDetails: (book: Book) => void;
-  isExposicao?: boolean; // Nova prop para identificar se é livro de exposição
+  isExposicao?: boolean;
 };
 
 const cardVariants: Variants = {
@@ -50,6 +51,7 @@ const cardVariants: Variants = {
 export default function BookCard({
   book,
   onDelete,
+  onUpdate,
   isExposicao = false,
 }: BookCardProps) {
   const router = useRouter();
@@ -57,14 +59,20 @@ export default function BookCard({
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentBook, setCurrentBook] = useState(book);
+
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     setIsLoggedIn(!!token);
   }, []);
 
+  // 🆕 Sincroniza quando a prop book mudar
+  useEffect(() => {
+    setCurrentBook(book);
+  }, [book]);
+
   const handleProtectedAction = (action: "details" | "edit" | "delete") => {
-    // Se é livro de exposição, sempre redireciona para login
     if (isExposicao || !isLoggedIn) {
       const messages = {
         details: "Faça login para ver os detalhes completos do livro",
@@ -78,6 +86,13 @@ export default function BookCard({
     }
     return true;
   };
+
+  const handleRatingChange = (newRating: number) => {
+    const updatedBook = { ...currentBook, rating: newRating };
+    setCurrentBook(updatedBook);
+    if (onUpdate) onUpdate(updatedBook);
+  };
+
 
   const handleDetails = () => {
     if (handleProtectedAction("details")) {
@@ -98,8 +113,14 @@ export default function BookCard({
   };
 
   const confirmDelete = () => {
-    if (onDelete) onDelete(book.id);
+    if (onDelete) onDelete(currentBook.id);
     setShowDeleteModal(false);
+  };
+
+  // 🆕 Função para salvar edições
+  const handleSaveEdit = (updatedBook: Book) => {
+    setCurrentBook(updatedBook);
+    if (onUpdate) onUpdate(updatedBook);
   };
 
   return (
@@ -126,8 +147,8 @@ export default function BookCard({
       >
         {/* Área da capa do livro */}
         <div className="relative bg-gray-200 dark:bg-gray-800 p-1 wood:bg-[var(--color-secondary-800)]">
-          <BookCover cover={book.cover} title={book.title} />
-          <StatusBadge status={book.status} />
+          <BookCover cover={currentBook.cover} title={currentBook.title} />
+          <StatusBadge status={currentBook.status} />
 
           {/* Rating */}
           <div
@@ -143,8 +164,8 @@ export default function BookCard({
             >
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            <span className="text-xs text-gray-700 dark:text-blue-600 wood:text-[var(--color-primary-800)] font-medium" >
-              {book.rating}
+            <span className="text-xs text-gray-700 dark:text-blue-600 wood:text-[var(--color-primary-800)] font-medium">
+              {currentBook.rating}
             </span>
           </div>
         </div>
@@ -156,21 +177,21 @@ export default function BookCard({
       dark:text-blue-400 line-clamp-2 min-w-0 wood:text-[var(--color-accent-500)]"
             style={{ marginBottom: "0.3rem" }}
           >
-            {book.title}
+            {currentBook.title}
           </h3>
           <p
             className="text-gray-600 text-xs dark:text-blue-200 wood:text-[var(--color-primary-200)]"
             style={{ marginBottom: "0.4rem" }}
           >
-            {book.author}
+            {currentBook.author}
           </p>
 
           <div
             className="flex items-center justify-between text-sm text-gray-400 dark:text-blue-200 wood:text-[var(--color-primary-100)]"
             style={{ marginBottom: "0.75rem" }}
           >
-            <span>📅 {book.year}</span>
-            <span>📄 {book.pages}</span>
+            <span>📅 {currentBook.year}</span>
+            <span>📄 {currentBook.pages}</span>
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
@@ -179,12 +200,13 @@ export default function BookCard({
         dark:bg-blue-200/10 dark:text-blue-200 wood:bg-[var(--color-primary-700)] wood:text-[var(--color-primary-200)]"
               style={{ padding: "0.25rem 0.5rem" }}
             >
-              {book.genre}
+              {currentBook.genre}
             </span>
           </div>
 
           <div style={{ marginBottom: "1rem" }}>
-            <StarRating rating={book.rating} />
+            <StarRating rating={currentBook.rating}
+              onChange={handleRatingChange} />
           </div>
 
           {/* Botões */}
@@ -273,7 +295,7 @@ export default function BookCard({
                   className="relative z-10"
                 >
                   <BookDetailsModal
-                    book={book}
+                    book={currentBook}
                     isOpen={showDetailsModal}
                     onClose={() => setShowDetailsModal(false)}
                     onEdit={() => {
@@ -284,7 +306,9 @@ export default function BookCard({
                       setShowDetailsModal(false);
                       setShowDeleteModal(true);
                     }}
+                    onUpdate={handleSaveEdit}
                   />
+
                 </motion.div>
               </motion.div>
             )}
@@ -310,9 +334,10 @@ export default function BookCard({
                   className="relative z-10"
                 >
                   <BookEditModal
-                    book={book}
+                    book={currentBook}  // 👈 MUDEI AQUI
                     isOpen={showEditModal}
                     onClose={() => setShowEditModal(false)}
+                    onSave={handleSaveEdit}  // 👈 ADICIONE ESTA LINHA
                     onBack={() => {
                       setShowEditModal(false);
                       setShowDetailsModal(true);
@@ -344,7 +369,7 @@ export default function BookCard({
                 >
                   <DeleteConfirmModal
                     isOpen={showDeleteModal}
-                    bookTitle={book.title}
+                    bookTitle={currentBook.title}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={confirmDelete}
                   />

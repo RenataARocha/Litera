@@ -39,9 +39,8 @@ export default function BooksPage() {
     lastRead: livro.lastRead,
     notes: "",
     isbn: "",
-    createdAt: new Date(Date.now() - index * 86400000).toISOString(), // Cada livro 1 dia antes
+    createdAt: new Date(Date.now() - index * 86400000).toISOString(),
   }));
-
 
   // Buscar livros da API (apenas se logado)
   useEffect(() => {
@@ -75,11 +74,7 @@ export default function BooksPage() {
 
   // Mapeia todos os gêneros
   const allGenresWithNull = livrosParaMostrar.map((b) => b.genre);
-
-  // Removendo todos os valores null
   const validGenres = allGenresWithNull.filter((g): g is string => g !== null);
-
-  // Cria o Set para ter apenas valores únicos
   const genres = Array.from(new Set(validGenres));
 
   // Filtrar
@@ -105,6 +100,15 @@ export default function BooksPage() {
     setQuery("");
     setGenre("");
     setStatusFilter("");
+  };
+
+  // 🆕 FUNÇÃO PARA ATUALIZAR UM LIVRO NA LISTA
+  const handleUpdateBook = (updatedBook: Book) => {
+    setBooks(prevBooks =>
+      prevBooks.map(book =>
+        book.id === updatedBook.id ? updatedBook : book
+      )
+    );
   };
 
   // Handlers
@@ -229,6 +233,7 @@ export default function BooksPage() {
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                   onDetails={handleDetails}
+                  onUpdate={handleUpdateBook} // 👈 ADICIONE ESTA LINHA
                   isExposicao={!isLoggedIn}
                 />
               ))}

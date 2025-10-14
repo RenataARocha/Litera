@@ -13,7 +13,7 @@ export type Book = {
   status: string;
   lastRead: string
   isbn?: string
-  pages: number;          
+  pages: number;
   finishedPages: number;
   createdAt: string;
 };
@@ -34,7 +34,7 @@ export interface Stats {
   totalPagesRead: number;
 }
 
-export interface DashboardProps{
+export interface DashboardProps {
   recentActivity: Book[];
   stats: Stats;
 }

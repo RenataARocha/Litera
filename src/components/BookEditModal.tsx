@@ -37,6 +37,8 @@ export default function BookEditModal({
     const [progress, setProgress] = useState(0);
     const [message, setMessage] = useState("");
 
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
     // Sincroniza os estados quando a prop `book` mudar
     useEffect(() => {
         if (!book) return;
@@ -144,8 +146,15 @@ export default function BookEditModal({
             const savedBook = await response.json();
             console.log("✅ Livro atualizado:", savedBook);
 
+            // 🆕 Mostra mensagem de sucesso
+            setShowSuccessMessage(true);
             if (onSave) onSave(savedBook);
-            onClose();
+
+            // 🆕 Fecha após 2 segundos
+            setTimeout(() => {
+                setShowSuccessMessage(false);
+                onClose();
+            }, 2000);
         } catch (error) {
             console.error("💥 Erro completo:", error);
             alert(`Não foi possível salvar as alterações.\n${error instanceof Error ? error.message : ''}`);
@@ -173,6 +182,25 @@ export default function BookEditModal({
             className="fixed inset-0 backdrop-blur-sm bg-white/30 wood:bg-background/50 flex items-center justify-center z-50"
             style={{ padding: "1rem" }}
         >
+            {showSuccessMessage && (
+                <div
+                    className="fixed top-2 left-1/2 transform -translate-x-1/2 z-[60] pointer-events-none"
+                    style={{ marginTop: '20px', padding: '0 10px' }}
+                >
+                    <div className="bg-green-500 text-white rounded-xl shadow-2xl animate-bounce pointer-events-auto" style={{ padding: '20px' }}>
+                        <div className="flex items-center gap-3">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <div>
+                                <p className="font-bold text-xl">Sucesso!</p>
+                                <p className="text-sm">Livro editado com sucesso ✨</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div
                 className="bg-white dark:bg-slate-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl wood:bg-accent-700"
                 style={{ margin: "1rem" }}
@@ -405,12 +433,8 @@ export default function BookEditModal({
                 wood:focus:ring-2 wood:focus:ring-primary-200"
                                         style={{ padding: "0.5rem 0.7rem" }}
                                     >
-                                        <option value="Literatura Brasileira">
-                                            📚 Literatura Brasileira
-                                        </option>
-                                        <option value="Ficção Científica">
-                                            🚀 Ficção Científica
-                                        </option>
+                                        <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
+                                        <option value="Ficção Científica">🚀 Ficção Científica</option>
                                         <option value="Realismo Mágico">✨ Realismo Mágico</option>
                                         <option value="Ficção">📖 Ficção</option>
                                         <option value="Fantasia">🐉 Fantasia</option>
@@ -424,6 +448,51 @@ export default function BookEditModal({
                                         <option value="Psicologia">🧠 Psicologia</option>
                                         <option value="Filosofia">🤔 Filosofia</option>
                                         <option value="Poesia">🎭 Poesia</option>
+                                        <option value="Suspense">🕵️‍♀️ Suspense</option>
+                                        <option value="Terror">👻 Terror</option>
+                                        <option value="Mistério">🧩 Mistério</option>
+                                        <option value="Thriller">🔪 Thriller</option>
+                                        <option value="Drama">🎬 Drama</option>
+                                        <option value="Aventura">🏔️ Aventura</option>
+                                        <option value="Clássicos">🏺 Clássicos</option>
+                                        <option value="Infantil">🧸 Infantil</option>
+                                        <option value="Juvenil">🎒 Juvenil</option>
+                                        <option value="HQs e Mangás">🦸 HQs e Mangás</option>
+                                        <option value="Artes">🎨 Artes</option>
+                                        <option value="Música">🎵 Música</option>
+                                        <option value="Cinema e TV">📺 Cinema e TV</option>
+                                        <option value="Educação">📘 Educação</option>
+                                        <option value="Religião">🙏 Religião</option>
+                                        <option value="Espiritualidade">🌙 Espiritualidade</option>
+                                        <option value="Ciência">🔬 Ciência</option>
+                                        <option value="Matemática">📏 Matemática</option>
+                                        <option value="Saúde">🩺 Saúde</option>
+                                        <option value="Nutrição">🥗 Nutrição</option>
+                                        <option value="Esportes">⚽ Esportes</option>
+                                        <option value="Culinária">🍳 Culinária</option>
+                                        <option value="Viagens">✈️ Viagens</option>
+                                        <option value="Moda">👗 Moda</option>
+                                        <option value="Beleza">💅 Beleza</option>
+                                        <option value="Política">🏛️ Política</option>
+                                        <option value="Sociologia">🌍 Sociologia</option>
+                                        <option value="Ecologia">🌱 Ecologia</option>
+                                        <option value="Direito">⚖️ Direito</option>
+                                        <option value="Economia">💰 Economia</option>
+                                        <option value="Arquitetura">🏗️ Arquitetura</option>
+                                        <option value="Engenharia">🧱 Engenharia</option>
+                                        <option value="Fotografia">📸 Fotografia</option>
+                                        <option value="Humor">😂 Humor</option>
+                                        <option value="Crônicas">📝 Crônicas</option>
+                                        <option value="Contos">📜 Contos</option>
+                                        <option value="Ensaios">📚 Ensaios</option>
+                                        <option value="Erótico">🔥 Erótico</option>
+                                        <option value="LGBTQIA+">🏳️‍🌈 LGBTQIA+</option>
+                                        <option value="Memórias">🕰️ Memórias</option>
+                                        <option value="Cartas e Diários">✉️ Cartas e Diários</option>
+                                        <option value="Antologias">📖 Antologias</option>
+                                        <option value="Didáticos">📗 Didáticos</option>
+                                        <option value="Outros">📘 Outros</option>
+
                                     </select>
                                 </div>
                                 <div>
