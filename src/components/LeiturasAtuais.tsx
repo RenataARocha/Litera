@@ -555,7 +555,7 @@ const LeiturasAtuais = () => {
                         <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp dark:bg-slate-800 wood:bg-primary-900" style={{ padding: '24px' }}>
                             <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
                                 <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-blue-200 wood:text-[var(--color-foreground)]">Atualizar Progresso</h3>
-                                <button onClick={closeModal} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800">
+                                <button onClick={closeModal} className="hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800" style={{ padding: '0.5rem' }}>
                                     <X className="w-5 h-5 text-gray-500 dark:text-blue-300 wood:text-primary-300" />
                                 </button>
                             </div>
@@ -576,7 +576,7 @@ const LeiturasAtuais = () => {
                                         max={books.find(b => b.id === selectedBook)?.pages || 999}
                                         required
                                     />
-                                    <p className="text-xs text-gray-500 mt-1 dark:text-blue-400 wood:text-primary-400">
+                                    <p className="text-xs text-gray-500 dark:text-blue-400 wood:text-primary-400" style={{ marginTop: '0.25rem' }}>
                                         Progresso atual: {books.find(b => b.id === selectedBook)?.finishedPages || 0} páginas
                                     </p>
                                 </div>
@@ -631,7 +631,8 @@ const LeiturasAtuais = () => {
                                         setEditingNoteId(null);
                                         setNoteText('');
                                     }}
-                                    className="p-2 hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800"
+                                    className="hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800"
+                                    style={{ padding: '0.5rem' }}
                                 >
                                     <X className="w-5 h-5 text-gray-500 dark:text-blue-300 wood:text-primary-300" />
                                 </button>
@@ -675,26 +676,28 @@ const LeiturasAtuais = () => {
                                     <div className="h-full flex flex-col">
                                         {notes.length > 0 ? (
                                             <>
-                                                <div className="flex items-center justify-between mb-4">
+                                                <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
                                                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-blue-300 wood:text-primary-300">
                                                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse dark:bg-green-400 wood:bg-accent-500"></div>
                                                         <span>{notes.length} {notes.length === 1 ? 'anotação' : 'anotações'}</span>
                                                     </div>
                                                     <button
                                                         onClick={() => setNoteMode('write')}
-                                                        className="text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-3 py-1.5 transition-all duration-200 dark:bg-emerald-500 wood:bg-secondary-600"
+                                                        className="text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 dark:bg-emerald-500 wood:bg-secondary-600"
+                                                        style={{ padding: '0.375rem 0.75rem' }}
                                                     >
                                                         + Nova
                                                     </button>
                                                 </div>
 
-                                                <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-slate-600 dark:scrollbar-track-slate-800 wood:scrollbar-thumb-primary-600 wood:scrollbar-track-primary-900" style={{ maxHeight: '400px' }}>
+                                                <div className="flex-1 overflow-y-auto space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-slate-600 dark:scrollbar-track-slate-800 wood:scrollbar-thumb-primary-600 wood:scrollbar-track-primary-900" style={{ maxHeight: '400px', paddingRight: '0.5rem' }}>
                                                     {notes.map((note) => (
                                                         <div
                                                             key={note.id}
-                                                            className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-lg p-4 transition-all duration-300 hover:shadow-md hover:border-emerald-300 dark:from-slate-800/50 dark:to-slate-800/30 dark:border-slate-700 wood:from-primary-800/30 wood:to-primary-900/20 wood:border-primary-700"
+                                                            className="bg-gradient-to-br from-gray-50 to-white border-2 border-gray-200 rounded-lg transition-all duration-300 hover:shadow-md hover:border-emerald-300 dark:from-slate-800/50 dark:to-slate-800/30 dark:border-slate-700 wood:from-primary-800/30 wood:to-primary-900/20 wood:border-primary-700"
+                                                            style={{ padding: '1rem', margin: '1rem 0 1rem 0' }}
                                                         >
-                                                            <div className="flex justify-between items-start mb-2">
+                                                            <div className="flex justify-between items-start" style={{ marginBottom: '0.5rem' }}>
                                                                 <span className="text-xs text-gray-500 dark:text-blue-400 wood:text-primary-400">
                                                                     {new Date(note.createdAt).toLocaleDateString('pt-BR', {
                                                                         day: '2-digit',
@@ -729,15 +732,16 @@ const LeiturasAtuais = () => {
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                                                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4 dark:bg-slate-700 wood:bg-primary-800">
+                                            <div className="flex flex-col items-center justify-center h-full text-center" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
+                                                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center dark:bg-slate-700 wood:bg-primary-800" style={{ marginBottom: '1rem' }}>
                                                     <StickyNote className="w-8 h-8 text-gray-400 dark:text-blue-300 wood:text-primary-300" />
                                                 </div>
-                                                <p className="text-gray-500 font-medium mb-2 dark:text-blue-300 wood:text-primary-300">Nenhuma anotação ainda</p>
-                                                <p className="text-gray-400 text-sm mb-4 dark:text-blue-400 wood:text-primary-400">Comece a registrar suas reflexões</p>
+                                                <p className="text-gray-500 font-medium dark:text-blue-300 wood:text-primary-300" style={{ marginBottom: '0.5rem' }}>Nenhuma anotação ainda</p>
+                                                <p className="text-gray-400 text-sm dark:text-blue-400 wood:text-primary-400" style={{ marginBottom: '1rem' }}>Comece a registrar suas reflexões</p>
                                                 <button
                                                     onClick={() => setNoteMode('write')}
-                                                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2 transition-all duration-200 dark:bg-emerald-500 wood:bg-secondary-600"
+                                                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-200 dark:bg-emerald-500 wood:bg-secondary-600"
+                                                    style={{ padding: '0.5rem 1rem' }}
                                                 >
                                                     Criar primeira anotação
                                                 </button>
