@@ -61,7 +61,7 @@ export default function Header() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsLoggedIn(false);
     window.location.href = '/';

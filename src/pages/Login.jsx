@@ -42,7 +42,7 @@ export default function Login() {
       }
 
       // Salvar token e dados do usuário
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Redirecionar para a página anterior ou home

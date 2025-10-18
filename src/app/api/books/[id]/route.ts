@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
-import { prisma } from '@/_lib/db';
+// app/api/book/[id]/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from '@/_lib/prisma';
 import { book_status as BookStatus, book_rating as BookRating } from '@prisma/client';
+import { getUserFromToken } from '@/app/_lib/auth';
 
 // --- Helpers ---
 function mapStatusToFrontend(dbStatus: BookStatus): string {
@@ -36,7 +38,6 @@ function mapRatingToDB(rating: number): BookRating | null {
   }
 }
 
-// Faz o caminho inverso: enum -> número
 function mapRatingToFrontend(rating: BookRating | null): number {
   switch (rating) {
     case BookRating.FIVE_STARS: return 5;
@@ -48,50 +49,83 @@ function mapRatingToFrontend(rating: BookRating | null): number {
   }
 }
 
-// --- Rotas ---
-export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-  const bookId = parseInt(id);
+// --- Rotas Protegidas ---
 
-  if (isNaN(bookId)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+// GET - Ver detalhes de UM livro (apenas se for do usuário)
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  try {
+    // Valida autenticação
+    const userId = getUserFromToken(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
 
-  const book = await prisma.book.findUnique({
-    where: { id: bookId },
-    include: { author: true }
-  });
+    const { id } = await context.params;
+    const bookId = parseInt(id);
 
-  if (!book) return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    if (isNaN(bookId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
 
-  const formattedBook = {
-    ...book,
-    author: book.author ? book.author.name : 'Autor Desconhecido',
-    status: mapStatusToFrontend(book.status),
-    rating: mapRatingToFrontend(book.rating),
-  };
+    const book = await prisma.book.findUnique({
+      where: { id: bookId },
+      include: { author: true }
+    });
 
-  return NextResponse.json(formattedBook);
+    if (!book) {
+      return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    }
+
+    // VERIFICA SE O LIVRO PERTENCE AO USUÁRIO
+    if (book.userId !== userId) {
+      return NextResponse.json({ error: "Você não tem permissão para acessar este livro" }, { status: 403 });
+    }
+
+    const formattedBook = {
+      ...book,
+      author: book.author ? book.author.name : 'Autor Desconhecido',
+      status: mapStatusToFrontend(book.status),
+      rating: mapRatingToFrontend(book.rating),
+    };
+
+    return NextResponse.json(formattedBook);
+  } catch (error) {
+    console.error("Erro no GET:", error);
+    return NextResponse.json({ error: "Erro ao buscar livro" }, { status: 500 });
+  }
 }
 
-export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-  const bookId = parseInt(id);
-
-  if (isNaN(bookId)) {
-    return NextResponse.json({ error: "ID inválido" }, { status: 400 });
-  }
-
+// PUT - Editar livro (apenas se for do usuário)
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    // Valida autenticação
+    const userId = getUserFromToken(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const { id } = await context.params;
+    const bookId = parseInt(id);
+
+    if (isNaN(bookId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
+
     const body = await req.json();
 
-    // 1. BUSCA O LIVRO ATUAL PARA VALIDAÇÃO DE PROGRESSO
+    // 1. BUSCA O LIVRO ATUAL
     const existingBook = await prisma.book.findUnique({
       where: { id: bookId },
-      // Precisamos do progresso atual e do total de páginas
-      select: { finishedPages: true, pages: true }
+      select: { finishedPages: true, pages: true, userId: true }
     });
 
     if (!existingBook) {
       return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    }
+
+    // VERIFICA SE O LIVRO PERTENCE AO USUÁRIO
+    if (existingBook.userId !== userId) {
+      return NextResponse.json({ error: "Você não tem permissão para editar este livro" }, { status: 403 });
     }
 
     // 2. VALIDAÇÃO ESPECÍFICA PARA 'finishedPages'
@@ -103,14 +137,12 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
         return NextResponse.json({ error: "O número de páginas lidas é inválido." }, { status: 400 });
       }
 
-      // Bloqueia a regressão do progresso
       if (newFinishedPages < currentFinishedPages) {
         return NextResponse.json({
           error: `O progresso atual (${currentFinishedPages}) não pode ser regredido para ${newFinishedPages}.`
         }, { status: 400 });
       }
 
-      // Bloqueia progresso maior que o total do livro
       if (newFinishedPages > existingBook.pages) {
         return NextResponse.json({
           error: `O total de páginas é ${existingBook.pages}. O progresso não pode exceder este valor.`
@@ -118,7 +150,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       }
     }
 
-    // 3. Sua lógica original para mapear e preparar a atualização
+    // 3. Prepara a atualização
     const dbStatus = body.status ? mapStatusToDB(body.status) : undefined;
     const dbRating = body.rating !== undefined ? mapRatingToDB(body.rating) : undefined;
 
@@ -140,7 +172,6 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       status: dbStatus,
       rating: dbRating,
       pages: body.pages,
-      // O campo finishedPages agora será validado antes de ser usado
       finishedPages: body.finishedPages,
       genre: body.genre,
       year: body.year,
@@ -150,7 +181,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       cover: body.cover,
     };
 
-    // Sua lógica original de Author
+    // Lógica de Author
     if (body.author) {
       const existingAuthor = await prisma.author.findUnique({ where: { name: body.author } });
       if (existingAuthor) {
@@ -166,9 +197,7 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
       (key) => dataToUpdate[key] === undefined && delete dataToUpdate[key]
     );
 
-    console.log("Data to update:", dataToUpdate);
-
-    // 4. ATUALIZAÇÃO SEGURA NO BANCO DE DADOS
+    // 4. ATUALIZAÇÃO SEGURA
     const updatedBook = await prisma.book.update({
       where: { id: bookId },
       data: dataToUpdate,
@@ -184,28 +213,51 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 
     return NextResponse.json(formattedBook, { status: 200 });
   } catch (error) {
-    console.error("💥 Erro completo ao atualizar livro:", error);
-    console.error("💥 Stack trace:", error instanceof Error ? error.stack : 'N/A');
-    console.error("💥 Message:", error instanceof Error ? error.message : error);
-
+    console.error("💥 Erro ao atualizar livro:", error);
     return NextResponse.json({
       error: "Erro ao atualizar livro",
       details: error instanceof Error ? error.message : String(error)
     }, { status: 500 });
   }
-
 }
 
-export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
-  const { id } = await context.params;
-  const bookId = parseInt(id);
-
-  if (isNaN(bookId)) return NextResponse.json({ error: "ID inválido" }, { status: 400 });
-
+//  DELETE - Deletar livro (apenas se for do usuário)
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    // Valida autenticação
+    const userId = getUserFromToken(request);
+    if (!userId) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const { id } = await context.params;
+    const bookId = parseInt(id);
+
+    if (isNaN(bookId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    // Busca o livro para verificar o dono
+    const book = await prisma.book.findUnique({
+      where: { id: bookId },
+      select: { userId: true }
+    });
+
+    if (!book) {
+      return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    }
+
+    // VERIFICA SE O LIVRO PERTENCE AO USUÁRIO
+    if (book.userId !== userId) {
+      return NextResponse.json({ error: "Você não tem permissão para deletar este livro" }, { status: 403 });
+    }
+
+    // Deleta o livro
     await prisma.book.delete({ where: { id: bookId } });
+
     return NextResponse.json({ message: "Livro removido com sucesso" });
-  } catch {
-    return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+  } catch (error) {
+    console.error("Erro ao deletar livro:", error);
+    return NextResponse.json({ error: "Erro ao deletar livro" }, { status: 500 });
   }
 }

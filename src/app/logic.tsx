@@ -1,5 +1,5 @@
 import type { Book, Stats } from '@/components/types/types';
-import { prisma } from '@/_lib/db';
+import { prisma } from '@/_lib/prisma';
 
 
 function formatTimeAgo(date: Date): string {

@@ -121,11 +121,23 @@ export default function NewBookPage() {
     e.preventDefault();
 
     try {
-      // Envia os dados para a API
+      //  Pega o token do localStorage (salvo durante o login)
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        alert('Você precisa estar logado para adicionar um livro.');
+        // Salva onde o usuário estava para voltar depois do login
+        localStorage.setItem('redirectAfterLogin', '/books/new');
+        router.push('/login');
+        return;
+      }
+
+      // Envia os dados para a API COM O TOKEN
       const response = await fetch('/api/books', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           title: formData.title,
@@ -145,16 +157,21 @@ export default function NewBookPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Mostra erro se houver
         alert(data.message || 'Erro ao salvar livro');
+
+        // Se o token expirou ou é inválido, redireciona para login
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.setItem('loginMessage', 'Sua sessão expirou. Faça login novamente.');
+          router.push('/login');
+        }
         return;
       }
 
       console.log('Livro salvo com sucesso:', data.book);
-
       setShowSuccessModal(true);
 
-      // Redireciona para a biblioteca
       setTimeout(() => {
         router.push('/books');
       }, 800);

@@ -3,7 +3,7 @@
 // Verifica se usuário está logado
 export const isUserLoggedIn = (): boolean => {
     if (typeof window === 'undefined') return false;
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     return !!token;
 };
 

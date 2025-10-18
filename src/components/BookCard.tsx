@@ -63,11 +63,11 @@ export default function BookCard({
 
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
 
-  // 🆕 Sincroniza quando a prop book mudar
+  //  Sincroniza quando a prop book mudar
   useEffect(() => {
     setCurrentBook(book);
   }, [book]);
@@ -117,7 +117,7 @@ export default function BookCard({
     setShowDeleteModal(false);
   };
 
-  // 🆕 Função para salvar edições
+  //  Função para salvar edições
   const handleSaveEdit = (updatedBook: Book) => {
     setCurrentBook(updatedBook);
     if (onUpdate) onUpdate(updatedBook);
@@ -334,10 +334,10 @@ export default function BookCard({
                   className="relative z-10"
                 >
                   <BookEditModal
-                    book={currentBook}  // 👈 MUDEI AQUI
+                    book={currentBook}
                     isOpen={showEditModal}
                     onClose={() => setShowEditModal(false)}
-                    onSave={handleSaveEdit}  // 👈 ADICIONE ESTA LINHA
+                    onSave={handleSaveEdit}
                     onBack={() => {
                       setShowEditModal(false);
                       setShowDetailsModal(true);

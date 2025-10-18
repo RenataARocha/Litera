@@ -93,7 +93,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("token");
         setIsLoggedIn(!!token);
     }, []);
 

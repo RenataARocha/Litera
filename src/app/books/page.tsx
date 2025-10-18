@@ -19,7 +19,7 @@ export default function BooksPage() {
 
   // Verificar login
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, []);
 
@@ -51,13 +51,28 @@ export default function BooksPage() {
       }
 
       try {
-        const res = await fetch("/api/books");
+        //  PEGANDO O TOKEN
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          console.error('Token não encontrado');
+          setLoading(false);
+          return;
+        }
+
+        //  ENVIANDO O TOKEN NO HEADER
+        const res = await fetch("/api/books", {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
         if (!res.ok) {
           throw new Error("Falha ao buscar livros da API");
         }
 
         const data: Book[] = await res.json();
+        console.log('📚 Livros carregados:', data.length); // Log para debug
         setBooks(data);
       } catch (err) {
         console.error("Erro ao carregar livros: ", err);
@@ -102,7 +117,7 @@ export default function BooksPage() {
     setStatusFilter("");
   };
 
-  // 🆕 FUNÇÃO PARA ATUALIZAR UM LIVRO NA LISTA
+  // FUNÇÃO PARA ATUALIZAR UM LIVRO NA LISTA
   const handleUpdateBook = (updatedBook: Book) => {
     setBooks(prevBooks =>
       prevBooks.map(book =>
@@ -135,13 +150,20 @@ export default function BooksPage() {
     }
 
     try {
+      //  ADICIONE O TOKEN AQUI TAMBÉM
+      const token = localStorage.getItem('token');
+
       const res = await fetch(`/api/books/${bookId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}` //  COM TOKEN
+        }
       });
 
       if (!res.ok) {
         throw new Error("Falha ao excluir o livro no servidor.");
       }
+
       setBooks(books.filter(book => book.id !== bookId));
       alert('Livro removido com sucesso!');
 
@@ -233,7 +255,7 @@ export default function BooksPage() {
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                   onDetails={handleDetails}
-                  onUpdate={handleUpdateBook} // 👈 ADICIONE ESTA LINHA
+                  onUpdate={handleUpdateBook}
                   isExposicao={!isLoggedIn}
                 />
               ))}

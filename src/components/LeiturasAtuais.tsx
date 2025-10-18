@@ -72,12 +72,29 @@ const LeiturasAtuais = () => {
         return () => clearTimeout(timer);
     }, []);
 
+    // Substitua o useEffect que busca os livros (linhas 72-102) por este:
+
     useEffect(() => {
         const fetchReadingBooks = async () => {
             try {
                 setLoading(true);
 
-                const res = await fetch('/api/books?status=READING');
+                // Pega o token do localStorage
+                const token = localStorage.getItem('token');
+
+                if (!token) {
+                    console.error('Token não encontrado');
+                    setLoading(false);
+                    return;
+                }
+
+                //  Envia o token no header
+                const res = await fetch('/api/books?status=READING', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
                 if (!res.ok) throw new Error('Erro ao buscar livros');
                 const data: Book[] = await res.json();
 
@@ -296,7 +313,7 @@ const LeiturasAtuais = () => {
                 setReadingData(prev => ({
                     ...prev,
                     paginasHoje: prev.paginasHoje + paginasLidasAgora,
-                    tempoMedio: Math.round((prev.tempoMedio + timeMin) / 2)
+                    tempoMedio: prev.tempoMedio + timeMin //  CORRETO: soma os minutos
                 }));
             }
 
