@@ -7,7 +7,7 @@ import ScrollToTopButton from "@/components/ScrollToTopButton";
 import ToasterClient from "@/components/ToasterClient";
 import { ThemeProvider } from 'next-themes';
 
-const SITE_URL = 'https://litera-six.vercel.app';
+const SITE_URL = 'https://litera-biblioteca-online.vercel.app';
 
 // SEO otimizado para o Litera
 export const metadata: Metadata = {
@@ -47,12 +47,13 @@ export const metadata: Metadata = {
     siteName: 'Litera',
     images: [
       {
-        url: '/images/litera-og.png',
+        url: `${SITE_URL}/images/litera-og.png`,
         width: 1200,
         height: 630,
         alt: 'Litera - Plataforma de Gestão Editorial',
       },
     ],
+
   },
 
   // Twitter
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
     description:
       'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
-    images: ['/images/litera-og.png'],
+    images: [`${SITE_URL}/images/litera-og.png`],
     creator: '@litera_oficial',
     site: '@litera_oficial',
   },

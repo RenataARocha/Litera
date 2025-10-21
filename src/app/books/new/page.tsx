@@ -83,8 +83,7 @@ export default function NewBookPage() {
             author: info.authors ? info.authors.join(", ") : prev.author,
             description: info.description || prev.description,
             pages: info.pageCount ? String(info.pageCount) : prev.pages,
-            genre: info.categories ? info.categories[0] : prev.genre,
-            year: info.publishedDate ? info.publishedDate.split('-')[0] : prev.year,
+            genre: info.categories ? mapearGenero(info.categories[0]) : prev.genre, year: info.publishedDate ? info.publishedDate.split('-')[0] : prev.year,
             isbn: info.industryIdentifiers
               ? info.industryIdentifiers.map((id) => id.identifier).join(", ")
               : prev.isbn,
@@ -108,6 +107,54 @@ export default function NewBookPage() {
     const timeoutId = setTimeout(buscarLivro, 800);
     return () => clearTimeout(timeoutId);
   }, [formData.title, formData.author]);
+
+
+  // Função para mapear categorias do Google Books para categorias personalizadas
+  const mapearGenero = (categoria: string): string => {
+    const generoLower = categoria.toLowerCase();
+
+    // Mapeamento de categorias em inglês para português
+    const mapeamento: { [key: string]: string } = {
+      'fiction': 'Ficção',
+      'science fiction': 'Ficção Científica',
+      'fantasy': 'Fantasia',
+      'romance': 'Romance',
+      'horror': 'Terror',
+      'thriller': 'Thriller',
+      'mystery': 'Mistério',
+      'biography': 'Biografia',
+      'history': 'História',
+      'self-help': 'Autoajuda',
+      'business': 'Negócios',
+      'psychology': 'Psicologia',
+      'philosophy': 'Filosofia',
+      'poetry': 'Poesia',
+      'drama': 'Drama',
+      'adventure': 'Aventura',
+      'science': 'Ciência',
+      'technology': 'Tecnologia',
+      'cooking': 'Culinária',
+      'travel': 'Viagens',
+      'sports': 'Esportes',
+      'art': 'Artes',
+      'music': 'Música',
+      'religion': 'Religião',
+      'comics': 'HQs e Mangás',
+      'juvenile fiction': 'Juvenil',
+      'young adult': 'Juvenil',
+      'children': 'Infantil',
+    };
+
+    // Verifica se existe mapeamento direto
+    for (const [chave, valor] of Object.entries(mapeamento)) {
+      if (generoLower.includes(chave)) {
+        return valor;
+      }
+    }
+
+    // Retorna a categoria original se não encontrar mapeamento
+    return categoria;
+  };
 
 
   const handleChange = (
