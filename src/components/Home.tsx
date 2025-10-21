@@ -128,7 +128,8 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
         const generosLidos = new Set(
             dadosAtividade
                 ?.filter((book) => book.status === "Lido")
-                ?.map((book) => book.genre)
+                ?.map((book) => 'genre' in book ? book.genre : null)
+                ?.filter((genre): genre is string => genre !== null)
         ).size;
 
         const progressoGeneros = Math.min(

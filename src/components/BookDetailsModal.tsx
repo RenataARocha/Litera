@@ -265,7 +265,7 @@ export default function BookDetailsModal({
                                 />
                             ) : (
                                 <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 dark:scrollbar-thumb-amber-500 dark:scrollbar-track-amber-900/20 wood:scrollbar-thumb-primary-500 wood:scrollbar-track-primary-800" style={{ paddingRight: '0.5rem' }}>
-                                    {book.notes.includes('NOTAS PESSOAIS:') && book.notes.includes('ANOTAÇÕES DA LEITURA:') ? (
+                                    {book.notes && book.notes.includes('NOTAS PESSOAIS:') && book.notes.includes('ANOTAÇÕES DA LEITURA:') ? (
                                         // Renderiza com seções separadas
                                         <div className="space-y-4">
                                             {book.notes.split(/={50,}/g).map((section, sectionIndex) => {
@@ -315,7 +315,7 @@ export default function BookDetailsModal({
                                                 return null;
                                             })}
                                         </div>
-                                    ) : (
+                                    ) : book.notes ? (
                                         // Renderiza normalmente (só um tipo de anotação)
                                         <div className="space-y-3">
                                             {book.notes.split('\n\n---\n\n').map((note, index) => {
@@ -346,7 +346,7 @@ export default function BookDetailsModal({
                                                 }
                                             })}
                                         </div>
-                                    )}
+                                    ) : null}
                                 </div>
                             )}
                         </div>
