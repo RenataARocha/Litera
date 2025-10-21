@@ -123,8 +123,14 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
             100
         );
 
+        // 👇 Aqui vem o conserto
         const metaGeneros = 10;
-        const generosLidos = 0;
+        const generosLidos = new Set(
+            dadosAtividade
+                ?.filter((book) => book.status === "Lido")
+                ?.map((book) => book.genre)
+        ).size;
+
         const progressoGeneros = Math.min(
             Math.round((generosLidos / metaGeneros) * 100),
             100
@@ -151,6 +157,7 @@ const Home: React.FC<DashboardProps> = ({ recentActivity, stats }) => {
             },
         ];
     };
+
 
     const dadosMetas = calcularMetasReais();
 

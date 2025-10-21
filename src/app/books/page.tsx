@@ -16,7 +16,7 @@ export default function BooksPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   // Verificar login
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -42,46 +42,63 @@ export default function BooksPage() {
     createdAt: new Date(Date.now() - index * 86400000).toISOString(),
   }));
 
-  // Buscar livros da API (apenas se logado)
-  useEffect(() => {
-    const fetchBooks = async () => {
-      if (!isLoggedIn) {
+  // 🔥 EXTRAIR fetchBooks para poder reusar
+  const fetchBooks = async () => {
+    if (!isLoggedIn) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setIsRefreshing(true);
+
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error('Token não encontrado');
         setLoading(false);
         return;
       }
 
-      try {
-        //  PEGANDO O TOKEN
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-          console.error('Token não encontrado');
-          setLoading(false);
-          return;
+      const res = await fetch("/api/books", {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      });
 
-        //  ENVIANDO O TOKEN NO HEADER
-        const res = await fetch("/api/books", {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!res.ok) {
-          throw new Error("Falha ao buscar livros da API");
-        }
-
-        const data: Book[] = await res.json();
-        console.log('📚 Livros carregados:', data.length); // Log para debug
-        setBooks(data);
-      } catch (err) {
-        console.error("Erro ao carregar livros: ", err);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error("Falha ao buscar livros da API");
       }
+
+      const data: Book[] = await res.json();
+      console.log('📚 Livros carregados:', data.length);
+      setBooks(data);
+    } catch (err) {
+      console.error("Erro ao carregar livros: ", err);
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  // Buscar livros da API (apenas se logado)
+  useEffect(() => {
+    fetchBooks();
+  }, [isLoggedIn]);
+
+  // 🔥 NOVO: Escutar atualizações de livros de outras páginas
+  useEffect(() => {
+    const handleBookUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      console.log('📚 Livro atualizado:', customEvent.detail);
+      fetchBooks(); // Recarrega a lista
     };
 
-    fetchBooks();
+    window.addEventListener('bookUpdated', handleBookUpdated);
+
+    return () => {
+      window.removeEventListener('bookUpdated', handleBookUpdated);
+    };
   }, [isLoggedIn]);
 
   // Decidir quais livros mostrar
@@ -150,13 +167,12 @@ export default function BooksPage() {
     }
 
     try {
-      //  ADICIONE O TOKEN AQUI TAMBÉM
       const token = localStorage.getItem('token');
 
       const res = await fetch(`/api/books/${bookId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}` //  COM TOKEN
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -205,6 +221,13 @@ export default function BooksPage() {
 
   return (
     <div className="wood:bg-background wood:min-h-screen" style={{ padding: '2rem' }}>
+      {/* 🔥 NOVO: Indicador de atualização */}
+      {isRefreshing && (
+        <div className="fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-pulse">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          <span>Atualizando...</span>
+        </div>
+      )}
 
       {/* Header da página */}
       <div style={{ marginBottom: '2rem' }}>

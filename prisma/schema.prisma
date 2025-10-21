@@ -34,6 +34,7 @@ model book {
   author         author           @relation(fields: [authorId], references: [id])
   user           User?            @relation(fields: [userId], references: [id])
   currentReading CurrentReading[]
+  ReadingTimer   ReadingTimer?
 
   @@index([authorId], map: "Book_authorId_fkey")
   @@index([userId])
@@ -56,19 +57,21 @@ enum book_rating {
 }
 
 model CurrentReading {
-  id Int @id @default(autoincrement())
-
-  bookId Int
-  book   book @relation(fields: [bookId], references: [id])
-
-  currentPage Int     @default(0)
-  isPaused    Boolean @default(false)
-
-  startedAt       DateTime  @default(now())
+  id              Int              @id @default(autoincrement())
+  bookId          Int
+  book            book             @relation(fields: [bookId], references: [id])
+  currentPage     Int              @default(0)
+  isPaused        Boolean          @default(false)
+  startedAt       DateTime         @default(now())
+  finishedAt      DateTime?
   predictedFinish DateTime?
-
   progressUpdates ProgressUpdate[]
   notes           ReadingNote[]
+
+  // ===== campos do cronômetro =====
+  totalSeconds   Int       @default(0)
+  isTimerRunning Boolean   @default(false)
+  lastStartedAt  DateTime?
 
   @@unique([bookId])
 }
@@ -106,4 +109,16 @@ model User {
   updatedAt        DateTime  @updatedAt
 
   books book[]
+}
+
+model ReadingTimer {
+  id           Int       @id @default(autoincrement())
+  bookId       Int
+  book         book      @relation(fields: [bookId], references: [id])
+  startTime    DateTime  @default(now())
+  endTime      DateTime?
+  totalSeconds Int       @default(0)
+  isRunning    Boolean   @default(false)
+
+  @@unique([bookId])
 }

@@ -260,4 +260,91 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
     console.error("Erro ao deletar livro:", error);
     return NextResponse.json({ error: "Erro ao deletar livro" }, { status: 500 });
   }
+
+}
+
+// PATCH - Atualizar apenas o status do livro
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  try {
+    // Valida autenticação
+    const userId = getUserFromToken(req);
+    if (!userId) {
+      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    }
+
+    const { id } = await context.params;
+    const bookId = parseInt(id);
+
+    if (isNaN(bookId)) {
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
+    }
+
+    const { status, notes } = await req.json();
+
+    // Busca o livro para verificar o dono
+    const book = await prisma.book.findUnique({
+      where: { id: bookId },
+      select: { userId: true, pages: true }
+    });
+
+    if (!book) {
+      return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
+    }
+
+    // VERIFICA SE O LIVRO PERTENCE AO USUÁRIO
+    if (book.userId !== userId) {
+      return NextResponse.json({ error: "Você não tem permissão para editar este livro" }, { status: 403 });
+    }
+
+    // Mapeia o status
+    const dbStatus = mapStatusToDB(status);
+
+    // Prepara os dados para atualização
+    const updateData: { status: BookStatus; notes?: string } = { status: dbStatus };
+
+    // Se notes foi fornecido, adiciona ao updateData
+    if (notes !== undefined) {
+      updateData.notes = notes;
+    }
+
+    // Atualiza o status (e notas, se fornecidas) do livro
+    const updatedBook = await prisma.book.update({
+      where: { id: bookId },
+      data: updateData,
+      include: { author: true }
+    });
+
+    // Se foi marcado como READ, atualizar o CurrentReading também
+    if (dbStatus === BookStatus.READ) {
+      const currentReading = await prisma.currentReading.findUnique({
+        where: { bookId }
+      });
+
+      if (currentReading) {
+        await prisma.currentReading.update({
+          where: { bookId },
+          data: {
+            finishedAt: new Date(),
+            currentPage: book.pages  // Garante 100%
+          }
+        });
+      }
+    }
+
+    const formattedBook = {
+      ...updatedBook,
+      author: updatedBook.author ? updatedBook.author.name : 'Autor Desconhecido',
+      status: mapStatusToFrontend(updatedBook.status),
+      rating: mapRatingToFrontend(updatedBook.rating),
+    };
+
+    return NextResponse.json({
+      success: true,
+      book: formattedBook
+    });
+
+  } catch (error) {
+    console.error("Erro ao atualizar status:", error);
+    return NextResponse.json({ error: "Erro ao atualizar status" }, { status: 500 });
+  }
 }

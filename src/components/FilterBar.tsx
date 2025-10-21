@@ -278,66 +278,142 @@ export default function FilterBar({
                         onChange={(e) => onGenreChange(e.target.value)}
                         style={{ paddingLeft: "1rem", paddingRight: "2.5rem" }}
                     >
-                        <option value="">Todos os Gêneros 🏷️</option>
-                        <option value="Literatura Brasileira">📚 Literatura Brasileira</option>
-                        <option value="Ficção Científica">🚀 Ficção Científica</option>
-                        <option value="Realismo Mágico">✨ Realismo Mágico</option>
-                        <option value="Ficção">📖 Ficção</option>
-                        <option value="Fantasia">🐉 Fantasia</option>
-                        <option value="Romance">💕 Romance</option>
-                        <option value="Biografia">👤 Biografia</option>
-                        <option value="História">🏛️ História</option>
-                        <option value="Autoajuda">💪 Autoajuda</option>
-                        <option value="Tecnologia">💻 Tecnologia</option>
-                        <option value="Programação">⌨️ Programação</option>
-                        <option value="Negócios">💼 Negócios</option>
-                        <option value="Psicologia">🧠 Psicologia</option>
-                        <option value="Filosofia">🤔 Filosofia</option>
-                        <option value="Poesia">🎭 Poesia</option>
-                        <option value="Suspense">🕵️‍♀️ Suspense</option>
-                        <option value="Terror">👻 Terror</option>
-                        <option value="Mistério">🧩 Mistério</option>
-                        <option value="Thriller">🔪 Thriller</option>
-                        <option value="Drama">🎬 Drama</option>
-                        <option value="Aventura">🏔️ Aventura</option>
-                        <option value="Clássicos">🏺 Clássicos</option>
-                        <option value="Infantil">🧸 Infantil</option>
-                        <option value="Juvenil">🎒 Juvenil</option>
-                        <option value="HQs e Mangás">🦸 HQs e Mangás</option>
-                        <option value="Artes">🎨 Artes</option>
-                        <option value="Música">🎵 Música</option>
-                        <option value="Cinema e TV">📺 Cinema e TV</option>
-                        <option value="Educação">📘 Educação</option>
-                        <option value="Religião">🙏 Religião</option>
-                        <option value="Espiritualidade">🌙 Espiritualidade</option>
-                        <option value="Ciência">🔬 Ciência</option>
-                        <option value="Matemática">📏 Matemática</option>
-                        <option value="Saúde">🩺 Saúde</option>
-                        <option value="Nutrição">🥗 Nutrição</option>
-                        <option value="Esportes">⚽ Esportes</option>
-                        <option value="Culinária">🍳 Culinária</option>
-                        <option value="Viagens">✈️ Viagens</option>
-                        <option value="Moda">👗 Moda</option>
-                        <option value="Beleza">💅 Beleza</option>
-                        <option value="Política">🏛️ Política</option>
-                        <option value="Sociologia">🌍 Sociologia</option>
-                        <option value="Ecologia">🌱 Ecologia</option>
-                        <option value="Direito">⚖️ Direito</option>
-                        <option value="Economia">💰 Economia</option>
-                        <option value="Arquitetura">🏗️ Arquitetura</option>
-                        <option value="Engenharia">🧱 Engenharia</option>
-                        <option value="Fotografia">📸 Fotografia</option>
-                        <option value="Humor">😂 Humor</option>
-                        <option value="Crônicas">📝 Crônicas</option>
-                        <option value="Contos">📜 Contos</option>
-                        <option value="Ensaios">📚 Ensaios</option>
-                        <option value="Erótico">🔥 Erótico</option>
-                        <option value="LGBTQIA+">🏳️‍🌈 LGBTQIA+</option>
-                        <option value="Memórias">🕰️ Memórias</option>
-                        <option value="Cartas e Diários">✉️ Cartas e Diários</option>
-                        <option value="Antologias">📖 Antologias</option>
-                        <option value="Didáticos">📗 Didáticos</option>
-                        <option value="Outros">📘 Outros</option>
+                        <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="">Selecione uma categoria</option>
+
+                        {/* 📚 FICÇÃO */}
+                        <optgroup label="📚 FICÇÃO" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Literatura Brasileira">📚 Literatura Brasileira</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Ficção">📖 Ficção</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Ficção Científica">🚀 Ficção Científica</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Fantasia">🐉 Fantasia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Realismo Mágico">✨ Realismo Mágico</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Distopia">🌆 Distopia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Steampunk/Cyberpunk">⚙️ Steampunk/Cyberpunk</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Romance">💕 Romance</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Romance Histórico">💕📜 Romance Histórico</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Terror">👻 Terror</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Suspense">🕵️‍♀️ Suspense</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Mistério">🧩 Mistério</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Thriller">🔪 Thriller</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Crime/Policial">🚔 Crime/Policial</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Paranormal">👁️ Paranormal</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Drama">🎬 Drama</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Aventura">🏔️ Aventura</option>
+                        </optgroup>
+
+                        {/* 📖 LITERATURA ESPECÍFICA */}
+                        <optgroup label="📖 LITERATURA" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Clássicos">🏺 Clássicos</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Poesia">🎭 Poesia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Contos">📜 Contos</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Crônicas">📝 Crônicas</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Ensaios">📚 Ensaios</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Antologias">📖 Antologias</option>
+                        </optgroup>
+
+                        {/* 👥 NÃO-FICÇÃO */}
+                        <optgroup label="👥 NÃO-FICÇÃO" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Biografia">👤 Biografia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Memórias">🕰️ Memórias</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Cartas e Diários">✉️ Cartas e Diários</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="História">🏛️ História</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="True Crime">🔍 True Crime</option>
+                        </optgroup>
+
+                        {/* 🧠 DESENVOLVIMENTO PESSOAL */}
+                        <optgroup label="🧠 DESENVOLVIMENTO PESSOAL" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Autoajuda">💪 Autoajuda</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Desenvolvimento Pessoal">🌟 Desenvolvimento Pessoal</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Psicologia">🧠 Psicologia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Filosofia">🤔 Filosofia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Espiritualidade">🌙 Espiritualidade</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Religião">🙏 Religião</option>
+                        </optgroup>
+
+                        {/* 💼 NEGÓCIOS E CARREIRA */}
+                        <optgroup label="💼 NEGÓCIOS E CARREIRA" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Negócios">💼 Negócios</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Empreendedorismo">🚀 Empreendedorismo</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Marketing/Vendas">📈 Marketing/Vendas</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Economia">💰 Economia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Finanças Pessoais">💸 Finanças Pessoais</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Direito">⚖️ Direito</option>
+                        </optgroup>
+
+                        {/* 💻 TECNOLOGIA */}
+                        <optgroup label="💻 TECNOLOGIA" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Tecnologia">💻 Tecnologia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Programação">⌨️ Programação</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Games">🎮 Games</option>
+                        </optgroup>
+
+                        {/* 🔬 CIÊNCIAS */}
+                        <optgroup label="🔬 CIÊNCIAS" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Ciência">🔬 Ciência</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Matemática">📏 Matemática</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Astronomia">🌌 Astronomia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Saúde">🩺 Saúde</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Nutrição">🥗 Nutrição</option>
+                        </optgroup>
+
+                        {/* 🎨 ARTES E CULTURA */}
+                        <optgroup label="🎨 ARTES E CULTURA" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Artes">🎨 Artes</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Música">🎵 Música</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Cinema e TV">📺 Cinema e TV</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Fotografia">📸 Fotografia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Moda">👗 Moda</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Beleza">💅 Beleza</option>
+                        </optgroup>
+
+                        {/* 📚 QUADRINHOS E GRAPHIC NOVELS */}
+                        <optgroup label="📚 QUADRINHOS" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="HQs e Mangás">🦸 HQs e Mangás</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Quadrinhos Nacionais">🇧🇷 Quadrinhos Nacionais</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Graphic Novels">🎨📖 Graphic Novels</option>
+                        </optgroup>
+
+                        {/* 👶 PÚBLICO JOVEM */}
+                        <optgroup label="👶 PÚBLICO JOVEM" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Infantil">🧸 Infantil</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Juvenil">🎒 Juvenil</option>
+                        </optgroup>
+
+                        {/* 🌍 SOCIEDADE E MEIO AMBIENTE */}
+                        <optgroup label="🌍 SOCIEDADE" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Política">🏛️ Política</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Sociologia">🌍 Sociologia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Ecologia">🌱 Ecologia</option>
+                        </optgroup>
+
+                        {/* 🏗️ ÁREAS TÉCNICAS */}
+                        <optgroup label="🏗️ ÁREAS TÉCNICAS" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Arquitetura">🏗️ Arquitetura</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Engenharia">🧱 Engenharia</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Educação">📘 Educação</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Didáticos">📗 Didáticos</option>
+                        </optgroup>
+
+                        {/* 🎭 LIFESTYLE */}
+                        <optgroup label="🎭 LIFESTYLE" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Culinária">🍳 Culinária</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Viagens">✈️ Viagens</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Esportes">⚽ Esportes</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Jardinagem">🌻 Jardinagem</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Pets/Animais">🐾 Pets/Animais</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Humor">😂 Humor</option>
+                        </optgroup>
+
+                        {/* 🎭 TEMAS ESPECIAIS */}
+                        <optgroup label="🎭 TEMAS ESPECIAIS" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Erótico">🔥 Erótico</option>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="LGBTQIA+">🏳️‍🌈 LGBTQIA+</option>
+                        </optgroup>
+
+                        {/* 📘 OUTROS */}
+                        <optgroup label="📘 OUTROS" className='dark:text-blue-900'>
+                            <option className="bg-white text-gray-700 dark:bg-slate-600 dark:text-blue-200" value="Outros">📘 Outros</option>
+                        </optgroup>
 
                     </motion.select>
 

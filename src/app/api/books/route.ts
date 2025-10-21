@@ -59,7 +59,6 @@ const mapRatingToFrontend = (rating: BookRating | null): number => {
 export async function GET(request: NextRequest) {
   try {
     const userId = getUserFromToken(request);
-
     if (!userId) {
       return NextResponse.json(
         { message: 'Não autorizado. Faça login primeiro.' },
@@ -67,24 +66,59 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const url = new URL(request.url);
+    const statusFilter = url.searchParams.get('status');
+
+    type WhereClause = {
+      userId: string;
+      status?: BookStatus;
+    };
+
+    const whereClause: WhereClause = {
+      userId: userId,
+    };
+
+    // 🔥 CORRIGIDO: Converte "Lendo" para BookStatus.READING
+    if (statusFilter) {
+      whereClause.status = mapStatusToDB(statusFilter); // Usa a função que já existe!
+    }
+
     const books = await prisma.book.findMany({
-      where: {
-        userId: userId,
-      },
+      where: whereClause,
       include: {
         author: true,
+        currentReading: true,
       },
       orderBy: {
         title: 'asc',
       },
     });
 
-    const formattedBooks = books.map((book) => ({
-      ...book,
-      author: book.author ? book.author.name : 'Autor Desconhecido',
-      status: mapStatusToFrontend(book.status),
-      rating: mapRatingToFrontend(book.rating),
-    }));
+    const formattedBooks = books.map((book) => {
+      const currentReading = Array.isArray(book.currentReading)
+        ? book.currentReading[0]
+        : book.currentReading;
+
+      return {
+        id: book.id,
+        title: book.title,
+        author: book.author ? book.author.name : 'Autor Desconhecido',
+        pages: book.pages,
+        finishedPages: book.finishedPages,
+        status: mapStatusToFrontend(book.status),
+        rating: mapRatingToFrontend(book.rating),
+        cover: book.cover,
+        genre: book.genre,
+        year: book.year,
+        description: book.description,
+        notes: book.notes,
+        isbn: book.isbn,
+        createdAt: book.createdAt,
+        updatedAt: book.updatedAt,
+        startedAt: currentReading?.startedAt || null,
+        readingId: currentReading?.id || null,
+      };
+    });
 
     return NextResponse.json(formattedBooks, { status: 200 });
   } catch (error) {

@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { Book } from "@/components/types/types";
 import StarRating from "./StarRating";
+import { useState } from "react";
+import { Edit, Save, X } from "lucide-react";
 
 type BookDetailsModalProps = {
     book: Book;
@@ -19,7 +21,13 @@ export default function BookDetailsModal({
     onClose,
     onEdit,
     onDelete,
+    onUpdate,
 }: BookDetailsModalProps) {
+    const [isEditingNotes, setIsEditingNotes] = useState(false);
+    const [editedNotes, setEditedNotes] = useState(book.notes || '');
+    const [isSaving, setIsSaving] = useState(false);
+    const [feedback, setFeedback] = useState('');
+
     if (!isOpen) return null;
 
     const bookWithPages = book as Book & {
@@ -28,6 +36,47 @@ export default function BookDetailsModal({
         publisher?: string;
         language?: string;
         readingDate?: string;
+    };
+
+    const showFeedback = (message: string) => {
+        setFeedback(message);
+        setTimeout(() => setFeedback(''), 3000);
+    };
+
+    const handleSaveNotes = async () => {
+        setIsSaving(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/books/${book.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ notes: editedNotes })
+            });
+
+            if (!res.ok) throw new Error('Erro ao salvar');
+
+            const updatedBook = await res.json();
+
+            if (onUpdate) {
+                onUpdate(updatedBook);
+            }
+
+            showFeedback('✅ Anotações salvas com sucesso!');
+            setIsEditingNotes(false);
+        } catch (error) {
+            console.error(error);
+            showFeedback('❌ Erro ao salvar anotações');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditedNotes(book.notes || '');
+        setIsEditingNotes(false);
     };
 
     return (
@@ -138,63 +187,6 @@ export default function BookDetailsModal({
                         </div>
                     </div>
 
-                    {/* Cronômetro de Leitura */}
-                    <div
-                        className="bg-orange-50 dark:bg-slate-700 rounded-xl wood:bg-[var(--color-secondary-600)]"
-                        style={{ padding: "1.25rem", marginBottom: "1rem" }}
-                    >
-                        <h4
-                            className="text-base font-semibold text-orange-700 dark:text-orange-300 wood:text-[var(--color-accent-900)] flex items-center gap-2"
-                            style={{ marginBottom: "1rem" }}
-                        >
-                            ⏱️ Cronômetro de Leitura
-                        </h4>
-
-                        <div className="flex items-center justify-between">
-                            <div className="text-center">
-                                <div className="text-3xl font-mono font-bold text-orange-700 dark:text-orange-300 wood:text-[var(--color-accent-500)]">
-                                    00:00:00
-                                </div>
-                                <p
-                                    className="text-xs text-orange-600 dark:text-orange-400 wood:text-[var(--color-accent-900)]"
-                                    style={{ marginTop: "0.25rem" }}
-                                >
-                                    Pausado
-                                </p>
-                            </div>
-
-                            <div className="flex flex-col gap-3 text-center">
-                                <div>
-                                    <p className="text-xs text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]">Sessão</p>
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-blue-100 wood:text-[var(--color-accent-500)]">0min</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]">Total</p>
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-blue-100 wood:text-[var(--color-accent-500)]">0h 0m</p>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <button
-                                    className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-medium rounded cursor-pointer transition-colors wood:bg-green-700 wood:hover:bg-green-800 flex items-center justify-center gap-1"
-                                    style={{ padding: "0.5rem 1rem" }}
-                                >
-                                    ▶ Iniciar
-                                </button>
-                                <button
-                                    className="bg-gray-500 hover:bg-gray-600 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded cursor-pointer transition-colors wood:bg-blue-600 wood:hover:bg-blue-700 flex items-center justify-center gap-1"
-                                    style={{ padding: "0.5rem 1rem" }}
-                                >
-                                    🔄 Reset
-                                </button>
-                            </div>
-                        </div>
-                        <p className="text-xs italic text-center text-gray-600 dark:text-blue-300 wood:text-[var(--color-accent-900)]" style={{ marginTop: "1rem" }}>
-                            &quot;A leitura é uma conversa com as mentes mais nobres dos séculos passados.&quot;
-                        </p>
-                    </div>
-
-
 
                     {/* Sinopse com Scroll */}
                     {book.description && (
@@ -217,23 +209,148 @@ export default function BookDetailsModal({
                         </div>
                     )}
 
-                    {/* Notas Pessoais */}
-                    {book.notes && (
+                    {/* Anotações da Leitura */}
+                    {(book.notes && book.notes.trim() !== '') || isEditingNotes ? (
                         <div
                             className="bg-emerald-100 dark:bg-amber-900/20 rounded-xl wood:bg-[var(--color-secondary-600)]"
                             style={{ padding: "1.25rem", marginBottom: "1rem" }}
                         >
-                            <h4
-                                className="text-base font-semibold text-emerald-800 dark:text-amber-300 wood:text-[var(--color-primary-900)] flex items-center gap-2"
-                                style={{ marginBottom: "0.75rem" }}
-                            >
-                                ✍️ Notas Pessoais
-                            </h4>
-                            <p className="text-sm text-[#4d3d2d] dark:text-amber-200 wood:text-[var(--color-primary-200)] leading-relaxed whitespace-pre-wrap">
-                                {book.notes}
-                            </p>
+                            <div className="flex items-center justify-between" style={{ marginBottom: "0.75rem" }}>
+                                <h4 className="text-base font-semibold text-emerald-800 dark:text-amber-300 wood:text-[var(--color-primary-900)] flex items-center gap-2">
+                                    ✍️ Anotações da Leitura
+                                </h4>
+                                {!isEditingNotes ? (
+                                    <button
+                                        onClick={() => {
+                                            setIsEditingNotes(true);
+                                            setEditedNotes(book.notes || '');
+                                        }}
+                                        className="flex items-center gap-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors dark:bg-emerald-500 wood:bg-secondary-600"
+                                        style={{ padding: '0.4rem 0.8rem' }}
+                                    >
+                                        <Edit className="w-3.5 h-3.5" />
+                                        Editar
+                                    </button>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleSaveNotes}
+                                            disabled={isSaving}
+                                            className="flex items-center gap-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                                            style={{ padding: '0.4rem 0.8rem' }}
+                                        >
+                                            <Save className="w-3.5 h-3.5" />
+                                            {isSaving ? 'Salvando...' : 'Salvar'}
+                                        </button>
+                                        <button
+                                            onClick={handleCancelEdit}
+                                            disabled={isSaving}
+                                            className="flex items-center gap-1 text-xs bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                                            style={{ padding: '0.4rem 0.8rem' }}
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {isEditingNotes ? (
+                                <textarea
+                                    value={editedNotes}
+                                    onChange={(e) => setEditedNotes(e.target.value)}
+                                    className="w-full border-2 border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none text-sm dark:bg-amber-900/30 dark:border-amber-600 dark:text-amber-100 wood:bg-primary-800/50 wood:border-primary-600 wood:text-primary-100"
+                                    style={{ padding: '0.75rem', minHeight: '200px' }}
+                                    placeholder="Escreva suas anotações sobre o livro..."
+                                />
+                            ) : (
+                                <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-400 scrollbar-track-emerald-100 dark:scrollbar-thumb-amber-500 dark:scrollbar-track-amber-900/20 wood:scrollbar-thumb-primary-500 wood:scrollbar-track-primary-800" style={{ paddingRight: '0.5rem' }}>
+                                    {book.notes.includes('NOTAS PESSOAIS:') && book.notes.includes('ANOTAÇÕES DA LEITURA:') ? (
+                                        // Renderiza com seções separadas
+                                        <div className="space-y-4">
+                                            {book.notes.split(/={50,}/g).map((section, sectionIndex) => {
+                                                if (section.includes('NOTAS PESSOAIS:')) {
+                                                    const personalNote = section.replace('📝 NOTAS PESSOAIS:', '').trim();
+                                                    return (
+                                                        <div key={`personal-${sectionIndex}`} className="bg-blue-50/80 dark:bg-blue-900/20 rounded-lg wood:bg-blue-700/20" style={{ padding: '0.75rem' }}>
+                                                            <h5 className="text-xs font-semibold text-blue-700 dark:text-blue-300 wood:text-blue-400 flex items-center gap-1" style={{ marginBottom: '0.5rem' }}>
+                                                                📝 Notas Pessoais
+                                                            </h5>
+                                                            <p className="text-sm text-[#4d3d2d] dark:text-amber-100 wood:text-primary-100 leading-relaxed whitespace-pre-wrap">
+                                                                {personalNote}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                } else if (section.includes('ANOTAÇÕES DA LEITURA:')) {
+                                                    const readingNotes = section.replace('📖 ANOTAÇÕES DA LEITURA:', '').trim();
+                                                    return (
+                                                        <div key={`reading-${sectionIndex}`}>
+                                                            <h5 className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 wood:text-emerald-400 flex items-center gap-1" style={{ marginBottom: '0.75rem' }}>
+                                                                📖 Anotações Durante a Leitura
+                                                            </h5>
+                                                            <div className="space-y-3">
+                                                                {readingNotes.split('\n\n---\n\n').map((note, index) => {
+                                                                    const match = note.match(/\[(.*?)\]\s*([\s\S]*)/);
+                                                                    if (match) {
+                                                                        const [, date, content] = match;
+                                                                        return (
+                                                                            <div key={index} className="bg-white/60 dark:bg-amber-800/30 rounded-lg wood:bg-primary-700/40" style={{ padding: '0.75rem' }}>
+                                                                                <div className="flex items-center gap-2" style={{ marginBottom: '0.4rem' }}>
+                                                                                    <span className="text-xs font-medium text-emerald-600 dark:text-amber-400 wood:text-accent-400">
+                                                                                        📅 {date}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <p className="text-sm text-[#4d3d2d] dark:text-amber-100 wood:text-primary-100 leading-relaxed">
+                                                                                    {content.trim()}
+                                                                                </p>
+                                                                            </div>
+                                                                        );
+                                                                    }
+                                                                    return null;
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </div>
+                                    ) : (
+                                        // Renderiza normalmente (só um tipo de anotação)
+                                        <div className="space-y-3">
+                                            {book.notes.split('\n\n---\n\n').map((note, index) => {
+                                                const match = note.match(/\[(.*?)\]\s*([\s\S]*)/);
+                                                if (match) {
+                                                    const [, date, content] = match;
+                                                    return (
+                                                        <div key={index} className="bg-white/60 dark:bg-amber-800/30 rounded-lg wood:bg-primary-700/40" style={{ padding: '0.75rem' }}>
+                                                            <div className="flex items-center gap-2" style={{ marginBottom: '0.4rem' }}>
+                                                                <span className="text-xs font-medium text-emerald-600 dark:text-amber-400 wood:text-accent-400">
+                                                                    📅 {date}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-sm text-[#4d3d2d] dark:text-amber-100 wood:text-primary-100 leading-relaxed">
+                                                                {content.trim()}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                } else {
+                                                    // Texto sem data (nota pessoal simples)
+                                                    return (
+                                                        <div key={index} className="bg-white/60 dark:bg-amber-800/30 rounded-lg wood:bg-primary-700/40" style={{ padding: '0.75rem' }}>
+                                                            <p className="text-sm text-[#4d3d2d] dark:text-amber-100 wood:text-primary-100 leading-relaxed whitespace-pre-wrap">
+                                                                {note.trim()}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                }
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    )}
+                    ) : null}
 
                     {/* Informações Técnicas */}
                     <div
@@ -271,10 +388,33 @@ export default function BookDetailsModal({
                         >
                             Fechar
                         </button>
-
                     </div>
+
+                    {/* Feedback de salvamento */}
+                    {feedback && (
+                        <div className="fixed top-4 right-4 bg-green-500 text-white rounded-lg shadow-lg z-50 font-medium animate-slideInRight" style={{ padding: '14px 18px' }}>
+                            {feedback}
+                        </div>
+                    )}
                 </div>
             </div>
+
+            <style jsx>{`
+                @keyframes slideInRight {
+                    from { 
+                        opacity: 0; 
+                        transform: translateX(100px); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: translateX(0); 
+                    }
+                }
+                
+                .animate-slideInRight {
+                    animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                }
+            `}</style>
         </div>
     );
 }

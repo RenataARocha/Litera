@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { BookOpen, Calendar, Clock, TrendingUp, Edit, StickyNote, Pause, X, Play } from 'lucide-react';
+import FloatingTimer from './FloatingTimer';
 
 type Book = {
     id: number;
@@ -13,6 +14,7 @@ type Book = {
     predictedEnd?: string;
     status: string;
     readingId?: number;
+    cover?: string;
 };
 
 type Note = {
@@ -55,12 +57,36 @@ const LeiturasAtuais = () => {
     const [readingTime, setReadingTime] = useState('');
     const [noteText, setNoteText] = useState('');
     const [feedback, setFeedback] = useState('');
-    const [isPaused, setIsPaused] = useState(false);
+    const [isPaused, setIsPaused] = useState<Record<number, boolean>>({});
     const [noteMode, setNoteMode] = useState<'write' | 'view'>('write');
+    const [dailyGoal, setDailyGoal] = useState<number>(20);
+    const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [isLeaving] = useState(false);
     const [fadeOut, setFadeOut] = useState(false);
+    const [activeTimer, setActiveTimer] = useState<{
+        bookId: number;
+        bookTitle: string;
+    } | null>(null);
+    const [timerMinutes, setTimerMinutes] = useState(0);
 
+    // Função para calcular previsão de término
+    const calculatePrediction = (book: Book) => {
+        if (!book.pages || !dailyGoal || dailyGoal <= 0) return 'Defina uma meta';
+
+        const pagesLeft = book.pages - (book.finishedPages || 0);
+        if (pagesLeft <= 0) return 'Concluído!';
+
+        const daysLeft = Math.ceil(pagesLeft / dailyGoal);
+        const predictedDate = new Date();
+        predictedDate.setDate(predictedDate.getDate() + daysLeft);
+
+        return predictedDate.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+    };
 
     const showFeedback = (message: string) => {
         setFeedback(message);
@@ -69,17 +95,22 @@ const LeiturasAtuais = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => setIsVisible(true), 100);
+
+        // Carregar meta diária e estados de pausa do localStorage
+        const savedGoal = localStorage.getItem('dailyReadingGoal');
+        if (savedGoal) setDailyGoal(parseInt(savedGoal));
+
+        const savedPauses = localStorage.getItem('pausedBooks');
+        if (savedPauses) setIsPaused(JSON.parse(savedPauses));
+
         return () => clearTimeout(timer);
     }, []);
-
-    // Substitua o useEffect que busca os livros (linhas 72-102) por este:
 
     useEffect(() => {
         const fetchReadingBooks = async () => {
             try {
                 setLoading(true);
 
-                // Pega o token do localStorage
                 const token = localStorage.getItem('token');
 
                 if (!token) {
@@ -88,8 +119,7 @@ const LeiturasAtuais = () => {
                     return;
                 }
 
-                //  Envia o token no header
-                const res = await fetch('/api/books?status=READING', {
+                const res = await fetch('/api/books?status=Lendo', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -98,7 +128,9 @@ const LeiturasAtuais = () => {
                 if (!res.ok) throw new Error('Erro ao buscar livros');
                 const data: Book[] = await res.json();
 
-                const readingBooks = data.filter(book => book.status === 'Lendo');
+                const readingBooks = data.filter(book =>
+                    book.status === 'Lendo'
+                );
 
                 await new Promise(resolve => setTimeout(resolve, 400));
 
@@ -125,9 +157,36 @@ const LeiturasAtuais = () => {
         const book = books.find(b => b.id === bookId);
         setSelectedBook(bookId);
         setPagesRead(book?.finishedPages?.toString() || '0');
+
+        // 🔥 NOVO: Se há timer ativo, preenche o tempo automaticamente
+        if (timerMinutes > 0) {
+            setReadingTime(timerMinutes.toString());
+        }
+
         setIsModalOpen(true);
     };
 
+    const handleStartTimer = (bookId: number, bookTitle: string) => {
+        setActiveTimer({ bookId, bookTitle });
+    };
+
+    const handleStopTimer = (totalMinutes: number) => {
+        setTimerMinutes(totalMinutes);
+        setActiveTimer(null);
+
+        showFeedback(`⏱️ Sessão concluída: ${totalMinutes} minutos`);
+
+        // Abrir modal de progresso automaticamente
+        if (activeTimer) {
+            setTimeout(() => {
+                openUpdateModal(activeTimer.bookId);
+            }, 500);
+        }
+    };
+
+    const handleCloseTimer = () => {
+        setActiveTimer(null);
+    };
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -286,6 +345,7 @@ const LeiturasAtuais = () => {
 
         try {
             const paginasLidasAgora = newTotalPages - (book.finishedPages || 0);
+            const isCompleted = newTotalPages >= book.pages;
 
             const res = await fetch('/api/current-readings', {
                 method: 'POST',
@@ -303,17 +363,103 @@ const LeiturasAtuais = () => {
                 throw new Error(errorData.message || 'Erro ao atualizar');
             }
 
-            setBooks(prev =>
-                prev.map(b =>
-                    b.id === selectedBook ? { ...b, finishedPages: newTotalPages } : b
-                )
-            );
+            // Se concluído, atualizar status para READ
+            if (isCompleted) {
+                const token = localStorage.getItem('token');
+
+                // 🔥 1. Buscar as notas pessoais ORIGINAIS do livro
+                const bookRes = await fetch(`/api/books/${selectedBook}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                let originalNotes = '';
+                if (bookRes.ok) {
+                    const bookData = await bookRes.json();
+                    originalNotes = bookData.notes || '';
+                }
+
+                // 🔥 2. Buscar todas as anotações feitas durante a leitura
+                const readingRes = await fetch(`/api/books/${selectedBook}/reading`);
+                let readingNotesFormatted = '';
+
+                if (readingRes.ok) {
+                    const { readingId } = await readingRes.json();
+
+                    if (readingId) {
+                        const notesRes = await fetch(`/api/reading-notes?readingId=${readingId}`);
+                        if (notesRes.ok) {
+                            const notesData = await notesRes.json();
+
+                            if (notesData.length > 0) {
+                                // Formata as anotações de leitura
+                                readingNotesFormatted = notesData.map((note: Note) => {
+                                    const date = new Date(note.createdAt).toLocaleDateString('pt-BR');
+                                    return `[${date}] ${note.content}`;
+                                }).join('\n\n---\n\n');
+                            }
+                        }
+                    }
+                }
+
+                // 🔥 3. MESCLA: Notas Pessoais + Anotações da Leitura
+                let finalNotes = '';
+
+                if (originalNotes && readingNotesFormatted) {
+                    // Se existem ambas, separa claramente
+                    finalNotes = `📝 NOTAS PESSOAIS:\n${originalNotes}\n\n${'='.repeat(50)}\n\n📖 ANOTAÇÕES DA LEITURA:\n\n${readingNotesFormatted}`;
+                } else if (originalNotes) {
+                    // Só tem notas pessoais
+                    finalNotes = originalNotes;
+                } else if (readingNotesFormatted) {
+                    // Só tem anotações de leitura
+                    finalNotes = readingNotesFormatted;
+                }
+
+                // Atualiza o status E adiciona todas as notas mescladas
+                const statusRes = await fetch(`/api/books/${selectedBook}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        status: 'Lido',
+                        notes: finalNotes // 🔥 Salva TUDO junto
+                    })
+                });
+
+                if (statusRes.ok) {
+                    showFeedback('🎉 Parabéns! Livro concluído e suas anotações foram salvas!');
+                    setBooks(prev => prev.filter(b => b.id !== selectedBook));
+
+                    window.dispatchEvent(new CustomEvent('bookUpdated', {
+                        detail: { bookId: selectedBook, action: 'completed' }
+                    }));
+
+                    closeModal();
+                    return;
+                }
+            }
+
+            // 🔥 RECARREGAR OS DADOS ATUALIZADOS DO SERVIDOR
+            const token = localStorage.getItem('token');
+            const updatedBooksRes = await fetch('/api/books?status=Lendo', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (updatedBooksRes.ok) {
+                const updatedData: Book[] = await updatedBooksRes.json();
+                const readingBooks = updatedData.filter(book => book.status === 'Lendo');
+                setBooks(readingBooks); // 🔥 Atualiza com dados frescos do servidor
+            }
 
             if (paginasLidasAgora > 0) {
                 setReadingData(prev => ({
                     ...prev,
                     paginasHoje: prev.paginasHoje + paginasLidasAgora,
-                    tempoMedio: prev.tempoMedio + timeMin //  CORRETO: soma os minutos
+                    tempoMedio: prev.tempoMedio + timeMin
                 }));
             }
 
@@ -326,9 +472,13 @@ const LeiturasAtuais = () => {
         }
     };
 
-    const togglePause = () => {
-        setIsPaused(!isPaused);
-        showFeedback(!isPaused ? 'Leitura pausada.' : 'Leitura retomada!');
+    const togglePause = (bookId: number) => {
+        setIsPaused(prev => {
+            const newState = { ...prev, [bookId]: !prev[bookId] };
+            localStorage.setItem('pausedBooks', JSON.stringify(newState));
+            return newState;
+        });
+        showFeedback(!isPaused[bookId] ? 'Leitura pausada.' : 'Leitura retomada!');
     };
 
     if (loading) return (
@@ -455,8 +605,26 @@ const LeiturasAtuais = () => {
                                     style={{ marginBottom: '1rem', padding: '2rem' }}
                                 >
                                     <div className="text-center" style={{ marginBottom: '24px' }}>
+                                        {/* 🔥 CAPA DO LIVRO - CORRIGIDO */}
+                                        {book.cover ? (
+                                            <img
+                                                src={book.cover}
+                                                alt={`Capa de ${book.title}`}
+                                                className="w-20 h-28 md:w-24 md:h-36 object-cover rounded-lg mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-gray-200 dark:border-slate-600 wood:border-primary-700"
+                                                style={{ marginBottom: '16px' }}
+                                                onError={(e) => {
+                                                    // Se a imagem falhar, esconde ela e mostra o fallback
+                                                    const target = e.currentTarget as HTMLImageElement;
+                                                    target.style.display = 'none';
+                                                    const fallback = target.nextElementSibling as HTMLElement;
+                                                    if (fallback) fallback.classList.remove('hidden');
+                                                }}
+                                            />
+                                        ) : null}
+
+                                        {/* Fallback com iniciais - só aparece se não houver cover */}
                                         <div
-                                            className="w-16 h-20 md:w-20 md:h-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl dark:from-blue-500 dark:to-indigo-500 wood:from-primary-600 wood:to-primary-800"
+                                            className={`w-16 h-20 md:w-20 md:h-28 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl dark:from-blue-500 dark:to-indigo-500 wood:from-primary-600 wood:to-primary-800 ${book.cover ? 'hidden' : ''}`}
                                             style={{ marginBottom: '16px', padding: '6px md:8px' }}
                                         >
                                             {book.title.substring(0, 3).toUpperCase()}
@@ -471,15 +639,30 @@ const LeiturasAtuais = () => {
 
                                         <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-6 text-sm text-gray-600 dark:text-blue-300 wood:text-primary-300">
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600 dark:hover:text-blue-400 wood:hover:text-accent-400">
-                                                📅 <strong>Iniciado:</strong> {book.startedAt ? new Date(book.startedAt).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não definido'}
+                                                📅 <strong>Iniciado:</strong> {
+                                                    book.startedAt
+                                                        ? new Date(book.startedAt).toLocaleDateString('pt-BR', {
+                                                            timeZone: 'America/Sao_Paulo' // 🔥 Use seu timezone
+                                                        })
+                                                        : 'Não definido'
+                                                }
                                             </span>
                                             <span className="flex items-center justify-center gap-1 transition-all duration-300 hover:text-blue-600 dark:hover:text-blue-400 wood:hover:text-accent-400">
-                                                ⏱️ <strong>Previsão:</strong> {book.predictedEnd || 'Calculando...'}
+                                                ⏱️ <strong>Previsão:</strong> {calculatePrediction(book)}
                                             </span>
                                         </div>
+
+                                        <button
+                                            onClick={() => setIsGoalModalOpen(true)}
+                                            className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:scale-105 font-medium text-xs sm:text-sm dark:bg-blue-500 dark:hover:bg-blue-600 wood:bg-primary-600 wood:hover:bg-primary-700"
+                                            style={{ padding: '0.4rem 0.8rem', marginTop: '0.8rem' }}
+                                        >
+                                            Meta atual: {dailyGoal} páginas/dia (clique para alterar)
+                                        </button>
+
                                     </div>
 
-                                    {isPaused && (
+                                    {isPaused[book.id] && (
                                         <div className="bg-orange-100 border-l-4 border-orange-400 text-orange-700 text-center font-medium rounded-r-lg transition-all duration-500 transform hover:scale-105 text-sm md:text-base dark:bg-orange-900/30 dark:border-orange-500 dark:text-orange-300 wood:bg-accent-800/30 wood:border-accent-600 wood:text-accent-200" style={{ padding: '12px md:16px', marginBottom: '20px' }}>
                                             📚 Leitura pausada - Clique em &quot;Retomar&quot; para continuar
                                         </div>
@@ -513,7 +696,7 @@ const LeiturasAtuais = () => {
                                                 onClick={() => openUpdateModal(book.id)}
                                                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm active:scale-95 dark:bg-blue-500 dark:hover:bg-blue-600 wood:bg-primary-600 wood:hover:bg-primary-700"
                                                 style={{ padding: '0.5rem 0.9rem' }}
-                                                disabled={isPaused}
+                                                disabled={isPaused[book.id]}
                                             >
                                                 <Edit className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                                                 <span className="hidden md:inline">Atualizar Progresso</span>
@@ -548,17 +731,32 @@ const LeiturasAtuais = () => {
                                                 <span className="hidden md:inline">Ver Anotações</span>
                                                 <span className="md:hidden">Anotações</span>
                                             </button>
+
+                                            <button
+                                                onClick={() => handleStartTimer(book.id, book.title)}
+                                                disabled={!!activeTimer || isPaused[book.id]}
+                                                className="bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-purple-500 dark:hover:bg-purple-600 wood:bg-primary-500 wood:hover:bg-primary-600"
+                                                style={{ padding: '0.5rem 0.9rem' }}
+                                            >
+                                                <Clock className="w-4 h-4" />
+                                                <span className="hidden md:inline">Iniciar Sessão</span>
+                                                <span className="md:hidden">Sessão</span>
+                                            </button>
+
+
+                                            <button
+                                                onClick={() => togglePause(book.id)}
+                                                className={`${isPaused[book.id] ? 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 wood:bg-secondary-500 wood:hover:bg-secondary-600' : 'bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 wood:bg-accent-600 wood:hover:bg-accent-700'} text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95 w-full md:w-auto mx-auto`}
+                                                style={{ padding: '10px 14px' }}
+                                            >
+                                                {isPaused[book.id] ? <Play className="w-4 h-4 transition-transform duration-300" /> : <Pause className="w-4 h-4 transition-transform duration-300" />}
+                                                {isPaused[book.id] ? 'Retomar' : 'Pausar'}
+                                            </button>
                                         </div>
                                     </div>
 
-                                    <button
-                                        onClick={togglePause}
-                                        className={`${isPaused ? 'bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 wood:bg-secondary-500 wood:hover:bg-secondary-600' : 'bg-orange-600 hover:bg-orange-700 dark:bg-orange-500 dark:hover:bg-orange-600 wood:bg-accent-600 wood:hover:bg-accent-700'} text-white rounded-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 flex items-center justify-center gap-2 font-medium cursor-pointer text-xs sm:text-sm active:scale-95 w-full md:w-auto mx-auto`}
-                                        style={{ padding: '10px 14px' }}
-                                    >
-                                        {isPaused ? <Play className="w-4 h-4 transition-transform duration-300" /> : <Pause className="w-4 h-4 transition-transform duration-300" />}
-                                        {isPaused ? 'Retomar' : 'Pausar'}
-                                    </button>
+
+
                                 </div>
                             ))
                         ) : (
@@ -776,7 +974,76 @@ const LeiturasAtuais = () => {
                         {feedback}
                     </div>
                 )}
+
+                {/* Modal de Meta Diária */}
+                {isGoalModalOpen && (
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn" style={{ padding: '16px' }}>
+                        <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl transform animate-slideInUp dark:bg-slate-800 wood:bg-primary-900" style={{ padding: '24px' }}>
+                            <div className="flex justify-between items-center" style={{ marginBottom: '20px' }}>
+                                <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-blue-200 wood:text-[var(--color-foreground)]">Definir Meta Diária</h3>
+                                <button
+                                    onClick={() => setIsGoalModalOpen(false)}
+                                    className="hover:bg-gray-100 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 dark:hover:bg-slate-700 wood:hover:bg-primary-800"
+                                    style={{ padding: '0.5rem' }}
+                                >
+                                    <X className="w-5 h-5 text-gray-500 dark:text-blue-300 wood:text-primary-300" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-blue-200 wood:text-primary-200" style={{ marginBottom: '6px' }}>
+                                        Quantas páginas você pretende ler por dia?
+                                    </label>
+                                    <input
+                                        type="number"
+                                        value={dailyGoal}
+                                        onChange={(e) => setDailyGoal(parseInt(e.target.value) || 0)}
+                                        className="w-full border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 focus:scale-105 dark:bg-blue-200/10 dark:border-blue-200/30 dark:placeholder-blue-200 dark:text-blue-100 dark:focus:ring-blue-300 wood:bg-primary-200 wood:border-primary-100 wood:text-secondary-600 wood:focus:ring-accent-600"
+                                        style={{ padding: '10px 14px' }}
+                                        placeholder="Ex: 20"
+                                        min={1}
+                                    />
+                                    <p className="text-xs text-gray-500 dark:text-blue-400 wood:text-primary-400" style={{ marginTop: '0.5rem' }}>
+                                        Esta meta será usada para calcular a previsão de término dos seus livros.
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-3" style={{ paddingTop: '12px' }}>
+                                    <button
+                                        onClick={() => setIsGoalModalOpen(false)}
+                                        className="flex-1 border-2 border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-200 font-medium cursor-pointer hover:scale-105 dark:border-slate-600 dark:text-blue-200 dark:hover:bg-slate-700 wood:border-primary-700 wood:text-primary-200 wood:hover:bg-primary-800/50"
+                                        style={{ padding: '10px 14px' }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            localStorage.setItem('dailyReadingGoal', dailyGoal.toString());
+                                            showFeedback(`✅ Meta definida: ${dailyGoal} páginas/dia`);
+                                            setIsGoalModalOpen(false);
+                                        }}
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg hover:shadow-lg transition-all duration-200 font-medium cursor-pointer hover:scale-105 dark:bg-blue-500 dark:hover:bg-blue-600 wood:bg-primary-600 wood:hover:bg-primary-700"
+                                        style={{ padding: '10px 14px' }}
+                                    >
+                                        Salvar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {/* 🔥 TIMER FLUTUANTE */}
+            {activeTimer && (
+                <FloatingTimer
+                    bookId={activeTimer.bookId}
+                    bookTitle={activeTimer.bookTitle}
+                    onStop={handleStopTimer}
+                    onClose={handleCloseTimer}
+                />
+            )}
 
             <style jsx>{`
             @keyframes fadeIn {

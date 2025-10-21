@@ -16,13 +16,8 @@ export async function GET(
             );
         }
 
-        const reading = await prisma.currentReading.findFirst({
-            where: {
-                bookId: bookId,
-            },
-            orderBy: {
-                startedAt: 'desc',
-            },
+        const reading = await prisma.currentReading.findUnique({
+            where: { bookId: bookId }
         });
 
         if (!reading) {
@@ -32,7 +27,11 @@ export async function GET(
             );
         }
 
-        return NextResponse.json({ readingId: reading.id });
+        return NextResponse.json({
+            readingId: reading.id,
+            startedAt: reading.startedAt,
+            currentPage: reading.currentPage
+        });
     } catch (error) {
         console.error('Erro ao buscar reading:', error);
         return NextResponse.json(

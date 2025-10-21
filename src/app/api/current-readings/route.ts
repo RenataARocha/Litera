@@ -64,15 +64,15 @@ export async function POST(request: Request) {
 
         // 2. Se não existir, INICIA UMA NOVA LEITURA
         if (!currentReading) {
-            // Cria o registro CurrentReading
             currentReading = await prisma.currentReading.create({
                 data: {
                     bookId: bookId,
                     currentPage: currentPage,
+                    startedAt: new Date(), // ✅ GARANTE QUE A DATA SEJA DEFINIDA
                 },
             });
 
-            // Atualiza o status e finishedPages do livro
+            // Atualiza o status do livro para READING
             await prisma.book.update({
                 where: { id: bookId },
                 data: {
