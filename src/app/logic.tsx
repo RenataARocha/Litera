@@ -1,6 +1,7 @@
 import type { Book, Stats } from '@/components/types/types';
 import { prisma } from '@/_lib/prisma';
-
+import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
 
 function formatTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -33,22 +34,53 @@ function formatTimeAgo(date: Date): string {
   return "agora";
 }
 
+// Função auxiliar para pegar o userId do token
+async function getUserIdFromToken(): Promise<string | null> {
+  try {
+    const cookieStore = await cookies(); // ← AWAIT AQUI
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) return null;
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    return decoded.userId;
+  } catch (error) {
+    console.error('Erro ao verificar token:', error);
+    return null;
+  }
+}
+
 export async function getDashboardData(): Promise<{ recentActivity: Book[], stats: Stats }> {
+  // 🔒 PEGA O USUÁRIO LOGADO
+  const userId = await getUserIdFromToken(); // ← AWAIT AQUI TAMBÉM
+
+  // Se não estiver logado, retorna dados vazios
+  if (!userId) {
+    return {
+      recentActivity: [],
+      stats: {
+        totalBooks: 0,
+        readingNow: 0,
+        finishedBooks: 0,
+        totalPagesRead: 0,
+      }
+    };
+  }
+
+  // 🔒 BUSCA APENAS OS LIVROS DO USUÁRIO LOGADO
   const dbBooks = await prisma.book.findMany({
+    where: { userId: userId },
     include: { author: true },
     orderBy: { updatedAt: 'desc' }
   });
 
-
   const totalBooks = dbBooks.length;
-  const readingNow = dbBooks.filter(b => b.status == "READING").length;
-  const finishedBooks = dbBooks.filter(b => b.status == "READ").length;
+  const readingNow = dbBooks.filter(b => b.status === "READING").length;
+  const finishedBooks = dbBooks.filter(b => b.status === "READ").length;
 
   const totalPagesRead = dbBooks
     .filter(b => b.status === "READ")
-    .reduce((sum, b) => {
-      return sum + b.pages;
-    }, 0);
+    .reduce((sum, b) => sum + b.pages, 0);
 
   const stats = {
     totalBooks: totalBooks,
@@ -85,7 +117,7 @@ export async function getDashboardData(): Promise<{ recentActivity: Book[], stat
       const ratingMap: Record<string, number> = {
         "FIVE_STARS": 5, "FOUR_STARS": 4, "THREE_STARS": 3,
         "TWO_STARS": 2, "ONE_STAR": 1
-      }
+      };
 
       const lastReadDate = new Date(b.updatedAt);
       const timeAgo = formatTimeAgo(lastReadDate);
@@ -96,14 +128,11 @@ export async function getDashboardData(): Promise<{ recentActivity: Book[], stat
         status: statusPt,
         genre: b.genre,
         description: b.description,
-
         rating: b.rating ? ratingMap[b.rating] : 0,
         lastRead: timeAgo,
         cover: b.cover,
       } as Book;
-
-
     });
 
-  return { recentActivity, stats }
+  return { recentActivity, stats };
 }

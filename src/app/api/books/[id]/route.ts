@@ -221,10 +221,10 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
   }
 }
 
-//  DELETE - Deletar livro (apenas se for do usuário)
+
+// DELETE - Deletar livro (apenas se for do usuário)
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    // Valida autenticação
     const userId = getUserFromToken(request);
     if (!userId) {
       return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
@@ -237,7 +237,6 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
       return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
 
-    // Busca o livro para verificar o dono
     const book = await prisma.book.findUnique({
       where: { id: bookId },
       select: { userId: true }
@@ -247,20 +246,49 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
       return NextResponse.json({ error: "Livro não encontrado" }, { status: 404 });
     }
 
-    // VERIFICA SE O LIVRO PERTENCE AO USUÁRIO
     if (book.userId !== userId) {
       return NextResponse.json({ error: "Você não tem permissão para deletar este livro" }, { status: 403 });
     }
 
-    // Deleta o livro
+    // Busca o CurrentReading relacionado
+    const currentReading = await prisma.currentReading.findUnique({
+      where: { bookId: bookId }
+    });
+
+    // Se existe CurrentReading, deleta seus filhos primeiro
+    if (currentReading) {
+      // Deleta ProgressUpdate relacionados ao CurrentReading
+      await prisma.progressUpdate.deleteMany({
+        where: { readingId: currentReading.id }
+      });
+
+      // Deleta ReadingNote relacionados ao CurrentReading
+      await prisma.readingNote.deleteMany({
+        where: { readingId: currentReading.id }
+      });
+
+      // Agora deleta o CurrentReading
+      await prisma.currentReading.delete({
+        where: { id: currentReading.id }
+      });
+    }
+
+    // Deleta o ReadingTimer
+    await prisma.readingTimer.deleteMany({
+      where: { bookId: bookId }
+    });
+
+    // Agora pode deletar o livro
     await prisma.book.delete({ where: { id: bookId } });
 
     return NextResponse.json({ message: "Livro removido com sucesso" });
   } catch (error) {
     console.error("Erro ao deletar livro:", error);
-    return NextResponse.json({ error: "Erro ao deletar livro" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro ao excluir livro. Tente novamente." },
+      { status: 500 }
+    );
   }
-
 }
 
 // PATCH - Atualizar apenas o status do livro

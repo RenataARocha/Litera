@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
             { expiresIn: '7d' }
         );
 
-        return NextResponse.json({
+        // 🔥 CRIAR RESPONSE COM COOKIE
+        const response = NextResponse.json({
             success: true,
             message: 'Login realizado com sucesso!',
             token,
@@ -64,6 +65,17 @@ export async function POST(request: NextRequest) {
                 createdAt: user.createdAt,
             },
         });
+
+        // 🔥 SALVAR TOKEN NO COOKIE
+        response.cookies.set('token', token, {
+            httpOnly: true, // Não acessível via JavaScript (mais seguro)
+            secure: process.env.NODE_ENV === 'production', // HTTPS em produção
+            sameSite: 'lax',
+            maxAge: 60 * 60 * 24 * 7, // 7 dias
+            path: '/',
+        });
+
+        return response;
 
     } catch (error) {
         console.error('Erro no login:', error);

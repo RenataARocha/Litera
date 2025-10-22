@@ -30,9 +30,9 @@ model book {
   authorId       Int
   userId         String?
   createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt // ← MUDANÇA AQUI
   author         author           @relation(fields: [authorId], references: [id])
-  user           User?            @relation(fields: [userId], references: [id])
+  user           User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
   currentReading CurrentReading[]
   ReadingTimer   ReadingTimer?
 
@@ -59,7 +59,7 @@ enum book_rating {
 model CurrentReading {
   id              Int              @id @default(autoincrement())
   bookId          Int
-  book            book             @relation(fields: [bookId], references: [id])
+  book            book             @relation(fields: [bookId], references: [id], onDelete: Cascade)
   currentPage     Int              @default(0)
   isPaused        Boolean          @default(false)
   startedAt       DateTime         @default(now())
@@ -80,7 +80,7 @@ model ProgressUpdate {
   id Int @id @default(autoincrement())
 
   readingId Int
-  reading   CurrentReading @relation(fields: [readingId], references: [id])
+  reading   CurrentReading @relation(fields: [readingId], references: [id], onDelete: Cascade)
 
   pagesRead      Int
   readingTimeMin Int
@@ -91,7 +91,7 @@ model ReadingNote {
   id Int @id @default(autoincrement())
 
   readingId Int
-  reading   CurrentReading @relation(fields: [readingId], references: [id])
+  reading   CurrentReading @relation(fields: [readingId], references: [id], onDelete: Cascade)
 
   pageReference Int?
   content       String   @db.Text
@@ -114,7 +114,7 @@ model User {
 model ReadingTimer {
   id           Int       @id @default(autoincrement())
   bookId       Int
-  book         book      @relation(fields: [bookId], references: [id])
+  book         book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
   startTime    DateTime  @default(now())
   endTime      DateTime?
   totalSeconds Int       @default(0)
