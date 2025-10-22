@@ -27,6 +27,13 @@ Este projeto foi desenvolvido por **Renata Rocha**, **Ana Paula Dantas** e **Car
 - Design claro e intuitivo, priorizando a experiência do usuário.
 
 ---
+# 🎥 Demonstração
+
+
+
+https://github.com/user-attachments/assets/725bd21e-3065-47f4-b1ba-56bafd86e800
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 - **Next.js 14**
