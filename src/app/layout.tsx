@@ -8,6 +8,7 @@ import ToasterClient from "@/components/ToasterClient";
 import { ThemeProvider } from 'next-themes';
 
 const SITE_URL = 'https://litera-biblioteca-online.vercel.app';
+const OG_IMAGE_URL = `${SITE_URL}/images/litera-og.png`;
 
 // SEO otimizado para o Litera
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
   // Metadata base
   metadataBase: new URL(SITE_URL),
 
-  // Open Graph
+  // Open Graph - CORRIGIDO
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
@@ -47,22 +48,23 @@ export const metadata: Metadata = {
     siteName: 'Litera',
     images: [
       {
-        url: `${SITE_URL}/images/litera-og.png`,
+        url: OG_IMAGE_URL,
+        secureUrl: OG_IMAGE_URL, // Adicione secureUrl explicitamente
         width: 1200,
         height: 630,
         alt: 'Litera - Plataforma de Gestão Editorial',
+        type: 'image/png',
       },
     ],
-
   },
 
-  // Twitter
+  // Twitter - CORRIGIDO
   twitter: {
     card: 'summary_large_image',
     title: 'Litera | Plataforma de Gestão Editorial e Literária',
     description:
       'Plataforma completa para escritores, editores e profissionais do mercado editorial.',
-    images: [`${SITE_URL}/images/litera-og.png`],
+    images: [OG_IMAGE_URL],
     creator: '@litera_oficial',
     site: '@litera_oficial',
   },
@@ -125,6 +127,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        {/* Meta tags adicionais para forçar Open Graph */}
+        <meta property="og:image" content={OG_IMAGE_URL} />
+        <meta property="og:image:secure_url" content={OG_IMAGE_URL} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Litera - Plataforma de Gestão Editorial" />
+
         {/* Schema.org JSON-LD */}
         <script
           type="application/ld+json"
@@ -148,7 +158,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 "url": SITE_URL,
                 "logo": {
                   "@type": "ImageObject",
-                  "url": `${SITE_URL}/images/litera-og.png`,
+                  "url": OG_IMAGE_URL,
                   "caption": "Logo oficial do Litera"
                 }
               },
@@ -178,7 +188,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)] transition-colors duration-300"
         suppressHydrationWarning
       >
-
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -214,13 +223,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 © 2024 Litera. Todos os direitos reservados.
               </p>
             </footer>
-
           </div>
         </ThemeProvider>
 
         {/* PONTO CRÍTICO: Raiz para Modais (React Portals) */}
         <div id="modal-root" />
-
       </body>
     </html>
   );
