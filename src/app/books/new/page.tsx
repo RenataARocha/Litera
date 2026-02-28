@@ -66,7 +66,7 @@ export default function NewBookPage() {
           : `inauthor:${formData.author}`;
 
         const res = await fetch(
-          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`
+          `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&key=${process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY}`
         );
         const data: GoogleBooksResponse = await res.json();
 
